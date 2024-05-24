@@ -1,0 +1,47 @@
+import axios from 'axios'
+
+import { getAccessToken, refreshToken } from '@/utils/token'
+
+export default class BaseService {
+  constructor(baseURL) {
+    this._axiosInstance = axios.create({
+      baseURL
+    })
+
+    this._setupInterceptors()
+  }
+
+  _setupInterceptors() {
+    this._axiosInstance.interceptors.request.use(BaseService.requestInterceptor)
+    this._axiosInstance.interceptors.response.use(
+      BaseService.responseInterceptor,
+      (err) => this.responseErrorInterceptor(err)
+    )
+  }
+
+  static requestInterceptor(config) {
+    const token = getAccessToken()
+
+    if (token && config.headers && !config.public) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
+
+    return config
+  }
+
+  static responseInterceptor(response) {
+    return response
+  }
+
+  async responseErrorInterceptor(error) {
+    const originalRequest = error.config
+
+    if (error.response.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true
+      const accessToken = await refreshToken()
+      originalRequest.headers.Authorization = 'Bearer ' + accessToken
+      return this._axiosInstance(originalRequest)
+    }
+    return Promise.reject(error)
+  }
+}

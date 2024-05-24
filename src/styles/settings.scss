@@ -1,0 +1,21 @@
+/**
+ * src/styles/settings.scss
+ *
+ * Configures SASS variables and Vuetify overwrites
+ */
+
+// https://vuetifyjs.com/features/sass-variables/`
+// @use 'vuetify/settings' with (
+//   $color-pack: false
+// );
+
+@import './fonts.scss';
+@import './main.scss';
+
+:root {
+  --primary-color: #003058;     // Define your primary color
+  --secondary-color: #2ecc71;   // Define your secondary color
+  --accent-color: #e74c3c;      // Define your accent color
+  --orange: #FFB700;      // Define your accent color
+  --purple: #833BB5;      // Define your accent color
+}
