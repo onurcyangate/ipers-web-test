@@ -20,12 +20,6 @@ export default class BaseService {
   }
 
   static requestInterceptor(config) {
-    const token = getAccessToken()
-
-    if (token && config.headers && !config.public) {
-      config.headers.Authorization = `Bearer ${token}`
-    }
-
     return config
   }
 

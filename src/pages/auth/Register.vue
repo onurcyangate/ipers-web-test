@@ -10,39 +10,23 @@ import router from "@/router";
 const isFormValid = ref(null);
 const authStore = useAuthStore()
 const loading = ref(false);
-const formState = reactive({})
+const showPassword = ref(false);
+const showConfirmPassword = ref(false);
 
-const mockBackendResponse = () => {
-  return [
-    {name: 'givenName', label: 'Given Name', type: 'text'},
-    {name: 'initials', label: 'Initials', type: 'text'},
-    {name: 'mail', label: 'Email', type: 'email'},
-    {name: 'sn', label: 'Surname', type: 'text'},
-    {name: 'userPassword', label: 'Password', type: 'password'},
-    {name: 'confirm_password', label: 'Confirm Password', type: 'password'},
-    {name: 'userPartitionID', label: 'User Partition ID', type: 'text'},
-  ]
-}
-
-const getFormFields = async () => {
-  const fields = await mockBackendResponse()
-  fields.forEach(field => {
-    formState[field.name] = {value: '', ...field}
-  })
-}
-
-getFormFields()
-
+const formState = reactive({
+  givenName: {value: '', label: 'Given Name', type: 'text'},
+  sn: {value: '', label: 'Surname', type: 'text'},
+  initials: {value: '', label: 'Initials', type: 'text'},
+  mail: {value: '', label: 'Email', type: 'email'},
+  userPassword: {value: '', label: 'Password', type: 'password'},
+  confirmPassword: {value: '', label: 'Confirm Password', type: 'password'},
+});
 const registerAttempt = async () => {
   try {
     loading.value = true
     const payload = {
       customAttributes: [],
       values: [
-        {name: 'accountDisabled', values: ['false']},
-        {name: 'UserMustChangePasswordAtNextSignIn', values: ['false']},
-        {name: 'UserCannotChangePassword', values: ['false']},
-        {name: 'PasswordNeverExpires', values: ['true']},
         {name: 'userPassword', values: [formState.userPassword.value]},
         {name: 'givenName', values: [formState.givenName.value]},
         {name: 'initials', values: [formState.initials.value]},
@@ -50,22 +34,33 @@ const registerAttempt = async () => {
         {name: 'oTTelephoneNumber', values: ['']},
         {name: 'sn', values: [formState.sn.value]},
       ],
-      userPartitionID: formState.userPartitionID.value,
-      name: formState.givenName.value.replace(' ', ''),
+      name: formState.mail.value.slice(0, formState.mail.value.indexOf('@')),
     };
     const response = await apiService.register(payload)
-    // const responseBody = response.data.response_body
-    // const userRole = responseBody.user.role
-    // if (userRole === 'admin' || userRole === 'editor') {
-    //   authStore.login(responseBody)
-    //   await router.replace('/dashboard')
-    // }
+    await router.replace('/email-verify')
   } catch (err) {
     consoleError(err)
     errorMessage('Registration failed.')
   } finally {
     loading.value = false
   }
+}
+
+const getRules = (field) => {
+  const rules = [v => !!v || field.label + ' is required']
+  if (field.type === 'email') {
+    rules.push(v => /.+@.+\..+/.test(v) || 'E-mail must be valid')
+  }
+  if (field.type === 'password') {
+    rules.push(v => v.length >= 8 || 'Password must be at least 8 characters')
+    rules.push(v => /[a-z]/.test(v) || 'Password must contain at least 1 lowercase character')
+    rules.push(v => /[A-Z]/.test(v) || 'Password must contain at least 1 uppercase character')
+    rules.push(v => /[\W_]/.test(v) || 'Password must contain at least 1 symbol')
+  }
+  if (field.label === 'Confirm Password') {
+    rules.push(v => v === formState.userPassword.value || 'Password and Confirm Password must match')
+  }
+  return rules
 }
 </script>
 
@@ -89,7 +84,7 @@ const registerAttempt = async () => {
         <v-text-field v-for="(field, key) in formState" :key="key" v-model="field.value" :label="field.label"
                       :type="field.type" variant="underlined"
                       density="comfortable"
-                      :rules="[v => !!v || field.label + ' is required']"></v-text-field>
+                      :rules="getRules(field)"></v-text-field>
 
         <v-btn type="submit" color="primary" block class="mt-2 no-uppercase" :loading=loading
                :disabled="!isFormValid" style="margin-bottom:15px">Register
