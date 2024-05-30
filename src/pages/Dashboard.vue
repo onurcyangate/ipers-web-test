@@ -1,10 +1,12 @@
-<script setup>
-</script>
 <template>
-  <v-container class="my-5">
-    Dashboard
-  </v-container>
+  <v-app>
+    <TopBar />
+    <v-main>
+    </v-main>
+  </v-app>
 </template>
 
-<style scoped>
-</style>
+<script setup>
+import TopBar from '@/components/app/TopBar.vue';
+
+</script>

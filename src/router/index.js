@@ -1,9 +1,3 @@
-/**
- * router/index.ts
- *
- * Automatic routes for `./src/pages/*.vue`
- */
-
 import {createRouter, createWebHistory} from 'vue-router'
 import {onBeforeRouteEnter} from "@/utils/common";
 import Dashboard from "@/pages/Dashboard.vue";
@@ -12,6 +6,8 @@ import NotFound from "@/pages/misc/NotFound.vue";
 import Admin from "@/layouts/Admin.vue";
 import Register from "@/pages/auth/Register.vue";
 import ResetPassword from "@/pages/auth/ResetPassword.vue";
+import EmailVerification from "@/pages/auth/EmailVerification.vue";
+import VerificationLinkHandler from "@/pages/auth/VerificationLinkHandler.vue";
 
 const adminRoutes = [
   {
@@ -50,6 +46,22 @@ const router = createRouter({
       path: '/reset-password',
       name: 'reset-password',
       component: ResetPassword,
+      meta: {
+        public: true
+      }
+    },
+    {
+      path: '/verify-email',
+      name: 'verify-email',
+      component: EmailVerification,
+      meta: {
+        public: true
+      }
+    },
+    {
+      path: '/verification-handler',
+      name: 'verification-handler',
+      component: VerificationLinkHandler,
       meta: {
         public: true
       }

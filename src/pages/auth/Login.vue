@@ -24,11 +24,8 @@ const loginAttempt = async () => {
     };
     const response = await apiService.login(payload)
     const responseBody = response.data.response_body
-    const userRole = responseBody.user.role
-    if (userRole === 'admin' || userRole === 'editor') {
-      authStore.login(responseBody)
-      await router.replace('/dashboard')
-    }
+    authStore.login(responseBody)
+    await router.replace('/dashboard')
   } catch (err) {
     consoleError(err)
     errorMessage('Login failed.')
@@ -40,7 +37,8 @@ const loginAttempt = async () => {
 
 <template>
   <v-container fluid class="flex-col-center justify-center fill-height" style="background-color: #003058">
-    <v-container class="flex-col-center justify-center" style="width: fit-content;  height: fit-content; background-color: white; border-radius: 5px">
+    <v-container class="flex-col-center justify-center"
+                 style="width: fit-content;  height: fit-content; background-color: white; border-radius: 5px">
       <v-progress-linear
         v-if="loading"
         color="#003058"
@@ -49,7 +47,7 @@ const loginAttempt = async () => {
         rounded
       ></v-progress-linear>
       <div style="min-width: fit-content; display: flex; flex-direction: column; align-items: center; padding: 16px">
-        <AppLogo :width="400"></AppLogo>
+        <AppLogo></AppLogo>
       </div>
       <p class="font-weight-medium"
          style="text-align: center; margin: 10px 0 25px 0; font-size: 20px;">Sign In</p>
@@ -72,8 +70,6 @@ const loginAttempt = async () => {
         <v-btn type="submit" color="primary" block class="mt-2 no-uppercase" :loading=loading style="margin-bottom:15px"
                :disabled="!isFormValid">
           Sign In
-        </v-btn>
-        <v-btn variant="outlined" color="primary" block class="mt-2 no-uppercase" :disabled=loading>Sign In with OKTA
         </v-btn>
         <v-btn @click="() => router.push('/register')" variant="text" block color="grey" class="mt-2 no-uppercase"
                :disabled=loading style="font-size: 13px">Not registered yet? Register here

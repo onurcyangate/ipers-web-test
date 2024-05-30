@@ -14,11 +14,13 @@ const formState = reactive({})
 
 const mockBackendResponse = () => {
   return [
-    {name: 'name', label: 'Full Name', type: 'text'},
-    {name: 'email', label: 'E-mail', type: 'text'},
-    {name: 'organization', label: 'Organization', type: 'text'},
-    {name: 'password', label: 'Password', type: 'password'},
+    {name: 'givenName', label: 'Given Name', type: 'text'},
+    {name: 'initials', label: 'Initials', type: 'text'},
+    {name: 'mail', label: 'Email', type: 'email'},
+    {name: 'sn', label: 'Surname', type: 'text'},
+    {name: 'userPassword', label: 'Password', type: 'password'},
     {name: 'confirm_password', label: 'Confirm Password', type: 'password'},
+    {name: 'userPartitionID', label: 'User Partition ID', type: 'text'},
   ]
 }
 
@@ -34,14 +36,30 @@ getFormFields()
 const registerAttempt = async () => {
   try {
     loading.value = true
-    const payload = formState
+    const payload = {
+      customAttributes: [],
+      values: [
+        {name: 'accountDisabled', values: ['false']},
+        {name: 'UserMustChangePasswordAtNextSignIn', values: ['false']},
+        {name: 'UserCannotChangePassword', values: ['false']},
+        {name: 'PasswordNeverExpires', values: ['true']},
+        {name: 'userPassword', values: [formState.userPassword.value]},
+        {name: 'givenName', values: [formState.givenName.value]},
+        {name: 'initials', values: [formState.initials.value]},
+        {name: 'mail', values: [formState.mail.value]},
+        {name: 'oTTelephoneNumber', values: ['']},
+        {name: 'sn', values: [formState.sn.value]},
+      ],
+      userPartitionID: formState.userPartitionID.value,
+      name: formState.givenName.value.replace(' ', ''),
+    };
     const response = await apiService.register(payload)
-    const responseBody = response.data.response_body
-    const userRole = responseBody.user.role
-    if (userRole === 'admin' || userRole === 'editor') {
-      authStore.login(responseBody)
-      await router.replace('/dashboard')
-    }
+    // const responseBody = response.data.response_body
+    // const userRole = responseBody.user.role
+    // if (userRole === 'admin' || userRole === 'editor') {
+    //   authStore.login(responseBody)
+    //   await router.replace('/dashboard')
+    // }
   } catch (err) {
     consoleError(err)
     errorMessage('Registration failed.')
@@ -63,7 +81,7 @@ const registerAttempt = async () => {
         rounded
       ></v-progress-linear>
       <div style="min-width: fit-content; display: flex; flex-direction: column; align-items: center; padding: 16px">
-        <AppLogo :width="400"></AppLogo>
+        <AppLogo></AppLogo>
       </div>
       <p class="font-weight-medium"
          style="text-align: center; margin: 10px 0 25px 0; font-size: 20px;">Register</p>
@@ -86,5 +104,9 @@ const registerAttempt = async () => {
 </template>
 
 <style scoped>
+
+.v-list-group__items .v-list-item {
+  padding-inline-start: 24px !important;
+}
 
 </style>

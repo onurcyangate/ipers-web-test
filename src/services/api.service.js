@@ -14,7 +14,7 @@ class ApiService extends BaseService {
    * @returns Promise
    */
   login(payload) {
-    return this._axiosInstance.post('auth/login', payload)
+    return this._axiosInstance.post('iowa/login', payload)
   }
 
   /**
@@ -24,11 +24,19 @@ class ApiService extends BaseService {
    * @returns Promise
    */
   refreshToken(payload) {
-    return this._axiosInstance.post('auth/token/refresh/', payload)
+    return this._axiosInstance.post('token/refresh/', payload)
   }
 
   register(payload) {
-    return this._axiosInstance.post('auth/register', payload)
+    return this._axiosInstance.post('/iowa/createUser', payload)
+  }
+
+  verifyEmail(params) {
+    return this._axiosInstance.get(`/iowa/verify-email?${params}`)
+  }
+
+  resendVerificationEmail() {
+    return this._axiosInstance.post('/iowa/resend-email')
   }
 }
 
