@@ -3,17 +3,29 @@ import {onBeforeRouteEnter} from "@/utils/common";
 import Dashboard from "@/pages/Dashboard.vue";
 import Login from "@/pages/auth/Login.vue";
 import NotFound from "@/pages/misc/NotFound.vue";
-import Admin from "@/layouts/Admin.vue";
 import Register from "@/pages/auth/Register.vue";
 import ResetPassword from "@/pages/auth/ResetPassword.vue";
 import EmailVerification from "@/pages/auth/EmailVerification.vue";
 import VerificationLinkHandler from "@/pages/auth/VerificationLinkHandler.vue";
+import MainLayout from "@/layouts/MainLayout.vue";
+import CaseDetail from "@/pages/CaseDetail.vue";
 
-const adminRoutes = [
+const mainRoute = [
   {
     path: '/dashboard',
     name: 'dashboard',
-    component: Dashboard
+    component: Dashboard,
+    meta: {
+      external: false,
+    }
+  },
+  {
+    path: '/case-detail',
+    name: 'case-detail',
+    component: CaseDetail,
+    meta: {
+      external: true,
+    }
   }
 ];
 
@@ -22,9 +34,9 @@ const router = createRouter({
   routes: [
     {
       path: '',
-      name: 'admin',
-      component: Admin,
-      children: adminRoutes,
+      name: 'main',
+      component: MainLayout,
+      children: mainRoute,
     },
     {
       path: '/login',
@@ -70,6 +82,6 @@ const router = createRouter({
   ]
 })
 
-router.beforeEach(onBeforeRouteEnter);
+// router.beforeEach(onBeforeRouteEnter);
 
 export default router

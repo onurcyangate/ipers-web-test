@@ -33,6 +33,7 @@ import { useRoute, useRouter } from 'vue-router'
 import apiService from "@/services/api.service"
 import { consoleError } from "@/utils/logger"
 import AppLogo from "@/components/app/AppLogo.vue"
+import {successMessage} from "@/utils/message";
 
 const loading = ref(true)
 const loadingResend = ref(false)
@@ -44,7 +45,8 @@ const isVerified = ref(false)
 
 const verifyEmail = async (token) => {
   try {
-    const response = await apiService.verifyEmail({ token })
+    await apiService.verifyEmail( token )
+    successMessage("Your account has been successfully verified. You can now login.")
     messageTitle.value = 'Account Verified'
     messageContent.value = 'Your account has been successfully verified. You can now login.'
     isVerified.value = true

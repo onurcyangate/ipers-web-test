@@ -1,7 +1,7 @@
 <script setup>
 import {ref, reactive} from 'vue'
 import apiService from "@/services/api.service";
-import {errorMessage} from "@/utils/message";
+import {errorMessage, warningMessage} from "@/utils/message";
 import {consoleError} from "@/utils/logger";
 import AppLogo from "@/components/app/AppLogo.vue";
 import {useAuthStore} from '@/store/authStore'
@@ -18,13 +18,21 @@ const formState = reactive({
 const loginAttempt = async () => {
   try {
     loading.value = true
+    // TODO discuss with team
+    const modifiedUsername = formState.username.slice(0, formState.username.indexOf('@'))
     const payload = {
-      username: formState.username,
+      username: modifiedUsername,
       password: formState.password
     };
     const response = await apiService.login(payload)
-    const responseBody = response.data.response_body
-    authStore.login(responseBody)
+    const responseMessage = response.data.message
+    if (responseMessage === 'Account is disabled') {
+      warningMessage('Your account is disabled. Please verify your account.')
+      await apiService.resendVerificationEmail()
+      await router.replace('/verify-email')
+      return
+    }
+    // authStore.login(responseBody)
     await router.replace('/dashboard')
   } catch (err) {
     consoleError(err)

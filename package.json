@@ -13,6 +13,7 @@
     "axios": "^1.6.7",
     "browserlist": "^1.0.1",
     "core-js": "^3.34.0",
+    "libphonenumber-js": "^1.11.2",
     "qrcode": "^1.5.3",
     "roboto-fontface": "*",
     "vue": "^3.3.0",

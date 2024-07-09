@@ -32,11 +32,15 @@ class ApiService extends BaseService {
   }
 
   verifyEmail(params) {
-    return this._axiosInstance.get(`/iowa/verify-email?${params}`)
+    return this._axiosInstance.get(`/iowa/verify-email?token=${params}`)
   }
 
   resendVerificationEmail() {
     return this._axiosInstance.post('/iowa/resend-email')
+  }
+
+  fetchUserCases(){
+    return this._axiosInstance.post('/iowa/list-cases')
   }
 }
 

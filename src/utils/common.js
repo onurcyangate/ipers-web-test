@@ -1,4 +1,5 @@
 import {getAccessToken, getRefreshToken} from './token'
+import {useAuthStore} from "@/store/authStore";
 
 /**
  * Filters out properties with null values from an object.
@@ -22,17 +23,26 @@ export const formatDateToIsoString = (dateString) => {
   if (dateString) return dateString.toISOString().slice(0, 19);
 };
 
-export const formatDateToUnixTimestamp = (dateString) => {
-  if (dateString) return Math.floor(new Date(dateString).getTime() / 1000)
-};
 
 export const onBeforeRouteEnter = async (to) => {
-  const isPublic = to?.meta?.public
+  const isPublic = to?.meta?.public;
 
   if (!isPublic && !getAccessToken() && !getRefreshToken()) {
-    return {name: 'login'}
+    return { name: 'login' };
   }
-}
+
+  const externalRoute = to?.meta?.external;
+
+  if (externalRoute) {
+    const authStore = useAuthStore();
+
+    if (authStore.user.role !== 'university') {
+      return false;
+    }
+  }
+
+  return true; // Allow the navigation
+};
 
 export const refreshPage = () => {
   window.location.reload();
