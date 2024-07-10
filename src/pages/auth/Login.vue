@@ -8,38 +8,43 @@ import {useAuthStore} from '@/store/authStore'
 import router from "@/router";
 
 const isFormValid = ref(null);
-const authStore = useAuthStore()
+const authStore = useAuthStore();
 const loading = ref(false);
+const showPassword = ref(false);
 const formState = reactive({
   username: '',
   password: ''
-})
+});
 
 const loginAttempt = async () => {
   try {
-    loading.value = true
+    loading.value = true;
     // TODO discuss with team
-    const modifiedUsername = formState.username.slice(0, formState.username.indexOf('@'))
+    const modifiedUsername = formState.username.slice(0, formState.username.indexOf('@'));
     const payload = {
       username: modifiedUsername,
       password: formState.password
     };
-    const response = await apiService.login(payload)
-    const responseMessage = response.data.message
+    const response = await apiService.login(payload);
+    const responseMessage = response.data.message;
     if (responseMessage === 'Account is disabled') {
-      warningMessage('Your account is disabled. Please verify your account.')
-      await apiService.resendVerificationEmail()
-      await router.replace('/verify-email')
-      return
+      warningMessage('Your account is disabled. Please verify your account.');
+      await apiService.resendVerificationEmail();
+      await router.replace('/verify-email');
+      return;
     }
-    // authStore.login(responseBody)
-    await router.replace('/dashboard')
+    authStore.login(response.data);
+    await router.replace('/dashboard');
   } catch (err) {
-    consoleError(err)
-    errorMessage('Login failed.')
+    consoleError(err);
+    errorMessage('Login failed.');
   } finally {
-    loading.value = false
+    loading.value = false;
   }
+}
+
+const togglePasswordVisibility = () => {
+  showPassword.value = !showPassword.value;
 }
 </script>
 
@@ -59,28 +64,32 @@ const loginAttempt = async () => {
       </div>
       <p class="font-weight-medium"
          style="text-align: center; margin: 10px 0 25px 0; font-size: 20px;">Sign In</p>
-      <v-form :model=formState v-model="isFormValid" fast-fail @submit.prevent="loginAttempt" style="width: 300px">
+      <v-form :model="formState" v-model="isFormValid" fast-fail @submit.prevent="loginAttempt" style="width: 300px">
         <v-text-field v-model="formState.username" label="Username" variant="underlined"
                       prepend-inner-icon="mdi-account"
                       :rules="[v => !!v || 'Username is required']"></v-text-field>
 
-        <v-text-field v-model="formState.password" type="password" label="Password" variant="underlined"
+        <v-text-field v-model="formState.password" :type="showPassword ? 'text' : 'password'" label="Password"
+                      variant="underlined"
                       prepend-inner-icon="mdi-lock"
+                      :append-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                      @click:append="togglePasswordVisibility"
                       :rules="[v => !!v || 'Password is required']"></v-text-field>
         <div style="display: flex">
           <v-btn @click="() => router.push('/reset-password')" variant="text" color="grey"
                  class="no-uppercase forgot-password-btn"
-                 :disabled=loading
+                 :disabled="loading"
                  style="font-size: 13px">
             Forgot Password
           </v-btn>
         </div>
-        <v-btn type="submit" color="primary" block class="mt-2 no-uppercase" :loading=loading style="margin-bottom:15px"
+        <v-btn type="submit" color="primary" block class="mt-2 no-uppercase" :loading="loading"
+               style="margin-bottom:15px"
                :disabled="!isFormValid">
           Sign In
         </v-btn>
         <v-btn @click="() => router.push('/register')" variant="text" block color="grey" class="mt-2 no-uppercase"
-               :disabled=loading style="font-size: 13px">Not registered yet? Register here
+               :disabled="loading" style="font-size: 13px">Not registered yet? Register here
         </v-btn>
 
       </v-form>
@@ -97,5 +106,4 @@ const loginAttempt = async () => {
   margin-right: -5px;
   margin-left: auto;
 }
-
 </style>

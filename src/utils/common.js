@@ -25,17 +25,16 @@ export const formatDateToIsoString = (dateString) => {
 
 
 export const onBeforeRouteEnter = async (to) => {
+  const authStore = useAuthStore();
   const isPublic = to?.meta?.public;
 
-  if (!isPublic && !getAccessToken() && !getRefreshToken()) {
-    return { name: 'login' };
+  if (!isPublic && !authStore.isLoggedIn) {
+    return {name: 'login'};
   }
 
   const externalRoute = to?.meta?.external;
 
   if (externalRoute) {
-    const authStore = useAuthStore();
-
     if (authStore.user.role !== 'university') {
       return false;
     }

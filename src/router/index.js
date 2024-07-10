@@ -1,4 +1,4 @@
-import {createRouter, createWebHistory} from 'vue-router'
+import {createRouter, createWebHistory} from 'vue-router';
 import {onBeforeRouteEnter} from "@/utils/common";
 import Dashboard from "@/pages/Dashboard.vue";
 import Login from "@/pages/auth/Login.vue";
@@ -89,8 +89,18 @@ const router = createRouter({
     },
     {path: '/:pathMatch(.*)*', component: NotFound}
   ]
-})
+});
 
-// router.beforeEach(onBeforeRouteEnter);
+router.beforeEach((to, from, next) => {
+  onBeforeRouteEnter(to).then((result) => {
+    if (result === true) {
+      next();
+    } else if (result === false) {
+      next(false);
+    } else {
+      next(result);
+    }
+  });
+});
 
-export default router
+export default router;
