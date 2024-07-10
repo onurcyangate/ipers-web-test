@@ -9,6 +9,7 @@ import EmailVerification from "@/pages/auth/EmailVerification.vue";
 import VerificationLinkHandler from "@/pages/auth/VerificationLinkHandler.vue";
 import MainLayout from "@/layouts/MainLayout.vue";
 import CaseDetail from "@/pages/CaseDetail.vue";
+import ResetPasswordLinkHandler from "@/pages/auth/ResetPasswordLinkHandler.vue";
 
 const mainRoute = [
   {
@@ -58,6 +59,14 @@ const router = createRouter({
       path: '/reset-password',
       name: 'reset-password',
       component: ResetPassword,
+      meta: {
+        public: true
+      }
+    },
+    {
+      path: '/reset-password-link',
+      name: 'reset-password-link',
+      component: ResetPasswordLinkHandler,
       meta: {
         public: true
       }

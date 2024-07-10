@@ -35,12 +35,20 @@ class ApiService extends BaseService {
     return this._axiosInstance.get(`/iowa/verify-email?token=${params}`)
   }
 
+  validateUniqueCode(params) {
+    return this._axiosInstance.get(`/iowa/check-unique-caseid?caseID=${params}`)
+  }
+
   resendVerificationEmail() {
     return this._axiosInstance.post('/iowa/resend-email')
   }
 
-  fetchUserCases(){
+  fetchUserCases() {
     return this._axiosInstance.post('/iowa/list-cases')
+  }
+
+  resetPassword(email, token, payload) {
+    return this._axiosInstance.post(`/iowa/reset-password?email=${(email)}&token=${(token)}`, payload);
   }
 }
 
