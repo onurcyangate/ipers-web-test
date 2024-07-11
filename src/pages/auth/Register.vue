@@ -85,7 +85,6 @@ const registerAttempt = async () => {
     const payload = {
       customAttributes: [],
       values: [
-        { name: 'unique_code', values: [formState.unique_code.value] },
         { name: 'userPassword', values: [formState.userPassword.value] },
         { name: 'givenName', values: [formState.givenName.value] },
         { name: 'initials', values: [formState.initials.value] },
@@ -96,7 +95,7 @@ const registerAttempt = async () => {
       ],
       name: formState.mail.value.slice(0, formState.mail.value.indexOf('@')),
     };
-    const response = await apiService.register(payload);
+    const response = await apiService.register(payload, formState.unique_code.value);
     await router.replace('/verify-email');
   } catch (err) {
     if (err.response.data.status === '409 CONFLICT') {
