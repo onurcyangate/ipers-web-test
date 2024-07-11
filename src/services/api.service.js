@@ -27,8 +27,8 @@ class ApiService extends BaseService {
     return this._axiosInstance.post('token/refresh/', payload)
   }
 
-  register(payload) {
-    return this._axiosInstance.post('/iowa/createUser', payload)
+  register(payload, params) {
+    return this._axiosInstance.post(`/iowa/createUser?uniqueCode=${params}`, payload)
   }
 
   verifyEmail(params) {
@@ -43,8 +43,9 @@ class ApiService extends BaseService {
     return this._axiosInstance.post('/iowa/resend-email')
   }
 
-  fetchUserCases() {
-    return this._axiosInstance.post('/iowa/list-cases')
+  fetchUserCases(params) {
+    return this._axiosInstance.get(`/iowa/external-user-case-list?username=${params}`)
+
   }
 
   resetPassword(email, token, payload) {
