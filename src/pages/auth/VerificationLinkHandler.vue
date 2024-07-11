@@ -39,10 +39,10 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import {ref, computed, onMounted} from 'vue'
+import {useRoute, useRouter} from 'vue-router'
 import apiService from "@/services/api.service"
-import { consoleError } from "@/utils/logger"
+import {consoleError} from "@/utils/logger"
 import AppLogo from "@/components/app/AppLogo.vue"
 import {errorMessage, infoMessage, successMessage, warningMessage} from "@/utils/message"
 
@@ -97,8 +97,15 @@ const resendVerificationEmail = async () => {
     await router.replace('/verify-email');
     infoMessage("Account verification email has been sent.")
   } catch (err) {
+    if (err.response.data.status === '409 CONFLICT') {
+      warningMessage('Account already verified.')
+      messageTitle.value = 'Account Already Verified'
+      messageContent.value = 'Your account has been verified. You can now login.'
+      isVerified.value = true
+    } else {
+      errorMessage('Failed to resend verification email.')
+    }
     consoleError(err)
-    errorMessage("Failed to resend verification email.")
   } finally {
     loadingResend.value = false
   }

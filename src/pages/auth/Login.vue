@@ -27,6 +27,7 @@ const loginAttempt = async () => {
     };
     const response = await apiService.login(payload);
     const responseMessage = response.data.message;
+    console.log('response message: ', responseMessage)
     if (responseMessage === 'Account is disabled') {
       warningMessage('Your account is disabled. Please verify your account.');
       await apiService.resendVerificationEmail();
@@ -36,8 +37,12 @@ const loginAttempt = async () => {
     authStore.login(response.data);
     await router.replace('/dashboard');
   } catch (err) {
+    if (err.response.data.status === '401 UNAUTHORIZED') {
+      warningMessage('Account is not verified. Please verify your email.')
+    } else {
+      errorMessage('Login failed.');
+    }
     consoleError(err);
-    errorMessage('Login failed.');
   } finally {
     loading.value = false;
   }

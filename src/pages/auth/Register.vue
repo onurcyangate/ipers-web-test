@@ -16,11 +16,11 @@
          style="text-align: center; margin: 10px 0 25px 0; font-size: 20px;">Register</p>
       <v-form :model="formState" v-model="isFormValid" fast-fail @submit.prevent="registerAttempt" style="width: 300px">
         <v-text-field v-for="(field, key) in formState" :key="key" v-model="field.value" :label="field.label"
-                      :type="key === 'userPassword' ? (showPassword ? 'text' : 'password') : (key === 'confirmPassword' ? (showConfirmPassword ? 'text' : 'password') : field.type)"
+                      :type="getFieldType(key)"
                       variant="underlined"
                       density="comfortable"
                       :rules="getRules(field)"
-                      :append-icon="key === 'userPassword' ? (showPassword ? 'mdi-eye-off' : 'mdi-eye') : (key === 'confirmPassword' ? (showConfirmPassword ? 'mdi-eye-off' : 'mdi-eye') : '')"
+                      :append-icon="getAppendIcon(key)"
                       @click:append="togglePasswordVisibility(key)">
         </v-text-field>
 
@@ -37,17 +37,17 @@
   </v-container>
 </template>
 
-<script setup lang="ts">
-import { ref, reactive } from 'vue';
+<script setup>
+import {ref, reactive} from 'vue';
 import apiService from "@/services/api.service";
-import { errorMessage } from "@/utils/message";
-import { consoleError } from "@/utils/logger";
+import {errorMessage, successMessage} from "@/utils/message";
+import {consoleError} from "@/utils/logger";
 import AppLogo from "@/components/app/AppLogo.vue";
-import { useAuthStore } from '@/store/authStore';
+import {useAuthStore} from '@/store/authStore';
 import router from "@/router";
 import Recaptcha from '../../components/Recaptcha.vue';
 
-const isFormValid = ref(null);
+const isFormValid = ref(false);
 const authStore = useAuthStore();
 const loading = ref(false);
 const showPassword = ref(false);
@@ -55,13 +55,13 @@ const showConfirmPassword = ref(false);
 const captchaVerified = ref(false);
 
 const formState = reactive({
-  unique_code: { value: '', label: 'Case Number', type: 'text' },
-  givenName: { value: '', label: 'Given Name', type: 'text' },
-  sn: { value: '', label: 'Surname', type: 'text' },
-  initials: { value: '', label: 'Initials', type: 'text' },
-  mail: { value: '', label: 'Email', type: 'email' },
-  userPassword: { value: '', label: 'Password', type: 'password' },
-  confirmPassword: { value: '', label: 'Confirm Password', type: 'password' },
+  unique_code: {value: '', label: 'Case Number', type: 'text'},
+  givenName: {value: '', label: 'Given Name', type: 'text'},
+  sn: {value: '', label: 'Surname', type: 'text'},
+  initials: {value: '', label: 'Initials', type: 'text'},
+  mail: {value: '', label: 'Email', type: 'email'},
+  userPassword: {value: '', label: 'Password', type: 'password'},
+  confirmPassword: {value: '', label: 'Confirm Password', type: 'password'},
 });
 
 const handleVerify = (response: string) => {
@@ -85,21 +85,24 @@ const registerAttempt = async () => {
     const payload = {
       customAttributes: [],
       values: [
-        { name: 'userPassword', values: [formState.userPassword.value] },
-        { name: 'givenName', values: [formState.givenName.value] },
-        { name: 'initials', values: [formState.initials.value] },
-        { name: 'mail', values: [formState.mail.value] },
-        { name: 'oTTelephoneNumber', values: [''] },
-        { name: 'sn', values: [formState.sn.value] },
-        { name: "accountDisabled", values: [true] },
+        {name: 'userPassword', values: [formState.userPassword.value]},
+        {name: 'givenName', values: [formState.givenName.value]},
+        {name: 'initials', values: [formState.initials.value]},
+        {name: 'mail', values: [formState.mail.value]},
+        {name: 'oTTelephoneNumber', values: ['']},
+        {name: 'sn', values: [formState.sn.value]},
+        {name: "accountDisabled", values: [true]},
       ],
       name: formState.mail.value.slice(0, formState.mail.value.indexOf('@')),
     };
     const response = await apiService.register(payload, formState.unique_code.value);
+    successMessage('Account has been successfully created. Verify your email to login.')
     await router.replace('/verify-email');
   } catch (err) {
     if (err.response.data.status === '409 CONFLICT') {
       errorMessage('Email already exists.');
+    } else if (err.response.data.responseFromUniqueCodeControl.status === '404 NOT_FOUND') {
+      errorMessage('Case Number is invalid.');
     } else {
       errorMessage('Registration failed.');
     }
@@ -132,6 +135,26 @@ const togglePasswordVisibility = (key) => {
   } else if (key === 'confirmPassword') {
     showConfirmPassword.value = !showConfirmPassword.value;
   }
+};
+
+const getFieldType = (key) => {
+  if (key === 'userPassword') {
+    return showPassword.value ? 'text' : 'password';
+  }
+  if (key === 'confirmPassword') {
+    return showConfirmPassword.value ? 'text' : 'password';
+  }
+  return formState[key].type;
+};
+
+const getAppendIcon = (key) => {
+  if (key === 'userPassword') {
+    return showPassword.value ? 'mdi-eye-off' : 'mdi-eye';
+  }
+  if (key === 'confirmPassword') {
+    return showConfirmPassword.value ? 'mdi-eye-off' : 'mdi-eye';
+  }
+  return '';
 };
 </script>
 
