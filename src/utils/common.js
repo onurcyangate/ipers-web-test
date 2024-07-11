@@ -15,8 +15,14 @@ export const filterNullValues = (obj) => {
 
 // Date used for demonstration purpose on datatable
 export const formatDate = (dateString) => {
-  if (dateString) return new Date(dateString).toLocaleDateString('en-GB');
+  if (!dateString) return '';
+
+  const date = new Date(dateString);
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+
+  return new Intl.DateTimeFormat('en-US', options).format(date);
 };
+
 
 // Date used for api payload: returns like 2024-03-10T22:50:00
 export const formatDateToIsoString = (dateString) => {
