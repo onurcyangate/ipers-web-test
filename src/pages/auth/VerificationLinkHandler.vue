@@ -19,21 +19,32 @@
         <v-btn v-if="isVerified" @click="redirectToLogin" color="primary" class="mt-2 no-uppercase auto-width"
                style="margin-bottom:15px">Login
         </v-btn>
-        <v-btn v-else @click="resendVerificationEmail" color="primary" class="mt-2 no-uppercase auto-width"
-               :loading="loadingResend" style="margin-bottom:15px">Resend Verification Email
-        </v-btn>
+        <v-form v-else @submit.prevent="resendVerificationEmail" style="width: 300px">
+          <v-text-field
+            v-model="email"
+            label="Email"
+            type="email"
+            variant="underlined"
+            density="comfortable"
+            :rules="emailRules"
+            append-icon="mdi-email"
+          ></v-text-field>
+          <v-btn type="submit" color="primary" class="mt-2 no-uppercase auto-width"
+                 :loading="loadingResend" :disabled="!isEmailValid" style="margin-bottom:15px">Resend Verification Email
+          </v-btn>
+        </v-form>
       </div>
     </v-container>
   </v-container>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import apiService from "@/services/api.service"
 import { consoleError } from "@/utils/logger"
 import AppLogo from "@/components/app/AppLogo.vue"
-import {errorMessage, successMessage, warningMessage} from "@/utils/message";
+import {errorMessage, infoMessage, successMessage, warningMessage} from "@/utils/message"
 
 const loading = ref(true)
 const loadingResend = ref(false)
@@ -42,22 +53,31 @@ const router = useRouter()
 const messageTitle = ref('')
 const messageContent = ref('')
 const isVerified = ref(false)
+const email = ref('')
+const emailRules = [
+  v => !!v || 'Email is required',
+  v => /.+@.+\..+/.test(v) || 'Email must be valid',
+]
+
+const isEmailValid = computed(() => {
+  return emailRules.every(rule => rule(email.value) === true)
+})
 
 const verifyEmail = async (token) => {
   try {
-    await apiService.verifyEmail( token )
+    await apiService.verifyEmail(token)
     successMessage("Your account has been successfully verified. You can now login.")
     messageTitle.value = 'Account Verified'
     messageContent.value = 'Your account has been successfully verified. You can now login.'
     isVerified.value = true
   } catch (err) {
     if (err.response.data.status === '409 CONFLICT') {
-      warningMessage('Account already verified.');
+      warningMessage('Account already verified.')
       messageTitle.value = 'Account Already Verified'
       messageContent.value = 'Your account has been verified. You can now login.'
       isVerified.value = true
     } else {
-      errorMessage('Account verification failed.');
+      errorMessage('Account verification failed.')
       consoleError(err)
       messageTitle.value = 'Invalid Link'
       messageContent.value = 'This verification link is invalid.'
@@ -70,11 +90,15 @@ const verifyEmail = async (token) => {
 const resendVerificationEmail = async () => {
   try {
     loadingResend.value = true
-    const response = await apiService.resendVerificationEmail()
-    messageContent.value = response.data.message || 'Verification email sent.'
+    const payload = {
+      email: email.value
+    }
+    const response = await apiService.resendVerificationEmail(payload)
+    await router.replace('/verify-email');
+    infoMessage("Account verification email has been sent.")
   } catch (err) {
     consoleError(err)
-    messageContent.value = 'Failed to resend verification email.'
+    errorMessage("Failed to resend verification email.")
   } finally {
     loadingResend.value = false
   }
@@ -114,7 +138,7 @@ onMounted(() => {
   font-weight: bold;
 }
 
-body-1 {
+.body-1 {
   font-size: 1rem;
   color: #333;
 }

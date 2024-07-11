@@ -1,5 +1,6 @@
 <template>
-  <v-container fluid class="flex-col-center justify-center fill-height" style="background: linear-gradient(to right bottom, #003058, #00517A)">
+  <v-container fluid class="flex-col-center justify-center fill-height"
+               style="background: linear-gradient(to right bottom, #003058, #00517A)">
     <v-container class="flex-col-center justify-center"
                  style="width: fit-content; height: fit-content; background-color: rgba(255, 255, 255, 0.9); border-radius: 10px; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2)">
       <v-progress-linear
@@ -18,16 +19,27 @@
         <p class="body-1 mb-10" style="line-height: 1.6em">
           Please verify your email by clicking the link sent to your email.
         </p>
-        <v-btn v-if="showResendButton" @click="resendVerificationEmail" color="primary" class="mt-2 no-uppercase auto-width"
-               :loading=loading style="margin-bottom:15px;">Resend Verification Email
-        </v-btn>
+        <v-form v-if="showResendButton" @submit.prevent="resendVerificationEmail" style="width: 300px">
+          <v-text-field
+            v-model="email"
+            label="Email"
+            type="email"
+            variant="underlined"
+            density="comfortable"
+            :rules="emailRules"
+            append-icon="mdi-email"
+          ></v-text-field>
+          <v-btn type="submit" color="primary" class="mt-2 no-uppercase auto-width"
+                 :loading="loading" :disabled="!isEmailValid" style="margin-bottom:15px">Resend Verification Email
+          </v-btn>
+        </v-form>
       </div>
     </v-container>
   </v-container>
 </template>
 
 <script setup>
-import {ref, onMounted} from 'vue'
+import {ref, computed, onMounted} from 'vue'
 import apiService from "@/services/api.service"
 import {errorMessage, successMessage} from "@/utils/message"
 import {consoleError} from "@/utils/logger"
@@ -35,6 +47,15 @@ import AppLogo from "@/components/app/AppLogo.vue"
 
 const loading = ref(false)
 const showResendButton = ref(false)
+const email = ref('')
+const emailRules = [
+  v => !!v || 'Email is required',
+  v => /.+@.+\..+/.test(v) || 'Email must be valid',
+]
+
+const isEmailValid = computed(() => {
+  return emailRules.every(rule => rule(email.value) === true)
+})
 
 onMounted(() => {
   setTimeout(() => {
@@ -45,7 +66,10 @@ onMounted(() => {
 const resendVerificationEmail = async () => {
   try {
     loading.value = true
-    const response = await apiService.resendVerificationEmail()
+    const payload = {
+      email: email.value
+    }
+    const response = await apiService.resendVerificationEmail(payload)
     successMessage(response.data.message || 'Verification email sent.')
   } catch (err) {
     consoleError(err)
@@ -74,7 +98,7 @@ const resendVerificationEmail = async () => {
   font-weight: bold;
 }
 
-body-1 {
+.body-1 {
   font-size: 1rem;
   color: #333;
 }
