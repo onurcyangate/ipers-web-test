@@ -29,8 +29,11 @@
                         :type="showConfirmPassword ? 'text' : 'password'" :rules="getRules(formState.confirmPassword)"
                         variant="underlined" dense :append-icon="showConfirmPassword ? 'mdi-eye-off' : 'mdi-eye'"
                         @click:append="togglePasswordVisibility('confirmPassword')"></v-text-field>
+
+          <Recaptcha @verify="handleVerify" @expired="handleExpired"></Recaptcha>
+
           <v-btn type="submit" color="primary" block class="mt-2 no-uppercase" :loading="loading"
-                 :disabled="!isFormValid" style="margin-bottom:15px">Reset Password
+                 :disabled="!isFormValid || !captchaVerified" style="margin-bottom:15px">Reset Password
           </v-btn>
         </v-form>
       </div>
@@ -39,17 +42,19 @@
 </template>
 
 <script setup>
-import {ref, reactive, onMounted} from 'vue'
+import {ref, reactive} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
 import apiService from "@/services/api.service"
 import {consoleError} from "@/utils/logger"
 import AppLogo from "@/components/app/AppLogo.vue"
 import {successMessage, errorMessage} from "@/utils/message"
+import Recaptcha from '@/components/Recaptcha.vue'
 
 const loading = ref(false)
 const isFormValid = ref(null)
 const showPassword = ref(false)
 const showConfirmPassword = ref(false)
+const captchaVerified = ref(false)
 const route = useRoute()
 const router = useRouter()
 
@@ -60,9 +65,22 @@ const formState = reactive({
   confirmPassword: {value: '', label: 'Confirm New Password', type: 'password'},
 })
 
-//const token = ref(null)
+const handleVerify = (response) => {
+  captchaVerified.value = true
+  console.log("Captcha success", response)
+}
+
+const handleExpired = () => {
+  captchaVerified.value = false
+  console.log("Captcha expired")
+}
 
 const resetPassword = async () => {
+  if (!captchaVerified.value) {
+    errorMessage('Please complete the CAPTCHA.')
+    return
+  }
+
   try {
     loading.value = true
     const payload = {
@@ -103,17 +121,6 @@ const togglePasswordVisibility = (key) => {
     showConfirmPassword.value = !showConfirmPassword.value
   }
 }
-/*
-onMounted(() => {
-
-  token.value = route.query.token || null
-  if (!token.value) {
-    errorMessage("This reset link is invalid or has expired.")
-    router.push('/login')
-  } else {
-    loading.value = false
-  }
-})*/
 </script>
 
 <style scoped>
