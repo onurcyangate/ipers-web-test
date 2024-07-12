@@ -35,6 +35,8 @@ const loginAttempt = async () => {
       return;
     }
     authStore.login(response.data);
+    authStore.setUsername(payload.username);
+
     await router.replace('/dashboard');
   } catch (err) {
     if (err.response.data.status === '401 UNAUTHORIZED') {
