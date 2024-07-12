@@ -4,7 +4,8 @@ import {setAccessToken} from '@/utils/token';
 export const useAuthStore = defineStore('user', {
   state: () => ({
     user: {username: null, isTokenActive: false, role: null},
-    isLoggedIn: false
+    isLoggedIn: false,
+    username: null
   }),
   actions: {
     login(loginResponse) {
@@ -17,8 +18,8 @@ export const useAuthStore = defineStore('user', {
         this.isLoggedIn = true;
       }
     },
-    setUserRole(role) {
-      this.user.role = role;
+    setUsername(username) {
+      this.username = username;
     }
   }
 });
