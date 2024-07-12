@@ -10,7 +10,7 @@
         rounded
       ></v-progress-linear>
       <div style="min-width: fit-content; display: flex; flex-direction: column; align-items: center; padding: 16px">
-        <AppLogo ></AppLogo>
+        <AppLogo></AppLogo>
       </div>
       <p class="font-weight-medium"
          style="text-align: center; margin: 10px 0 25px 0; font-size: 20px;">Reset Password</p>

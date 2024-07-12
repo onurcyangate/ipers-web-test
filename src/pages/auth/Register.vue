@@ -64,14 +64,12 @@ const formState = reactive({
   confirmPassword: {value: '', label: 'Confirm Password', type: 'password'},
 });
 
-const handleVerify = (response: string) => {
+const handleVerify = () => {
   captchaVerified.value = true;
-  console.log("Captcha success", response);
 };
 
 const handleExpired = () => {
   captchaVerified.value = false;
-  console.log("Captcha expired");
 };
 
 const registerAttempt = async () => {

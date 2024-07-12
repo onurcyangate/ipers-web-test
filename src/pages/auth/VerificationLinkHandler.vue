@@ -1,5 +1,6 @@
 <template>
-  <v-container fluid class="flex-col-center justify-center fill-height" style="background: linear-gradient(to right bottom, #003058, #00517A)">
+  <v-container fluid class="flex-col-center justify-center fill-height"
+               style="background: linear-gradient(to right bottom, #003058, #00517A)">
     <v-container class="flex-col-center justify-center"
                  style="width: fit-content; height: fit-content; background-color: rgba(255, 255, 255, 0.9); border-radius: 10px; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2)">
       <v-progress-linear
