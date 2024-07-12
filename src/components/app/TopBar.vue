@@ -12,12 +12,13 @@
       <v-container>
         <v-row align="center" justify="space-between">
           <v-col cols="auto">
-
           </v-col>
 
           <v-col cols="auto" class="d-flex align-center">
             <span>Welcome!</span>
-            <v-btn color="primary" dark class="ml-4" @click="router.push('/login')"><v-icon size="x-large">mdi-logout</v-icon></v-btn>
+            <v-btn color="primary" dark class="ml-4" @click="logout">
+              <v-icon size="x-large">mdi-logout</v-icon>
+            </v-btn>
           </v-col>
         </v-row>
       </v-container>
@@ -30,7 +31,15 @@
 </template>
 
 <script setup>
+import {useAuthStore} from '@/stores/user';
 import router from "@/router";
+
+const authStore = useAuthStore();
+
+const logout = () => {
+  authStore.logout();
+  router.push('/login');
+};
 </script>
 
 <style scoped>
@@ -43,8 +52,8 @@ import router from "@/router";
 }
 
 .logo {
-  display: block; /* Ensure the image is displayed as a block element */
-  max-width: 150px; /* Adjust the width as needed */
-  max-height: 50px; /* Ensure the height is not too large */
+  display: block;
+  max-width: 150px;
+  max-height: 50px;
 }
 </style>
