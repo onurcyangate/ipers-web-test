@@ -39,7 +39,8 @@
         </template>
         <template v-slot:no-data>
           <div v-if="!loading">
-            You do not have any case to work on.
+            <div v-if="cases.length === 0">You do not have any case to work on.</div>
+            <div v-else>No case available for this search</div>
           </div>
           <div v-else>
             Loading...
@@ -51,7 +52,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import {ref, computed} from 'vue';
 
 const props = defineProps({
   cases: {
@@ -67,11 +68,11 @@ const props = defineProps({
 const search = ref('');
 
 const headers = [
-  { title: 'Case ID', value: 'caseID' },
-  { title: 'Member First Name', value: 'memberFirstName' },
-  { title: 'Member Last Name', value: 'memberLastName' },
-  { title: 'Member Date of Birth', value: 'memberDOB' },
-  { title: 'Case Status', value: 'caseStatus' },
+  {title: 'Case ID', value: 'caseID'},
+  {title: 'Member First Name', value: 'memberFirstName'},
+  {title: 'Member Last Name', value: 'memberLastName'},
+  {title: 'Member Date of Birth', value: 'memberDOB'},
+  {title: 'Case Status', value: 'caseStatus'},
 ];
 
 const statusColorMap = {
