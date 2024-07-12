@@ -77,7 +77,7 @@ const headers = [
 const statusColorMap = {
   complete: 'green',
   'in progress': 'orange',
-  created: 'blue',
+  Created: 'blue',
   rejected: 'red',
 };
 
@@ -85,7 +85,7 @@ const formatDate = (dateString) => {
   if (!dateString) return '';
 
   const date = new Date(dateString);
-  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  const options = {year: 'numeric', month: 'long', day: 'numeric'};
 
   return new Intl.DateTimeFormat('en-US', options).format(date);
 };
