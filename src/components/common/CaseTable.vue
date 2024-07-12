@@ -13,7 +13,7 @@
         </v-col>
         <v-spacer></v-spacer>
         <v-col cols="3" class="d-flex align-center justify-end">
-          <v-btn @click="addNewCase" class="ml-2" color="#003058">Add New Case</v-btn>
+          <v-btn @click="addNewCase" class="ml-2" color="#003058" disabled>Add New Case</v-btn>
         </v-col>
       </v-row>
       <v-data-table
@@ -31,7 +31,6 @@
             <td class="text-left">{{ item.caseID }}</td>
             <td class="text-left">{{ item.memberFirstName }}</td>
             <td class="text-left">{{ item.memberLastName }}</td>
-            <td class="text-left">{{ formatDate(item.memberDOB) }}</td>
             <td class="text-left">
               <v-chip :color="statusColorMap[item.caseStatus]" dark>{{ item.caseStatus }}</v-chip>
             </td>
@@ -71,7 +70,6 @@ const headers = [
   {title: 'Case ID', value: 'caseID'},
   {title: 'Member First Name', value: 'memberFirstName'},
   {title: 'Member Last Name', value: 'memberLastName'},
-  {title: 'Member Date of Birth', value: 'memberDOB'},
   {title: 'Case Status', value: 'caseStatus'},
 ];
 
@@ -80,15 +78,6 @@ const statusColorMap = {
   'in progress': 'orange',
   Created: 'blue',
   rejected: 'red',
-};
-
-const formatDate = (dateString) => {
-  if (!dateString) return '';
-
-  const date = new Date(dateString);
-  const options = {year: 'numeric', month: 'long', day: 'numeric'};
-
-  return new Intl.DateTimeFormat('en-US', options).format(date);
 };
 
 const addNewCase = () => {

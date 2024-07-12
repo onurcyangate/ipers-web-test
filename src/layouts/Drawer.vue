@@ -30,8 +30,8 @@
 import {ref} from 'vue';
 
 const menuItems = ref([
-  {title: 'Main Page', icon: 'mdi-view-dashboard', to: {name: 'dashboard'}},
-  {title: 'Case', icon: 'mdi-calendar', to: {name: 'case-detail'}},
+  {title: 'Home Page', icon: 'mdi-view-dashboard', to: {name: 'dashboard'}},
+  // {title: 'Case', icon: 'mdi-calendar', to: {name: 'case-detail'}},
 ]);
 </script>
 
