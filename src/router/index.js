@@ -21,12 +21,13 @@ const mainRoute = [
     }
   },
   {
-    path: '/case-detail',
+    path: '/case-detail/:case_id?',
     name: 'case-detail',
     component: CaseDetail,
     meta: {
-      external: true,
-    }
+      external: false,
+    },
+    props: true,
   }
 ];
 
@@ -91,16 +92,16 @@ const router = createRouter({
   ]
 });
 
-router.beforeEach((to, from, next) => {
-  onBeforeRouteEnter(to).then((result) => {
-    if (result === true) {
-      next();
-    } else if (result === false) {
-      next(false);
-    } else {
-      next(result);
-    }
-  });
-});
+// router.beforeEach((to, from, next) => {
+//   onBeforeRouteEnter(to).then((result) => {
+//     if (result === true) {
+//       next();
+//     } else if (result === false) {
+//       next(false);
+//     } else {
+//       next(result);
+//     }
+//   });
+// });
 
 export default router;

@@ -13,7 +13,7 @@
         </v-col>
         <v-spacer></v-spacer>
         <v-col cols="3" class="d-flex align-center justify-end">
-          <v-btn @click="addNewCase" class="ml-2" color="#003058" disabled>Add New Case</v-btn>
+          <v-btn @click="isAddCaseModalOpen = true" class="ml-2" :color="COLORS.PRIMARY">Add New Case</v-btn>
         </v-col>
       </v-row>
       <v-data-table
@@ -47,12 +47,27 @@
         </template>
       </v-data-table>
     </v-card>
+    <Dialog
+      v-model="isAddCaseModalOpen"
+      heading="Add New Case"
+      label="Case Number"
+      inputType="text"
+      @submit="addNewCase"
+    ></Dialog>
   </v-container>
 </template>
 
 <script setup>
-import {ref, computed} from 'vue';
+import {ref, computed, defineEmits} from 'vue';
+import {useRouter} from 'vue-router';
+import Dialog from "@/components/common/Dialog.vue";
+import {COLORS} from "@/styles/colors";
+import apiService from "@/services/api.service";
+import {consoleError} from "@/utils/logger";
+import {errorMessage} from "@/utils/message";
+import {useAuthStore} from "@/store/authStore";
 
+const authStore = useAuthStore();
 const props = defineProps({
   cases: {
     type: Array,
@@ -65,6 +80,10 @@ const props = defineProps({
 });
 
 const search = ref('');
+const isAddCaseModalOpen = ref(false);
+const router = useRouter();
+const emit = defineEmits(['cases-updated']);
+
 
 const headers = [
   {title: 'Case ID', value: 'caseID'},
@@ -80,12 +99,21 @@ const statusColorMap = {
   rejected: 'red',
 };
 
-const addNewCase = () => {
-  console.log('Add new case');
+const addNewCase = async () => {
+  try {
+    const response = await apiService.addCase(authStore.username);
+    const userCases = response.data.externalUserCaseList._embedded.filterListExternalUID.map(item => item.Properties);
+    emit('cases-updated');
+    return userCases;
+  } catch (err) {
+    consoleError(err);
+    errorMessage('Failed to add case.');
+    return [];
+  }
 };
 
 const rowClicked = (item) => {
-  console.log('Row clicked', item);
+  router.push(`/case-detail/${item.caseID}`);
 };
 
 const filteredCases = computed(() => {

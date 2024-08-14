@@ -9,19 +9,18 @@
         max-height="50"
         class="logo ml-5"
       ></v-img>
-      <v-container>
+
         <v-row align="center" justify="space-between">
           <v-col cols="auto">
           </v-col>
 
           <v-col cols="auto" class="d-flex align-center">
             <span>Welcome!</span>
-            <v-btn color="primary" dark class="ml-4" @click="logout">
+            <v-btn :color="COLORS.PRIMARY" dark class="ml-4" @click="logout">
               <v-icon size="x-large">mdi-logout</v-icon>
             </v-btn>
           </v-col>
         </v-row>
-      </v-container>
     </v-app-bar>
 
     <v-main>
@@ -31,8 +30,10 @@
 </template>
 
 <script setup>
-import {useAuthStore} from '@/stores/user';
+import {useAuthStore} from '@/store/authStore';
 import router from "@/router";
+import {COLORS} from "@/styles/colors";
+
 
 const authStore = useAuthStore();
 

@@ -1,5 +1,5 @@
 <template>
-    <v-navigation-drawer color="#003058" permanent>
+    <v-navigation-drawer :color="COLORS.PRIMARY" permanent>
       <v-list dense>
         <div v-for="menuItem in menuItems" :key="menuItem.title">
           <!-- If it's a group -->
@@ -28,10 +28,11 @@
 
 <script setup>
 import {ref} from 'vue';
+import {COLORS} from "@/styles/colors";
 
 const menuItems = ref([
-  {title: 'Home Page', icon: 'mdi-view-dashboard', to: {name: 'dashboard'}},
-  // {title: 'Case', icon: 'mdi-calendar', to: {name: 'case-detail'}},
+  {title: 'Dashboard', icon: 'mdi-view-dashboard', to: {name: 'dashboard'}},
+  {title: 'Case', icon: 'mdi-calendar', to: {name: 'case-detail'}},
 ]);
 </script>
 

@@ -1,6 +1,6 @@
 <template>
   <v-row class="flex-col-center align-center fill-height mt-10">
-    <CaseTable v-if="!loading" :cases="cases" :loading="loading"></CaseTable>
+    <CaseTable v-if="!loading" :cases="cases" :loading="loading" @cases-updated="updateCases"></CaseTable>
   </v-row>
 </template>
 
@@ -34,6 +34,10 @@ const fetchUserCases = async () => {
 onMounted(async () => {
   cases.value = await fetchUserCases();
 });
+
+const updateCases = async () => {
+  cases.value = await fetchUserCases();
+};
 </script>
 
 <style scoped>

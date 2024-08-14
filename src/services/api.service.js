@@ -45,7 +45,13 @@ class ApiService extends BaseService {
 
   fetchUserCases(params) {
     return this._axiosInstance.get(`/iowa/external-user-case-list?username=${params}`)
+  }
 
+  updateCase(params, payload) {
+    return this._axiosInstance.post(`/iowa/update-case?id=${params}`, payload)
+  }
+  addCase(params, payload) {
+    return this._axiosInstance.post(`/iowa/add-case?id=${params}`, payload)
   }
 
   resetPassword(email, token, payload) {
