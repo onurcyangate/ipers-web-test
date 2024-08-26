@@ -57,6 +57,10 @@ class ApiService extends BaseService {
   resetPassword(email, token, payload) {
     return this._axiosInstance.post(`/iowa/reset-password?email=${(email)}&token=${(token)}`, payload);
   }
+
+  saveMessage(payload){
+    return this._axiosInstance.put("/home/iowa/app/entityRestService/Items", payload)
+  }
 }
 
 export default new ApiService()

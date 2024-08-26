@@ -70,63 +70,75 @@ const props = defineProps({
 });
 
 const loading = ref(false);
+const discussionsList = ref([]);
+const newTopic = ref('');
+const newMessage = ref('');
+
 const targetEntityId = ref("12A62609423FA1EF920A1EEAC692847A");
 const containerVersionId = ref("56c3c2d807c036d884c120bb40ef5c17");
 
-const jsonData = {
-  "Discussions": [
-    {
-      "Identity": {
-        "Id": "196609"
-      },
-      "Discussion": {
-        "DiscussionType": 0,
-        "TopicName": "test",
-        "Body": "test 2",
-        "Author": "cyangateuser1@Appworks.Users,:userIdValue:cyangateuser1@Appworks.Users",
-        "PostedDateTime": "2024-08-07T07:47:09Z"
-      }
-    },
-    {
-      "Identity": {
-        "Id": "196609"
-      },
-      "Discussion": {
-        "DiscussionType": 0,
-        "TopicName": "Test 3",
-        "Body": "Test 3",
-        "Author": "cyangateuser1@Appworks.Users,:userIdValue:cyangateuser1@Appworks.Users",
-        "PostedDateTime": "2024-08-07T07:50:34Z"
-      }
-    },
-    {
-      "Identity": {
-        "Id": "196609"
-      },
-      "Discussion": {
-        "DiscussionType": 1,
-        "TopicName": null,
-        "Body": "Test 3 Response",
-        "Author": "cyangateuser1@Appworks.Users,:userIdValue:cyangateuser1@Appworks.Users",
-        "PostedDateTime": "2024-08-07T07:51:21Z"
-      }
+const parseDiscussions = (response) => {
+  if (response && response.item && response.item.Discussions) {
+    discussionsList.value = response.item.Discussions.map(discussion => ({
+      Identity: discussion.Identity,
+      Discussion: discussion.Discussion
+    }));
+  } else {
+    discussionsList.value = [];
+  }
+};
+
+// Mocking API data fetch (Replace with actual API call)
+const fetchDiscussions = async () => {
+  // Replace this with actual API call
+  const jsonResponse = {
+    "item": {
+      "Discussions": [
+        {
+          "Identity": {
+            "Id": "196609"
+          },
+          "Discussion": {
+            "DiscussionType": 0,
+            "TopicName": "test",
+            "Body": "test 2",
+            "Author": "cyangateuser1@Appworks.Users,:userIdValue:cyangateuser1@Appworks.Users",
+            "PostedDateTime": "2024-08-07T07:47:09Z"
+          }
+        },
+        {
+          "Identity": {
+            "Id": "196609"
+          },
+          "Discussion": {
+            "DiscussionType": 0,
+            "TopicName": "Test 3",
+            "Body": "Test 3",
+            "Author": "cyangateuser1@Appworks.Users,:userIdValue:cyangateuser1@Appworks.Users",
+            "PostedDateTime": "2024-08-07T07:50:34Z"
+          }
+        },
+        {
+          "Identity": {
+            "Id": "196609"
+          },
+          "Discussion": {
+            "DiscussionType": 1,
+            "TopicName": null,
+            "Body": "Test 3 Response",
+            "Author": "cyangateuser1@Appworks.Users,:userIdValue:cyangateuser1@Appworks.Users",
+            "PostedDateTime": "2024-08-07T07:51:21Z"
+          }
+        }
+      ]
     }
-  ]
+  };
+
+  parseDiscussions(jsonResponse);
 };
 
-const discussionsList = ref([]);
-
-const parseDiscussions = () => {
-  discussionsList.value = jsonData.Discussions.map(discussion => ({
-    Identity: discussion.Identity,
-    Discussion: discussion.Discussion
-  }));
-};
-
-parseDiscussions();
-
-const newTopic = ref('');
-const newMessage = ref('');
+// Call the fetch function on component mount
+fetchDiscussions();
 
 const sendMessage = async () => {
   if (newMessage.value.trim() !== '' && newTopic.value.trim() !== '') {
@@ -137,7 +149,6 @@ const sendMessage = async () => {
       }
     };
 
-    // Add the new message to the discussions list
     discussionsList.value.push(newDiscussion);
 
     const payload = [{
@@ -168,7 +179,6 @@ const saveMessage = async (payload) => {
     newMessage.value = '';
   }
 };
-
 </script>
 
 <style scoped>

@@ -14,10 +14,13 @@
               </v-row>
             </v-card-text>
             <v-card-actions v-if="!userStore.user.role">
-              <v-btn :color="COLORS.PRIMARY" variant="outlined" class="mr-auto no-uppercase" @click="openAppointmentDialog">
+              <v-btn :color="COLORS.PRIMARY" variant="outlined" class="mr-auto no-uppercase"
+                     @click="openAppointmentDialog">
                 {{ caseDetails.appointmentDate ? 'Update Appointment Date' : 'Set Appointment Date' }}
               </v-btn>
-              <v-btn :color="COLORS.PRIMARY" variant="flat" class="no-uppercase" :disabled="caseDetails.decision">Set the Decision</v-btn>
+              <v-btn :color="COLORS.PRIMARY" variant="flat" class="no-uppercase" :disabled="caseDetails.decision">Set
+                the Decision
+              </v-btn>
             </v-card-actions>
           </v-card>
         </v-col>
@@ -65,34 +68,8 @@
           </v-row>
 
           <v-row>
-            <!-- Secure Messages Section -->
             <v-col :cols="12" :md="downloads.length ? 8 : 12">
-              <v-card class="light-border elevation-10 pa-2">
-                <v-card-title>SECURE MESSAGES</v-card-title>
-                <v-card-text class="scrollable-messages">
-                  <v-row>
-                    <v-col cols="12" v-for="(message, index) in messages" :key="index">
-                      <div class="message">
-                        <strong>{{ message.sender }}</strong>
-                        <span>{{ message.timestamp }}</span>
-                        <p>{{ message.content }}</p>
-                      </div>
-                    </v-col>
-                  </v-row>
-                </v-card-text>
-                <v-card-actions>
-                  <v-row class="w-100">
-                    <v-col cols="12">
-                      <v-textarea v-model="newMessage" placeholder="Enter your message" variant="outlined"
-                                  row-height="15"
-                                  rows="2"></v-textarea>
-                    </v-col>
-                    <v-col cols="12" class="text-right">
-                      <v-btn :color="COLORS.PRIMARY" @click="sendMessage" variant="flat" class="no-uppercase">Send</v-btn>
-                    </v-col>
-                  </v-row>
-                </v-card-actions>
-              </v-card>
+              <SecureMessages />
             </v-col>
 
             <!-- Downloads Section -->
@@ -128,14 +105,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import {ref, onMounted} from 'vue';
 import Dialog from "@/components/common/Dialog.vue";
-import { COLORS } from "@/styles/colors";
-import { useAuthStore } from "@/store/authStore";
-import { consoleError } from "@/utils/logger";
-import { errorMessage } from "@/utils/message";
+import SecureMessages from "@/components/SecureMessages.vue";
+import {COLORS} from "@/styles/colors";
+import {useAuthStore} from "@/store/authStore";
+import {consoleError} from "@/utils/logger";
+import {errorMessage} from "@/utils/message";
 import apiService from "@/services/api.service";
-import { useRoute } from 'vue-router';
+import {useRoute} from 'vue-router';
 
 const userStore = useAuthStore();
 const route = useRoute();
@@ -152,19 +130,8 @@ const mockCaseDetails = {
 };
 
 const mockDocuments = [
-  { name: 'doc.pdf' },
-  { name: 'doc2.pdf' },
-];
-
-const mockMessages = [
-  { sender: 'Onur', timestamp: '01/01/2024 0:00 pm', content: 'All the documents are submitted.' },
-  { sender: 'IPERS', timestamp: '01/01/2024 0:00 pm', content: 'Please re-upload 3 important documents.' },
-  { sender: 'IPERS', timestamp: '01/01/2024 0:00 pm', content: 'Please re-upload 3 important documents.' },
-  { sender: 'IPERS', timestamp: '01/01/2024 0:00 pm', content: 'Please re-upload 3 important documents.' },
-  { sender: 'IPERS', timestamp: '01/01/2024 0:00 pm', content: 'Please re-upload 3 important documents.' },
-  { sender: 'IPERS', timestamp: '01/01/2024 0:00 pm', content: 'Please re-upload 3 important documents.' },
-  { sender: 'IPERS', timestamp: '01/01/2024 0:00 pm', content: 'Please re-upload 3 important documents.' },
-  { sender: 'IPERS', timestamp: '01/01/2024 0:00 pm', content: 'Please re-upload 3 important documents.' },
+  {name: 'doc.pdf'},
+  {name: 'doc2.pdf'},
 ];
 
 const mockDownloads = [];
@@ -172,9 +139,7 @@ const mockDownloads = [];
 const caseDetails = ref({});
 const documents = ref([]);
 const uploadedFiles = ref([]);
-const messages = ref([]);
 const downloads = ref([]);
-const newMessage = ref('');
 const isSetApptDateModalOpen = ref(false);
 const loading = ref(false);
 
@@ -208,7 +173,6 @@ const fetchData = () => {
       resolve({
         caseDetails: mockCaseDetails,
         documents: mockDocuments,
-        messages: mockMessages,
         downloads: mockDownloads
       });
     }, 1000);
@@ -218,7 +182,7 @@ const fetchData = () => {
 const updateAppointmentDate = async (date) => {
   try {
     loading.value = true;
-    await apiService.updateCase(caseId.value, { Properties: { appointmentDate: date } });
+    await apiService.updateCase(caseId.value, {Properties: {appointmentDate: date}});
   } catch (error) {
     consoleError('Error updating appointment date: ', error);
     errorMessage('Failed to update appointment date');
@@ -232,7 +196,6 @@ onMounted(async () => {
   await fetchCaseDetails();
   const data = await fetchData();
   documents.value = data.documents;
-  messages.value = data.messages;
   downloads.value = data.downloads;
 });
 
@@ -242,18 +205,7 @@ const removeDocument = (index) => {
 
 const handleFileChange = (files) => {
   const fileArray = Array.isArray(files) ? files : Array.from(files);
-  uploadedFiles.value = fileArray.map(file => ({ name: file.name }));
-};
-
-const sendMessage = () => {
-  if (newMessage.value.trim() !== '') {
-    messages.value.push({
-      sender: 'You',
-      timestamp: new Date().toLocaleString(),
-      content: newMessage.value
-    });
-    newMessage.value = '';
-  }
+  uploadedFiles.value = fileArray.map(file => ({name: file.name}));
 };
 
 const openAppointmentDialog = () => {
@@ -273,26 +225,6 @@ const openAppointmentDialog = () => {
   border-left: 2px solid lightgray;
   height: 100%;
   padding: 0;
-}
-
-.message {
-  border-bottom: 1px solid #ccc;
-  padding-bottom: 10px;
-  margin-bottom: 10px;
-}
-
-.message strong {
-  display: block;
-}
-
-.message span {
-  font-size: 0.8em;
-  color: gray;
-}
-
-.scrollable-messages {
-  max-height: 300px;
-  overflow-y: auto;
 }
 
 .light-border {
