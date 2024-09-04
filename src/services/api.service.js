@@ -61,6 +61,10 @@ class ApiService extends BaseService {
   saveMessage(payload){
     return this._axiosInstance.put("/home/iowa/app/entityRestService/Items", payload)
   }
+
+  uploadFile(parentId, id, payload){
+    return this._axiosInstance.put(`/iowa/upload-file?id=${parentId}`, payload)
+  }
 }
 
 export default new ApiService()
