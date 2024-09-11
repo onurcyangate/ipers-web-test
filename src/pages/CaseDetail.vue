@@ -107,10 +107,10 @@ const caseDetailFields = {
   decision: 'Decision',
 };
 
-const fetchCaseDetails = async () => {
+const fetchCaseDetails = async (id) => {
   try {
     loading.value = true;
-    const response = await apiService.fetchCaseDetails(caseId.value);
+    const response = await apiService.fetchCaseDetails(userStore.user.name, id);
     caseDetails.value = response.data;
   } catch (err) {
     consoleError(err);

@@ -84,7 +84,6 @@ const isAddCaseModalOpen = ref(false);
 const router = useRouter();
 const emit = defineEmits(['cases-updated']);
 
-
 const headers = [
   {title: 'Case ID', value: 'caseID'},
   {title: 'Member First Name', value: 'memberFirstName'},
