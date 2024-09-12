@@ -95,7 +95,7 @@ const caseDetails = ref({});
 const uploadedFiles = ref([]);
 const downloads = ref([]);
 const isSetApptDateModalOpen = ref(false);
-const loading = ref(true);
+const loading = ref(false);
 
 const caseDetailFields = {
   caseNumber: 'Case #',

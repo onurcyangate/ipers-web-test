@@ -3,16 +3,76 @@
     <v-card-title>SECURE MESSAGES</v-card-title>
     <v-card-text class="scrollable-messages">
       <v-row>
-        <v-col cols="12" v-for="(discussion, index) in discussionsList" :key="index">
-          <div class="message">
-            <strong>{{ discussion.Discussion.TopicName || 'No Topic' }}</strong>
-            <span>{{ formatDate(discussion.Discussion.PostedDateTime) }}</span>
-            <p>{{ discussion.Discussion.Body }}</p>
+        <v-col cols="12" v-for="(discussion, index) in topLevelMessages" :key="index">
+          <div class="message d-flex justify-space-between">
+            <div>
+              <strong>{{ discussion.Discussion.TopicName || 'No Topic' }}</strong>
+              <span>{{ formatDate(discussion.Discussion.PostedDateTime) }}</span>
+              <p>{{ discussion.Discussion.Body }}</p>
+            </div>
+            <div class="message-actions">
+              <v-btn icon small variant="text" @click="initReply(discussion.Identity.Id1)" style="margin-right: -10px">
+                <v-icon>mdi-reply</v-icon>
+              </v-btn>
+              <v-btn icon variant="text" small color="red" @click="deleteMessage(discussion.Identity.Id1)">
+                <v-icon>mdi-trash-can-outline</v-icon>
+              </v-btn>
+            </div>
           </div>
+
+          <div v-if="hasReplies(discussion.Identity.Id1)" class="replies">
+            <v-col cols="12" v-for="(reply, idx) in getReplies(discussion.Identity.Id1)" :key="idx"
+                   class="reply-message d-flex justify-space-between">
+              <div>
+                <strong>{{ reply.Discussion.TopicName || 'No Topic' }}</strong>
+                <span>{{ formatDate(reply.Discussion.PostedDateTime) }}</span>
+                <p>{{ reply.Discussion.Body }}</p>
+              </div>
+              <div class="message-actions">
+                <v-btn variant="text" icon small color="red" @click="deleteMessage(reply.Identity.Id1)">
+                  <v-icon>mdi-trash-can-outline</v-icon>
+                </v-btn>
+              </div>
+            </v-col>
+          </div>
+
+          <v-row v-if="replyTo === discussion.Identity.Id1">
+            <v-col cols="12">
+              <v-text-field
+                v-model="newReplyTopic"
+                label="Reply Topic"
+                variant="outlined"
+                density="compact"
+                class="mt-1"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12">
+              <v-textarea
+                v-model="newReplyMessage"
+                label="Reply Body"
+                variant="outlined"
+                row-height="15"
+                rows="2"
+                class="mt-1"
+              ></v-textarea>
+            </v-col>
+            <v-col cols="12" class="text-right">
+              <v-btn
+                :color="COLORS.PRIMARY"
+                @click="sendReply(discussion.Identity.Id1)"
+                variant="flat"
+                class="no-uppercase"
+                :disabled="!newReplyMessage || !newReplyTopic"
+              >
+                Send Reply
+              </v-btn>
+            </v-col>
+          </v-row>
         </v-col>
       </v-row>
     </v-card-text>
-    <v-card-actions>
+
+    <v-card-actions v-if="!replyTo">
       <v-row class="w-100">
         <v-col cols="12" class="py-0">
           <span class="font-weight-bold">Topic: </span>
@@ -55,7 +115,7 @@
 </template>
 
 <script setup>
-import {ref} from 'vue';
+import {ref, computed} from 'vue';
 import {COLORS} from "@/styles/colors";
 import apiService from '@/services/api.service';
 import {errorMessage, successMessage} from "@/utils/message";
@@ -71,11 +131,18 @@ const props = defineProps({
 
 const loading = ref(false);
 const discussionsList = ref([]);
+const replyTo = ref(null);
 const newTopic = ref('');
 const newMessage = ref('');
+const newReplyTopic = ref('');
+const newReplyMessage = ref('');
 
 const targetEntityId = ref("12A62609423FA1EF920A1EEAC692847A");
 const containerVersionId = ref("56c3c2d807c036d884c120bb40ef5c17");
+
+const topLevelMessages = computed(() => discussionsList.value.filter(d => !d.Identity.ParentId));
+const hasReplies = (id) => discussionsList.value.some(d => d.Identity.ParentId === id);
+const getReplies = (parentId) => discussionsList.value.filter(d => d.Identity.ParentId === parentId);
 
 const parseDiscussions = (response) => {
   if (response && response.item && response.item.Discussions) {
@@ -88,9 +155,7 @@ const parseDiscussions = (response) => {
   }
 };
 
-// Mocking API data fetch (Replace with actual API call)
 const fetchDiscussions = async () => {
-  // Replace this with actual API call
   const jsonResponse = {
     "item": {
       "Discussions": [
@@ -132,13 +197,17 @@ const fetchDiscussions = async () => {
         }
       ]
     }
-  };
-
+  }
   parseDiscussions(jsonResponse);
 };
 
-// Call the fetch function on component mount
 fetchDiscussions();
+
+const initReply = (messageId) => {
+  replyTo.value = messageId;
+  newReplyTopic.value = '';
+  newReplyMessage.value = '';
+};
 
 const sendMessage = async () => {
   if (newMessage.value.trim() !== '' && newTopic.value.trim() !== '') {
@@ -165,6 +234,45 @@ const sendMessage = async () => {
   }
 };
 
+const sendReply = async (parentId) => {
+  if (newReplyMessage.value.trim() !== '' && newReplyTopic.value.trim() !== '') {
+    const newReply = {
+      Identity: {ParentId: parentId},
+      Discussion: {
+        TopicName: newReplyTopic.value,
+        Body: newReplyMessage.value,
+      }
+    };
+
+    discussionsList.value.push(newReply);
+
+    const payload = [{
+      operationType: "Create",
+      parentItemId: `${targetEntityId.value}.${props.caseId}.${parentId}`,
+      relationName: "Discussions",
+      template: null,
+      item: newReply,
+      targetEntityId: targetEntityId.value,
+      targetEntityContainerVersionId: containerVersionId.value,
+    }];
+
+    await saveMessage(payload);
+    replyTo.value = null;
+  }
+};
+
+const deleteMessage = async (messageId) => {
+  discussionsList.value = discussionsList.value.filter(d => d.Identity.Id1 !== messageId);
+
+  const payload = [{
+    operationType: "Delete",
+    parentItemId: `${targetEntityId.value}.${props.caseId}.${messageId}`,
+  }];
+
+  await apiService.saveMessage(payload);
+  successMessage('Message deleted successfully.');
+};
+
 const saveMessage = async (payload) => {
   try {
     loading.value = true;
@@ -188,6 +296,19 @@ const saveMessage = async (payload) => {
   margin-bottom: 10px;
 }
 
+.message-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.reply-message {
+  padding-left: 20px;
+  margin-left: 20px;
+  border-left: 1px solid #ccc;
+  margin-bottom: 10px;
+}
+
 .message strong {
   display: block;
 }
@@ -206,3 +327,4 @@ const saveMessage = async (payload) => {
   border: 1px solid #e0e0e0;
 }
 </style>
+
