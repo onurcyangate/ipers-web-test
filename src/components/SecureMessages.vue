@@ -115,16 +115,16 @@
 </template>
 
 <script setup>
-import {ref, computed} from 'vue';
+import {ref, computed, onMounted} from 'vue';
 import {COLORS} from "@/styles/colors";
 import apiService from '@/services/api.service';
 import {errorMessage, successMessage} from "@/utils/message";
 import {formatDate} from "../utils/common";
+import {consoleError} from "@/utils/logger";
 
 const props = defineProps({
   caseId: {
     type: Number,
-    // required: true,
     default: 196609
   }
 });
@@ -155,58 +155,107 @@ const parseDiscussions = (response) => {
   }
 };
 
-const fetchDiscussions = async () => {
-  const jsonResponse = {
-    "item": {
-      "Discussions": [
-        {
-          "Identity": {
-            "Id": "196609"
-          },
-          "Discussion": {
-            "DiscussionType": 0,
-            "TopicName": "test",
-            "Body": "test 2",
-            "Author": "cyangateuser1@Appworks.Users,:userIdValue:cyangateuser1@Appworks.Users",
-            "PostedDateTime": "2024-08-07T07:47:09Z"
-          }
+const fallbackDiscussions = {
+  "item": {
+    "Discussions": [
+      {
+        "Identity": {
+          "Id": "196609"
         },
-        {
-          "Identity": {
-            "Id": "196609"
-          },
-          "Discussion": {
-            "DiscussionType": 0,
-            "TopicName": "Test 3",
-            "Body": "Test 3",
-            "Author": "cyangateuser1@Appworks.Users,:userIdValue:cyangateuser1@Appworks.Users",
-            "PostedDateTime": "2024-08-07T07:50:34Z"
-          }
-        },
-        {
-          "Identity": {
-            "Id": "196609"
-          },
-          "Discussion": {
-            "DiscussionType": 1,
-            "TopicName": null,
-            "Body": "Test 3 Response",
-            "Author": "cyangateuser1@Appworks.Users,:userIdValue:cyangateuser1@Appworks.Users",
-            "PostedDateTime": "2024-08-07T07:51:21Z"
-          }
+        "Discussion": {
+          "DiscussionType": 0,
+          "TopicName": "test",
+          "Body": "test 2",
+          "Author": "cyangateuser1@Appworks.Users,:userIdValue:cyangateuser1@Appworks.Users",
+          "PostedDateTime": "2024-08-07T07:47:09Z"
         }
-      ]
-    }
+      },
+      {
+        "Identity": {
+          "Id": "196609"
+        },
+        "Discussion": {
+          "DiscussionType": 0,
+          "TopicName": "Test 3",
+          "Body": "Test 3",
+          "Author": "cyangateuser1@Appworks.Users,:userIdValue:cyangateuser1@Appworks.Users",
+          "PostedDateTime": "2024-08-07T07:50:34Z"
+        }
+      },
+      {
+        "Identity": {
+          "Id": "196609"
+        },
+        "Discussion": {
+          "DiscussionType": 1,
+          "TopicName": null,
+          "Body": "Test 3 Response",
+          "Author": "cyangateuser1@Appworks.Users,:userIdValue:cyangateuser1@Appworks.Users",
+          "PostedDateTime": "2024-08-07T07:51:21Z"
+        }
+      }
+    ]
   }
-  parseDiscussions(jsonResponse);
-};
+}
 
-fetchDiscussions();
+const fetchDiscussions = async () => {
+  try {
+    loading.value = true;
+    // const response = await apiService.fetchDiscussions(targetEntityId.value, props.caseId);
+    parseDiscussions(fallbackDiscussions);
+  } catch (err) {
+    consoleError(err);
+    errorMessage('Failed to fetch discussions, showing fallback data.');
+    parseDiscussions(fallbackDiscussions);
+  } finally {
+    loading.value = false;
+  }
+};
 
 const initReply = (messageId) => {
   replyTo.value = messageId;
   newReplyTopic.value = '';
   newReplyMessage.value = '';
+};
+
+const saveMessage = async (message, isReply = false, parentId = null) => {
+  let parentItemId;
+
+  if (isReply && parentId) {
+    parentItemId = `${targetEntityId.value}.${props.caseId}.${parentId}`;
+  } else {
+    parentItemId = `${targetEntityId.value}.${props.caseId}`;
+  }
+
+  const payload = [{
+    operationType: "Create",
+    parentItemId: parentItemId,
+    relationName: "Discussions",
+    template: null,
+    item: message,
+    targetEntityId: targetEntityId.value,
+    targetEntityContainerVersionId: containerVersionId.value,
+  }];
+
+  try {
+    loading.value = true;
+    const response = await apiService.saveMessage(payload);
+    if (response.status === 200) {
+      successMessage(isReply ? 'Reply sent successfully.' : 'Message sent successfully.');
+    } else {
+      errorMessage(isReply ? 'Failed to send the reply.' : 'Failed to send the message.');
+    }
+  } catch (err) {
+    consoleError(err);
+    errorMessage(isReply ? 'Failed to send reply.' : 'Failed to send message.');
+  } finally {
+    loading.value = false;
+    newTopic.value = '';
+    newMessage.value = '';
+    replyTo.value = null;
+    newReplyTopic.value = '';
+    newReplyMessage.value = '';
+  }
 };
 
 const sendMessage = async () => {
@@ -219,18 +268,7 @@ const sendMessage = async () => {
     };
 
     discussionsList.value.push(newDiscussion);
-
-    const payload = [{
-      operationType: "Create",
-      parentItemId: targetEntityId.value + "." + props.caseId,
-      relationName: "Discussions",
-      template: null,
-      item: newDiscussion,
-      targetEntityId: targetEntityId.value,
-      targetEntityContainerVersionId: containerVersionId.value,
-    }];
-
-    await saveMessage(payload);
+    await saveMessage(newDiscussion);
   }
 };
 
@@ -245,19 +283,7 @@ const sendReply = async (parentId) => {
     };
 
     discussionsList.value.push(newReply);
-
-    const payload = [{
-      operationType: "Create",
-      parentItemId: `${targetEntityId.value}.${props.caseId}.${parentId}`,
-      relationName: "Discussions",
-      template: null,
-      item: newReply,
-      targetEntityId: targetEntityId.value,
-      targetEntityContainerVersionId: containerVersionId.value,
-    }];
-
-    await saveMessage(payload);
-    replyTo.value = null;
+    await saveMessage(newReply, true, parentId);
   }
 };
 
@@ -265,28 +291,28 @@ const deleteMessage = async (messageId) => {
   discussionsList.value = discussionsList.value.filter(d => d.Identity.Id1 !== messageId);
 
   const payload = [{
-    operationType: "Delete",
     parentItemId: `${targetEntityId.value}.${props.caseId}.${messageId}`,
   }];
 
-  await apiService.saveMessage(payload);
-  successMessage('Message deleted successfully.');
-};
-
-const saveMessage = async (payload) => {
   try {
     loading.value = true;
-    await apiService.saveMessage(payload);
-    successMessage('Your message has been sent.');
-  } catch (error) {
-    errorMessage('Failed to save message.');
-    console.error('Error saving message:', error);
+    const response = await apiService.deleteMessage(payload);
+    if (response.status === 200) {
+      successMessage('Message deleted successfully.');
+    } else {
+      errorMessage('Failed to delete the message.');
+    }
+  } catch (err) {
+    consoleError(err);
+    errorMessage('Failed to delete message.');
   } finally {
     loading.value = false;
-    newTopic.value = '';
-    newMessage.value = '';
   }
 };
+
+onMounted(() => {
+  fetchDiscussions();
+});
 </script>
 
 <style scoped>
@@ -327,4 +353,3 @@ const saveMessage = async (payload) => {
   border: 1px solid #e0e0e0;
 }
 </style>
-

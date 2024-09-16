@@ -51,9 +51,14 @@ class ApiService extends BaseService {
     return this._axiosInstance.get(`/iowa/external-user-case-list?username=${userName}&caseId=${id}`)
   }
 
+  fetchDiscussions(userName, id) {
+    return this._axiosInstance.get(`/iowa/external-user-case-list?username=${userName}&caseId=${id}`)
+  }
+
   updateCase(params, payload) {
     return this._axiosInstance.post(`/iowa/update-case?id=${params}`, payload)
   }
+
   addCase(params, payload) {
     return this._axiosInstance.post(`/iowa/add-case?id=${params}`, payload)
   }
@@ -64,6 +69,10 @@ class ApiService extends BaseService {
 
   saveMessage(payload){
     return this._axiosInstance.put("/home/iowa/app/entityRestService/Items", payload)
+  }
+
+  deleteMessage(payload){
+    return this._axiosInstance.delete("/home/iowa/app/entityRestService/Items", payload)
   }
 
   uploadFile(parentId, id, payload){
