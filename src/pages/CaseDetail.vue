@@ -18,7 +18,8 @@
                      @click="openAppointmentDialog">
                 {{ caseDetails.appointmentDate ? 'Update Appointment Date' : 'Set Appointment Date' }}
               </v-btn>
-              <v-btn @click="openDecisionDialog" :color="COLORS.PRIMARY" variant="flat" class="no-uppercase" :disabled="caseDetails.decision">
+              <v-btn @click="openDecisionDialog" :color="COLORS.PRIMARY" variant="flat" class="no-uppercase"
+                     :disabled="caseDetails.decision">
                 Set the Decision
               </v-btn>
             </v-card-actions>
@@ -114,10 +115,10 @@ const caseDetailFields = {
   decision: 'Decision',
 };
 
-const fetchCaseDetails = async (id) => {
+const fetchCaseDetails = async () => {
   try {
     loading.value = true;
-    const response = await apiService.fetchCaseDetails(userStore.user.name, id);
+    const response = await apiService.fetchCaseDetails(userStore.user.name, caseId);
     caseDetails.value = response.data;
   } catch (err) {
     consoleError(err);
