@@ -18,8 +18,8 @@
                      @click="openAppointmentDialog">
                 {{ caseDetails.appointmentDate ? 'Update Appointment Date' : 'Set Appointment Date' }}
               </v-btn>
-              <v-btn :color="COLORS.PRIMARY" variant="flat" class="no-uppercase" :disabled="caseDetails.decision">Set
-                the Decision
+              <v-btn @click="openDecisionDialog" :color="COLORS.PRIMARY" variant="flat" class="no-uppercase" :disabled="caseDetails.decision">
+                Set the Decision
               </v-btn>
             </v-card-actions>
           </v-card>
@@ -71,6 +71,11 @@
         inputType="date"
         @submit="updateAppointmentDate"
       ></Dialog>
+      <DecisionDialog
+        v-model="isSetDecisionModalOpen"
+        heading="Set Decision"
+        @submit="updateAppointmentDate"
+      ></DecisionDialog>
     </v-container>
   </v-app>
 </template>
@@ -86,6 +91,7 @@ import {consoleError} from "@/utils/logger";
 import {errorMessage, successMessage} from "@/utils/message";
 import apiService from "@/services/api.service";
 import {useRoute} from 'vue-router';
+import DecisionDialog from "@/components/common/DecisionDialog.vue";
 
 const userStore = useAuthStore();
 const route = useRoute();
@@ -95,6 +101,7 @@ const caseDetails = ref({});
 const uploadedFiles = ref([]);
 const downloads = ref([]);
 const isSetApptDateModalOpen = ref(false);
+const isSetDecisionModalOpen = ref(false);
 const loading = ref(false);
 
 const caseDetailFields = {
@@ -147,12 +154,29 @@ const updateAppointmentDate = async (date) => {
   }
 };
 
+const updateDecision = async (date) => {
+  try {
+    loading.value = true;
+    await apiService.updateCase(caseId.value, {Properties: {decision: date}});
+  } catch (error) {
+    consoleError('Error updating appointment date: ', error);
+    errorMessage('Failed to update appointment date');
+  } finally {
+    isSetApptDateModalOpen.value = false;
+    loading.value = false;
+  }
+};
+
 onMounted(async () => {
   await fetchCaseDetails();
 });
 
 const openAppointmentDialog = () => {
   isSetApptDateModalOpen.value = true;
+};
+
+const openDecisionDialog = () => {
+  isSetDecisionModalOpen.value = true;
 };
 </script>
 
