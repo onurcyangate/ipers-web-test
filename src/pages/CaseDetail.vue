@@ -118,9 +118,9 @@ const caseDetailFields = {
 const fetchCaseDetails = async () => {
   try {
     loading.value = true;
-    const response = await apiService.fetchCaseDetails(caseId);
-    caseDetails.value = response.data.externalUserCaseList._embedded.defaultList[0].Properties;
-    userStore.setBusinessWorkspaceId(response.data)
+    const response = await apiService.fetchCaseDetails(caseId.value);
+    caseDetails.value = response.data._embedded.DefaultList[0].Properties;
+    userStore.setBusinessWorkspaceId(response.data._embedded.DefaultList[0].BusinessWorkspace.BusinessWorkspaceId)
   } catch (err) {
     consoleError(err);
     errorMessage('Failed to fetch case details.');
@@ -132,8 +132,13 @@ const fetchCaseDetails = async () => {
 const submitAllDocuments = async () => {
   try {
     loading.value = true;
-    const payload = {file: uploadedFiles.value}
-    await apiService.uploadFile(userStore.businessWorkspaceId, payload);
+    const formData = new FormData();
+    // TODO support multiple
+    // uploadedFiles.value.forEach((file) => {
+      // formData.append('files[]', file);
+    //});
+    formData.append('file', uploadedFiles.value[0]);
+    await apiService.uploadFile(userStore.businessWorkspaceId, formData);
     successMessage('Files submitted successfully.')
   } catch (error) {
     consoleError('Error submitting documents: ', error);

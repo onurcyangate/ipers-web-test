@@ -44,7 +44,7 @@ class ApiService extends BaseService {
   }
 
   fetchUserCases(params) {
-    return this._axiosInstance.get(`/iowa/external-user-case-list?username=${params}`)
+    return this._axiosInstance.get(`/iowa/external-user-case-list?username=${params}&caseId=`)
   }
 
   fetchCaseDetails(id) {
@@ -76,7 +76,7 @@ class ApiService extends BaseService {
   }
 
   uploadFile(businessWorkspaceIdParam, payload){
-    return this._axiosInstance.put(`/iowa/file-upload?businessWorkspaceIdParam=${businessWorkspaceIdParam}`, payload)
+    return this._axiosInstance.post(`/iowa/file-upload?businessWorkspaceIdParam=${businessWorkspaceIdParam}`, payload)
   }
 }
 
