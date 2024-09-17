@@ -1,13 +1,22 @@
 <template>
   <v-app>
-    <v-container fluid>
+    <v-btn
+      icon
+      elevation="0"
+      @click="goBackToDashboard"
+      style="top: 25px; left: 15px; z-index: 5"
+      class="position-absolute no-uppercase"
+    >
+      <v-icon style="scale: 1.2">mdi-keyboard-backspace</v-icon>
+    </v-btn>
+    <v-container fluid style="padding-right: 5em; padding-left: 5em">
       <v-row class="py-5">
         <!-- Case Details Section -->
         <v-col cols="12" md="5" class="d-flex flex-column">
           <v-card class="flex-grow-1 d-flex flex-column justify-space-between light-border elevation-10 pa-2">
             <v-card-title class="mb-10">CASE DETAILS</v-card-title>
             <v-card-text>
-              <v-row>
+              <v-row class="pl-2">
                 <v-col cols="12" v-for="(label, key) in caseDetailFields" :key="key">
                   <strong>{{ label }}:</strong> {{ caseDetails[key] }}
                 </v-col>
@@ -94,6 +103,7 @@ import {errorMessage, successMessage} from "@/utils/message";
 import apiService from "@/services/api.service";
 import {useRoute} from 'vue-router';
 import DecisionDialog from "@/components/common/DecisionDialog.vue";
+import router from "@/router";
 
 const userStore = useAuthStore();
 const route = useRoute();
@@ -207,10 +217,11 @@ const openAppointmentDialog = () => {
 const openDecisionDialog = () => {
   isSetDecisionModalOpen.value = true;
 };
+
+const goBackToDashboard = () => {
+  router.back();
+};
 </script>
 
 <style scoped>
-.light-border {
-  border: 1px solid #e0e0e0;
-}
 </style>
