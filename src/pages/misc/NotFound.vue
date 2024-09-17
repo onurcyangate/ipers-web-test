@@ -1,5 +1,6 @@
 <script setup>
 import {useRouter} from 'vue-router';
+import {COLORS} from "@/styles/colors";
 
 const router = useRouter();
 
@@ -24,9 +25,8 @@ const goBackToDashboard = () => {
       <p class="text-subtitle-1 mb-6">The page you're looking for doesn't exist.</p>
 
       <v-btn
-        color="primary"
+        :color="COLORS.PRIMARY"
         large
-        variant="tonal"
         @click="goBackToDashboard"
         class="no-uppercase"
       >
