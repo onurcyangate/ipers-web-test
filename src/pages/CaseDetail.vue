@@ -36,6 +36,17 @@
                 @submitDocuments="submitAllDocuments"
                 :loading="loading"
               />
+
+              <!-- File Uploading Bars -->
+              <div v-for="(file, index) in uploadedFiles" :key="index" class="mt-2">
+                <div>{{ file.name }}</div>
+                <v-progress-linear
+                  :value="fileUploadProgress[index]"
+                  height="10"
+                  color="blue"
+                  class="mb-3"
+                ></v-progress-linear>
+              </div>
             </v-col>
           </v-row>
 
@@ -97,6 +108,7 @@ import DecisionDialog from "@/components/common/DecisionDialog.vue";
 const userStore = useAuthStore();
 const route = useRoute();
 const caseId = ref(route.params.case_id);
+const fileUploadProgress = ref([]);
 
 const caseDetails = ref({});
 const uploadedFiles = ref([]);
@@ -132,14 +144,22 @@ const fetchCaseDetails = async () => {
 const submitAllDocuments = async () => {
   try {
     loading.value = true;
-    const formData = new FormData();
-    // TODO support multiple
-    // uploadedFiles.value.forEach((file) => {
-      // formData.append('files[]', file);
-    //});
-    formData.append('file', uploadedFiles.value[0]);
-    await apiService.uploadFile(userStore.businessWorkspaceId, formData);
-    successMessage('Files submitted successfully.')
+
+    fileUploadProgress.value = uploadedFiles.value.map(() => 0);
+
+    for (const [index, file] of uploadedFiles.value.entries()) {
+      const formData = new FormData();
+      formData.append('files[]', file);
+
+      await apiService.uploadFile(userStore.businessWorkspaceId, formData, {
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          fileUploadProgress.value[index] = percentCompleted;
+        }
+      });
+    }
+
+    successMessage('Files submitted successfully.');
   } catch (error) {
     consoleError('Error submitting documents: ', error);
     errorMessage('Failed to submit documents');
