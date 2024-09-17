@@ -16,7 +16,7 @@
           />
         </v-col>
         <v-col cols="6">
-          <strong>Uploaded Documents</strong>
+          <strong>Uploaded Documents:</strong>
           <v-chip
             v-for="(file, index) in previouslyUploadedFiles"
             :key="index"
@@ -24,6 +24,9 @@
           >
             {{ file.name }}
           </v-chip>
+          <div v-if="previouslyUploadedFiles.length == 0" class="font-weight-light pt-2">
+            No files have been uploaded.
+          </div>
         </v-col>
       </v-row>
 
@@ -85,7 +88,4 @@ const submitDocuments = () => {
 </script>
 
 <style scoped>
-.light-border {
-  border: 1px solid #e0e0e0;
-}
 </style>
