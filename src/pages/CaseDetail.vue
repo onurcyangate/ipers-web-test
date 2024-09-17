@@ -35,19 +35,8 @@
                 @update:uploadedFiles="uploadedFiles = $event"
                 @submitDocuments="submitAllDocuments"
                 :loading="loading"
+                :fileUploadProgress="fileUploadProgress"
               />
-
-              <!-- File Uploading Bars -->
-              <div v-for="(file, index) in uploadedFiles" :key="index" class="mt-2">
-              <div>{{ file.name }}</div>
-              <v-progress-linear
-                :model-value="fileUploadProgress[index]"
-                :buffer-value="fileUploadProgress[index]+10"
-                color="blue"
-                class="mb-3"
-                stream
-              ></v-progress-linear>
-            </div>
             </v-col>
           </v-row>
 
