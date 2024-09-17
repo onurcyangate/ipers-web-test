@@ -459,10 +459,6 @@ onMounted(() => {
   overflow-y: auto;
 }
 
-.light-border {
-  border: 1px solid #e0e0e0;
-}
-
 .reply-preview {
   background-color: #f0f0f0;
   padding: 3px 10px 10px;

@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar app dark>
+    <v-app-bar app dark elevation="2">
       <v-img
         src="@/assets/logo.png"
         alt="Logo"
