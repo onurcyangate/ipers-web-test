@@ -39,14 +39,15 @@
 
               <!-- File Uploading Bars -->
               <div v-for="(file, index) in uploadedFiles" :key="index" class="mt-2">
-                <div>{{ file.name }}</div>
-                <v-progress-linear
-                  :value="fileUploadProgress[index]"
-                  height="10"
-                  color="blue"
-                  class="mb-3"
-                ></v-progress-linear>
-              </div>
+              <div>{{ file.name }}</div>
+              <v-progress-linear
+                :model-value="fileUploadProgress[index]"
+                :buffer-value="fileUploadProgress[index]+10"
+                color="blue"
+                class="mb-3"
+                stream
+              ></v-progress-linear>
+            </div>
             </v-col>
           </v-row>
 
@@ -144,19 +145,15 @@ const fetchCaseDetails = async () => {
 const submitAllDocuments = async () => {
   try {
     loading.value = true;
-
     fileUploadProgress.value = uploadedFiles.value.map(() => 0);
 
     for (const [index, file] of uploadedFiles.value.entries()) {
       const formData = new FormData();
-      formData.append('files[]', file);
+      formData.append('file', file);
 
-      await apiService.uploadFile(userStore.businessWorkspaceId, formData, {
-        onUploadProgress: (progressEvent) => {
-          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-          fileUploadProgress.value[index] = percentCompleted;
-        }
-      });
+      await simulateFakeProgress(index);
+
+      await apiService.uploadFile(userStore.businessWorkspaceId, formData);
     }
 
     successMessage('Files submitted successfully.');
@@ -167,6 +164,22 @@ const submitAllDocuments = async () => {
     loading.value = false;
   }
 };
+
+const simulateFakeProgress = (index) => {
+  return new Promise((resolve) => {
+    let progress = 0;
+    const interval = setInterval(() => {
+      if (progress >= 100) {
+        clearInterval(interval);
+        resolve(); // Resolve the promise once progress reaches 100%
+      } else {
+        progress += Math.random() * 10; // Increment progress by random value
+        fileUploadProgress.value[index] = Math.min(progress, 100); // Update progress directly
+      }
+    }, 100); // Update progress every 200ms
+  });
+};
+
 
 const updateAppointmentDate = async (date) => {
   try {
