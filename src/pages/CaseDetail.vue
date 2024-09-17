@@ -120,6 +120,7 @@ const fetchCaseDetails = async () => {
     loading.value = true;
     const response = await apiService.fetchCaseDetails(userStore.user.name, caseId);
     caseDetails.value = response.data;
+    userStore.setBusinessWorkspaceId(response.data)
   } catch (err) {
     consoleError(err);
     errorMessage('Failed to fetch case details.');

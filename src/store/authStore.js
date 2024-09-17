@@ -4,7 +4,8 @@ export const useAuthStore = defineStore('user', {
   state: () => ({
     user: JSON.parse(sessionStorage.getItem('user')) || {username: null, role: null},
     isLoggedIn: JSON.parse(sessionStorage.getItem('isLoggedIn')) || false,
-    username: sessionStorage.getItem('username') || null
+    username: sessionStorage.getItem('username') || null,
+    businessWorkspaceId: sessionStorage.getItem('businessWorkspaceId') || null
   }),
   actions: {
     login(loginResponse) {
@@ -21,6 +22,10 @@ export const useAuthStore = defineStore('user', {
     setUsername(username) {
       this.username = username;
       sessionStorage.setItem('username', username);
+    },
+    setBusinessWorkspaceId(id) {
+      this.businessWorkspaceId = id;
+      sessionStorage.setItem('businessWorkspaceId', id);
     },
     logout() {
       this.user = {username: null, role: null};
