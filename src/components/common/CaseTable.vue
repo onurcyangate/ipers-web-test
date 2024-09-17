@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="px-10">
+  <v-container fluid style="padding-right: 5em; padding-left: 5em">
     <v-card class="pa-4 light-border elevation-10">
       <v-row class="d-flex align-center mb-4">
         <v-col cols="3" class="d-flex align-center">
@@ -9,6 +9,7 @@
             clearable
             variant="outlined"
             density="compact"
+            class="pt-3"
           ></v-text-field>
         </v-col>
         <v-spacer></v-spacer>
