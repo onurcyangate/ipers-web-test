@@ -133,7 +133,7 @@ const submitAllDocuments = async () => {
   try {
     loading.value = true;
     const payload = {file: uploadedFiles.value}
-    await apiService.uploadFile(caseId, payload);
+    await apiService.uploadFile(userStore.businessWorkspaceId, payload);
     successMessage('Files submitted successfully.')
   } catch (error) {
     consoleError('Error submitting documents: ', error);

@@ -75,8 +75,8 @@ class ApiService extends BaseService {
     return this._axiosInstance.delete("/home/iowa/app/entityRestService/Items", payload)
   }
 
-  uploadFile(parentId, id, payload){
-    return this._axiosInstance.put(`/iowa/upload-file?id=${parentId}`, payload)
+  uploadFile(businessWorkspaceIdParam, payload){
+    return this._axiosInstance.put(`/iowa/file-upload?businessWorkspaceIdParam=${businessWorkspaceIdParam}`, payload)
   }
 }
 
