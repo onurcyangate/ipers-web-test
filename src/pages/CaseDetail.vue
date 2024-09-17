@@ -170,12 +170,15 @@ const simulateFakeProgress = (index) => {
     const interval = setInterval(() => {
       if (progress >= 100) {
         clearInterval(interval);
-        resolve(); // Resolve the promise once progress reaches 100%
+        resolve();
       } else {
-        progress += Math.random() * 10; // Increment progress by random value
-        fileUploadProgress.value[index] = Math.min(progress, 100); // Update progress directly
+        // Reduce the increment size as the progress approaches 100
+        const remainingProgress = 100 - progress;
+        const increment = Math.random() * (remainingProgress / 10); // Smaller increment as it gets closer to 100
+        progress += increment;
+        fileUploadProgress.value[index] = Math.min(progress, 100);
       }
-    }, 100); // Update progress every 200ms
+    }, 100);
   });
 };
 
