@@ -210,6 +210,11 @@ const updateDecision = async (date) => {
 };
 
 onMounted(async () => {
+  if (!caseId.value) {
+    await router.push({name: 'not-found'});
+    return;
+  }
+
   await fetchCaseDetails();
 });
 

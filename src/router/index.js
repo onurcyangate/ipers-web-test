@@ -88,7 +88,7 @@ const router = createRouter({
         public: true
       }
     },
-    {path: '/:pathMatch(.*)*', component: NotFound}
+    {path: '/:pathMatch(.*)*', component: NotFound, name: 'not-found',}
   ]
 });
 
