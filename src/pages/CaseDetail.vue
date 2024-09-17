@@ -8,6 +8,12 @@
       class="position-absolute no-uppercase"
     >
       <v-icon style="scale: 1.2">mdi-keyboard-backspace</v-icon>
+      <v-tooltip
+        activator="parent"
+        location="bottom"
+      >
+        Go Back
+      </v-tooltip>
     </v-btn>
     <v-container fluid style="padding-right: 5em; padding-left: 5em">
       <v-row class="py-5">

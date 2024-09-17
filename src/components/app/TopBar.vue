@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar app dark elevation="2">
+    <v-app-bar app dark elevation="0" style="border-bottom: 1px solid lightgray">
       <v-img
         src="@/assets/logo.png"
         alt="Logo"
@@ -10,17 +10,23 @@
         class="logo ml-5"
       ></v-img>
 
-        <v-row align="center" justify="space-between">
-          <v-col cols="auto">
-          </v-col>
+      <v-row align="center" justify="space-between">
+        <v-col cols="auto">
+        </v-col>
 
-          <v-col cols="auto" class="d-flex align-center">
-            <span>Welcome!</span>
-            <v-btn :color="COLORS.PRIMARY" dark class="ml-4" @click="logout">
-              <v-icon size="x-large">mdi-logout</v-icon>
-            </v-btn>
-          </v-col>
-        </v-row>
+        <v-col cols="auto" class="d-flex align-center">
+          <span>Welcome!</span>
+          <v-btn :color="COLORS.PRIMARY" dark class="ml-4" @click="logout">
+            <v-icon size="x-large">mdi-logout</v-icon>
+            <v-tooltip
+              activator="parent"
+              location="bottom"
+            >
+              Logout
+            </v-tooltip>
+          </v-btn>
+        </v-col>
+      </v-row>
     </v-app-bar>
 
     <v-main>
