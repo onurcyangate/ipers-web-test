@@ -20,7 +20,7 @@
       <v-data-table
         :headers="headers"
         :items="filteredCases"
-        item-value="caseID"
+        item-value="caseIdStr"
         :items-per-page="5"
       >
         <template v-slot:item="{ item, index }">
@@ -29,7 +29,7 @@
             class="custom-row clickable"
             @click="rowClicked(item)"
           >
-            <td class="text-left">{{ item.caseID }}</td>
+            <td class="text-left">{{ item.caseIdStr }}</td>
             <td class="text-left">{{ item.memberFirstName }}</td>
             <td class="text-left">{{ item.memberLastName }}</td>
             <td class="text-left">
@@ -86,7 +86,7 @@ const router = useRouter();
 const emit = defineEmits(['cases-updated']);
 
 const headers = [
-  {title: 'Case ID', value: 'caseID'},
+  {title: 'Case ID', value: 'caseIdStr'},
   {title: 'Member First Name', value: 'memberFirstName'},
   {title: 'Member Last Name', value: 'memberLastName'},
   {title: 'Case Status', value: 'caseStatus'},
@@ -113,7 +113,7 @@ const addNewCase = async () => {
 };
 
 const rowClicked = (item) => {
-  router.push(`/case-detail/${item.caseID}`);
+  router.push(`/case-detail/${item.caseIdStr}`);
 };
 
 const filteredCases = computed(() => {
