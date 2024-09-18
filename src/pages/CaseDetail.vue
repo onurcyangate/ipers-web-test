@@ -128,7 +128,7 @@ const loading = ref(false);
 const caseDetailFields = {
   caseIdStr: 'Case #',
   memberFirstName: 'Member Name',
-  memberLastName: 'Member Surname',
+  memberLastName: 'Member Last Name',
   caseStatus: 'Case Status',
   appointmentDate: 'Appointment Date',
 };

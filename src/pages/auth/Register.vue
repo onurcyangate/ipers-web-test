@@ -48,7 +48,6 @@ import router from "@/router";
 import Recaptcha from '../../components/Recaptcha.vue';
 
 const isFormValid = ref(false);
-const authStore = useAuthStore();
 const loading = ref(false);
 const showPassword = ref(false);
 const showConfirmPassword = ref(false);
@@ -57,8 +56,7 @@ const captchaVerified = ref(false);
 const formState = reactive({
   unique_code: {value: '', label: 'Case Number', type: 'text'},
   givenName: {value: '', label: 'Given Name', type: 'text'},
-  sn: {value: '', label: 'Surname', type: 'text'},
-  initials: {value: '', label: 'Initials', type: 'text'},
+  sn: {value: '', label: 'Last Name', type: 'text'},
   mail: {value: '', label: 'Email', type: 'email'},
   userPassword: {value: '', label: 'Password', type: 'password'},
   confirmPassword: {value: '', label: 'Confirm Password', type: 'password'},
