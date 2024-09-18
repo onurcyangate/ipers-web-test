@@ -124,13 +124,11 @@ const isSetDecisionModalOpen = ref(false);
 const loading = ref(false);
 
 const caseDetailFields = {
-  caseNumber: 'Case #',
-  memberName: 'Member Name',
-  memberSurname: 'Member Surname',
-  email: 'Email',
+  caseIdStr: 'Case #',
+  memberFirstName: 'Member Name',
+  memberLastName: 'Member Surname',
   caseStatus: 'Case Status',
   appointmentDate: 'Appointment Date',
-  decision: 'Decision',
 };
 
 const fetchCaseDetails = async () => {
@@ -156,9 +154,10 @@ const submitAllDocuments = async () => {
       const formData = new FormData();
       formData.append('file', file);
 
-      await simulateFakeProgress(index);
+      simulateFileUploadProgress(index);
 
       await apiService.uploadFile(userStore.businessWorkspaceId, formData);
+      stopFileUpload(index)
     }
 
     successMessage('Files submitted successfully.');
@@ -170,7 +169,11 @@ const submitAllDocuments = async () => {
   }
 };
 
-const simulateFakeProgress = (index) => {
+const stopFileUpload = (index) => {
+  fileUploadProgress.value[index] = 100;
+}
+
+const simulateFileUploadProgress = (index) => {
   return new Promise((resolve) => {
     let progress = 0;
     const interval = setInterval(() => {
