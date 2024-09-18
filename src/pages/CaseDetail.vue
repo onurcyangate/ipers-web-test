@@ -120,7 +120,7 @@ const resetFileInputTrigger = ref(false);
 
 const caseDetails = ref({});
 const uploadedFiles = ref([]);
-const downloads = ref([]);
+const downloads = ref(["test"]);
 const isSetApptDateModalOpen = ref(false);
 const isSetDecisionModalOpen = ref(false);
 const loading = ref(false);
@@ -164,6 +164,8 @@ const submitAllDocuments = async () => {
     }
     resetFileInputTrigger.value = true;
     successMessage('Files submitted successfully.');
+    uploadedFiles.value = [];
+    fileUploadProgress.value = [];
   } catch (error) {
     consoleError('Error submitting documents: ', error);
     errorMessage('Failed to submit documents');
