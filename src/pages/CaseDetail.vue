@@ -154,10 +154,11 @@ const submitAllDocuments = async () => {
       const formData = new FormData();
       formData.append('file', file);
 
-      simulateFileUploadProgress(index);
-
+      const progressController = { stop: false };
+      simulateFileUploadProgress(index, progressController);
       await apiService.uploadFile(userStore.businessWorkspaceId, formData);
-      stopFileUpload(index)
+      stopFileUploadProgressLoader(index);
+      progressController.stop = true;
     }
 
     successMessage('Files submitted successfully.');
@@ -169,15 +170,15 @@ const submitAllDocuments = async () => {
   }
 };
 
-const stopFileUpload = (index) => {
+const stopFileUploadProgressLoader = (index) => {
   fileUploadProgress.value[index] = 100;
 }
 
-const simulateFileUploadProgress = (index) => {
+const simulateFileUploadProgress = (index, controller) => {
   return new Promise((resolve) => {
     let progress = 0;
     const interval = setInterval(() => {
-      if (progress >= 100) {
+      if (controller.stop || progress >= 100) {
         clearInterval(interval);
         resolve();
       } else {
