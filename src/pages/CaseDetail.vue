@@ -51,6 +51,7 @@
                 @submitDocuments="submitAllDocuments"
                 :loading="loading"
                 :fileUploadProgress="fileUploadProgress"
+                :resetTrigger="resetFileInputTrigger"
               />
             </v-col>
           </v-row>
@@ -115,6 +116,7 @@ const userStore = useAuthStore();
 const route = useRoute();
 const caseId = ref(route.params.case_id);
 const fileUploadProgress = ref([]);
+const resetFileInputTrigger = ref(false);
 
 const caseDetails = ref({});
 const uploadedFiles = ref([]);
@@ -160,7 +162,7 @@ const submitAllDocuments = async () => {
       stopFileUploadProgressLoader(index);
       progressController.stop = true;
     }
-
+    resetFileInputTrigger.value = true;
     successMessage('Files submitted successfully.');
   } catch (error) {
     consoleError('Error submitting documents: ', error);

@@ -55,7 +55,7 @@
 </template>
 
 <script setup>
-import {ref} from 'vue';
+import {ref, watch} from 'vue';
 import {COLORS} from '@/styles/colors';
 
 const props = defineProps({
@@ -67,11 +67,15 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  resetTrigger: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const localUploadedFiles = ref([]);
 const previouslyUploadedFiles = ref([]);
-const emit = defineEmits(['update:uploadedFiles', 'submitDocuments']);
+const emit = defineEmits(['update:uploadedFiles', 'submitDocuments', 'update:resetTrigger']);
 
 const handleFileChange = () => {
   emit('update:uploadedFiles', localUploadedFiles.value);
@@ -85,6 +89,21 @@ const removeDocument = (index) => {
 const submitDocuments = () => {
   emit('submitDocuments', localUploadedFiles.value);
 };
+
+const resetFileInput = () => {
+  localUploadedFiles.value = [];
+};
+
+watch(
+  () => props.resetTrigger,
+  (newVal) => {
+    if (newVal) {
+      resetFileInput();
+      // Reset the trigger back to false
+      emit('update:resetTrigger', false);
+    }
+  }
+);
 </script>
 
 <style scoped>
