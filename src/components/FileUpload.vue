@@ -24,14 +24,14 @@
           >
             {{ file.name }}
           </v-chip>
-          <div v-if="previouslyUploadedFiles.length == 0" class="font-weight-light pt-2">
+          <div v-if="previouslyUploadedFiles.length === 0" class="font-weight-light pt-2">
             No files have been uploaded.
           </div>
         </v-col>
       </v-row>
 
       <!-- File Uploading Bars -->
-      <v-row v-if="fileUploadProgress[index] > 0">
+      <v-row v-if="fileUploadProgress.length > 0">
         <v-col cols="12" v-for="(file, index) in localUploadedFiles" :key="index">
           <div>{{ file.name }}</div>
           <v-progress-linear
@@ -47,7 +47,7 @@
     <v-card-actions>
       <v-spacer></v-spacer>
       <v-btn :color="COLORS.PRIMARY" variant="flat" class="no-uppercase" @click="submitDocuments"
-             :loading="props.loading" :disabled="localUploadedFiles.length == 0">
+             :loading="props.loading" :disabled="localUploadedFiles.length === 0">
         Submit All Documents
       </v-btn>
     </v-card-actions>
