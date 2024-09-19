@@ -123,7 +123,7 @@ const previouslyUploadedFiles = ref([{ name: "sampletestt.pdf" }]);
 
 const caseDetails = ref({});
 const uploadedFiles = ref([]);
-const downloads = ref(["test"]);
+const downloads = ref([]);
 const isSetApptDateModalOpen = ref(false);
 const isSetDecisionModalOpen = ref(false);
 const loading = ref(false);
@@ -168,6 +168,9 @@ const handleFileUpload = async (files) => {
       } finally {
         stopFileUploadProgressLoader(index);
         progressController.stop = true;
+        resetFileInputTrigger.value = true;
+        uploadedFiles.value = [];
+        fileUploadProgress.value = [];
       }
     }
 

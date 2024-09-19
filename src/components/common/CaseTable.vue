@@ -99,9 +99,9 @@ const statusColorMap = {
   rejected: 'red',
 };
 
-const addNewCase = async () => {
+const addNewCase = async (caseNumber) => {
   try {
-    const response = await apiService.addCase(authStore.username);
+    const response = await apiService.addCase(caseNumber, authStore.username);
     const userCases = response.data.externalUserCaseList._embedded.filterListExternalUID.map(item => item.Properties);
     emit('cases-updated');
     return userCases;
