@@ -47,7 +47,7 @@
             <v-col cols="12">
               <FileUpload
                 :uploadedFiles="uploadedFiles"
-                @update:uploadedFiles="uploadedFiles = $event"
+                @update:uploadedFiles="handleFileUpload"
                 @submitDocuments="submitAllDocuments"
                 :loading="loading"
                 :fileUploadProgress="fileUploadProgress"
@@ -147,21 +147,43 @@ const fetchCaseDetails = async () => {
   }
 };
 
-const submitAllDocuments = async () => {
+const handleFileUpload = async (files) => {
   try {
     loading.value = true;
-    fileUploadProgress.value = uploadedFiles.value.map(() => 0);
+    fileUploadProgress.value = files.map(() => 0);
 
-    for (const [index, file] of uploadedFiles.value.entries()) {
+    for (const [index, file] of files.entries()) {
       const formData = new FormData();
       formData.append('file', file);
 
-      const progressController = { stop: false };
+      const progressController = {stop: false};
       simulateFileUploadProgress(index, progressController);
-      await apiService.uploadFile(userStore.businessWorkspaceId, formData);
-      stopFileUploadProgressLoader(index);
-      progressController.stop = true;
+
+      try {
+        await apiService.uploadFile(userStore.businessWorkspaceId, formData);
+      } finally {
+        stopFileUploadProgressLoader(index);
+        progressController.stop = true;
+      }
     }
+
+    successMessage('Files uploaded successfully.');
+  } catch (error) {
+    consoleError('Error uploading documents: ', error);
+    errorMessage('Failed to upload documents');
+  } finally {
+    loading.value = false;
+    resetFileInputTrigger.value = true;
+    uploadedFiles.value = [];
+    fileUploadProgress.value = [];
+  }
+};
+
+const submitAllDocuments = async () => {
+  try {
+    loading.value = true;
+    // TODO move files from temp to other folder
+    // await apiService.uploadFile(userStore.businessWorkspaceId, formData);
     resetFileInputTrigger.value = true;
     successMessage('Files submitted successfully.');
     uploadedFiles.value = [];

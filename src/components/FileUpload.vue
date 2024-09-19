@@ -13,6 +13,7 @@
             variant="outlined"
             @change="handleFileChange"
             style="max-height: 100px"
+            :disabled="uploading"
           />
         </v-col>
         <v-col cols="6">
@@ -75,10 +76,16 @@ const props = defineProps({
 
 const localUploadedFiles = ref([]);
 const previouslyUploadedFiles = ref([]);
+const uploading = ref(false);
+
 const emit = defineEmits(['update:uploadedFiles', 'submitDocuments', 'update:resetTrigger']);
 
-const handleFileChange = () => {
-  emit('update:uploadedFiles', localUploadedFiles.value);
+const handleFileChange = async () => {
+  if (localUploadedFiles.value.length > 0) {
+    uploading.value = true;
+    await emit('update:uploadedFiles', localUploadedFiles.value);
+    uploading.value = false;
+  }
 };
 
 const removeDocument = (index) => {
