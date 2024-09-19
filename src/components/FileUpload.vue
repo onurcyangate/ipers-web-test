@@ -24,6 +24,9 @@
             class="ma-2"
           >
             {{ file.name }}
+            <v-btn icon @click="removePreviouslyUploadedFile(index)">
+              <v-icon small>mdi-delete</v-icon>
+            </v-btn>
           </v-chip>
           <div v-if="previouslyUploadedFiles.length === 0" class="font-weight-light pt-2">
             No files have been uploaded.
@@ -78,7 +81,7 @@ const localUploadedFiles = ref([]);
 const previouslyUploadedFiles = ref([]);
 const uploading = ref(false);
 
-const emit = defineEmits(['update:uploadedFiles', 'submitDocuments', 'update:resetTrigger']);
+const emit = defineEmits(['update:uploadedFiles', 'submitDocuments', 'update:resetTrigger', 'deleteFile']);
 
 const handleFileChange = async () => {
   if (localUploadedFiles.value.length > 0) {
@@ -88,9 +91,10 @@ const handleFileChange = async () => {
   }
 };
 
-const removeDocument = (index) => {
-  localUploadedFiles.value.splice(index, 1);
-  emit('update:uploadedFiles', localUploadedFiles.value);
+const removePreviouslyUploadedFile = (index) => {
+  const fileToRemove = previouslyUploadedFiles.value[index];
+  emit('deleteFile', fileToRemove);
+  previouslyUploadedFiles.value.splice(index, 1);
 };
 
 const submitDocuments = () => {
@@ -106,7 +110,6 @@ watch(
   (newVal) => {
     if (newVal) {
       resetFileInput();
-      // Reset the trigger back to false
       emit('update:resetTrigger', false);
     }
   }

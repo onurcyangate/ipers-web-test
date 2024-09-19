@@ -47,8 +47,10 @@
             <v-col cols="12">
               <FileUpload
                 :uploadedFiles="uploadedFiles"
+                :previouslyUploadedFiles="previouslyUploadedFiles"
                 @update:uploadedFiles="handleFileUpload"
                 @submitDocuments="submitAllDocuments"
+                @deleteFile="deleteFile"
                 :loading="loading"
                 :fileUploadProgress="fileUploadProgress"
                 :resetTrigger="resetFileInputTrigger"
@@ -117,6 +119,7 @@ const route = useRoute();
 const caseId = ref(route.params.case_id);
 const fileUploadProgress = ref([]);
 const resetFileInputTrigger = ref(false);
+const previouslyUploadedFiles = ref([{ name: "sampletestt.pdf" }]);
 
 const caseDetails = ref({});
 const uploadedFiles = ref([]);
@@ -161,6 +164,7 @@ const handleFileUpload = async (files) => {
 
       try {
         await apiService.uploadFile(userStore.businessWorkspaceId, formData);
+        previouslyUploadedFiles.value.push({ name: file.name });
       } finally {
         stopFileUploadProgressLoader(index);
         progressController.stop = true;
@@ -218,6 +222,18 @@ const simulateFileUploadProgress = (index, controller) => {
   });
 };
 
+const deleteFile = async (file) => {
+  try {
+    loading.value = true;
+    await apiService.deleteFile(userStore.businessWorkspaceId, file.name);
+    successMessage('File deleted successfully.');
+  } catch (error) {
+    consoleError('Error deleting file: ', error);
+    errorMessage('Failed to delete file');
+  } finally {
+    loading.value = false;
+  }
+};
 
 const updateAppointmentDate = async (date) => {
   try {
