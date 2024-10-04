@@ -5,7 +5,8 @@ export const useAuthStore = defineStore('user', {
     user: JSON.parse(sessionStorage.getItem('user')) || {username: null, role: null},
     isLoggedIn: JSON.parse(sessionStorage.getItem('isLoggedIn')) || false,
     username: sessionStorage.getItem('username') || null,
-    businessWorkspaceId: sessionStorage.getItem('businessWorkspaceId') || null
+    businessWorkspaceId: sessionStorage.getItem('businessWorkspaceId') || null,
+    businessWorkspaceObjectId: sessionStorage.getItem('businessWorkspaceObjectId') || null
   }),
   actions: {
     login(loginResponse) {
@@ -27,6 +28,10 @@ export const useAuthStore = defineStore('user', {
       this.businessWorkspaceId = id;
       sessionStorage.setItem('businessWorkspaceId', id);
     },
+    setBusinessWorkspaceObjectId(id) {
+      this.businessWorkspaceObjectId = id;
+      sessionStorage.setItem('businessWorkspaceObjectId', id);
+    },
     logout() {
       this.user = {username: null, role: null};
       this.isLoggedIn = false;
@@ -34,6 +39,8 @@ export const useAuthStore = defineStore('user', {
       sessionStorage.removeItem('user');
       sessionStorage.removeItem('isLoggedIn');
       sessionStorage.removeItem('username');
+      sessionStorage.removeItem('businessWorkspaceId');
+      sessionStorage.removeItem('businessWorkspaceObjectId');
     }
   }
 });

@@ -328,7 +328,7 @@ const deleteMessage = async (messageId) => {
 const fetchDiscussions = async () => {
   try {
     loading.value = true;
-    const response = await apiService.fetchCaseMessages(userStore.businessWorkspaceId, props.caseId);
+    const response = await apiService.fetchCaseMessages(userStore.businessWorkspaceObjectId);
     parseDiscussions(response);
     // parseDiscussions(fallbackDiscussions);
   } catch (err) {

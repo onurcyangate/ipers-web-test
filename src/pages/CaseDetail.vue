@@ -141,8 +141,8 @@ const fetchCaseDetails = async () => {
     loading.value = true;
     const response = await apiService.fetchCaseDetails(caseId.value);
     caseDetails.value = response.data._embedded.filterListExternalUID[0].Properties;
-    //userStore.setBusinessWorkspaceId(response.data._embedded.filterListExternalUID[0].BusinessWorkspace.BusinessWorkspaceObjectId)
-    userStore.setBusinessWorkspaceId(507914)
+    userStore.setBusinessWorkspaceId(response.data._embedded.filterListExternalUID[0].BusinessWorkspace.BusinessWorkspaceId)
+    userStore.setBusinessWorkspaceObjectId(response.data._embedded.filterListExternalUID[0].BusinessWorkspace.BusinessWorkspaceObjectId)
   } catch (err) {
     consoleError(err);
     errorMessage('Failed to fetch case details.');
