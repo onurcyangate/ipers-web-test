@@ -261,13 +261,13 @@ const saveMessage = async (body, topicName = null, isReply = false, parentId = n
       },
       ...(isReply ? {DisplayOrganization: {ParentId: parentId}} : {}),
     },
-    targetEntityId: targetEntityId.value,
-    targetEntityContainerVersionId: containerVersionId.value,
+    targetEntityId: userStore.targetEntityId,
+    targetEntityContainerVersionId: userStore.containerVersionId,
   };
 
   try {
     loading.value = true;
-    const response = await apiService.saveMessage(payload);
+    const response = await apiService.createMessage(payload);
     if (response.status === 200) {
       successMessage(isReply ? 'Reply sent successfully.' : 'Message sent successfully.');
     } else {
@@ -327,7 +327,10 @@ const fetchDiscussions = async () => {
   try {
     loading.value = true;
     const response = await apiService.fetchCaseMessages(userStore.businessWorkspaceObjectId);
-    parseDiscussions(response);
+    const responseBody = response.data
+    parseDiscussions(responseBody);
+    userStore.setTargetEntityId(responseBody.TargetEntityId)
+    userStore.setContainerVersionId(responseBody.ContainerVerisonId)
     // parseDiscussions(fallbackDiscussions);
   } catch (err) {
     consoleError(err);

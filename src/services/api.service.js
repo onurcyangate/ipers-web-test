@@ -71,12 +71,16 @@ class ApiService extends BaseService {
     return this._axiosInstance.get(`/iowa/get-messages?itemId=${businessWorkspaceObjectId}`)
   }
 
-  saveMessage(payload) {
-    return this._axiosInstance.put("/home/iowa/app/entityRestService/Items", payload)
+  createMessage(payload) {
+    return this._axiosInstance.put("/iowa/create-message", payload)
   }
 
-  deleteMessage(payload) {
-    return this._axiosInstance.delete("/home/iowa/app/entityRestService/Items", payload)
+  replyMessage(payload) {
+    return this._axiosInstance.put("/iowa/create-message", payload)
+  }
+
+  deleteMessage(id) {
+    return this._axiosInstance.delete("/iowa/delete-message/" + id)
   }
 
   uploadFile(businessWorkspaceIdParam, payload) {

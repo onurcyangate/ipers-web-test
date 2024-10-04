@@ -6,7 +6,9 @@ export const useAuthStore = defineStore('user', {
     isLoggedIn: JSON.parse(sessionStorage.getItem('isLoggedIn')) || false,
     username: sessionStorage.getItem('username') || null,
     businessWorkspaceId: sessionStorage.getItem('businessWorkspaceId') || null,
-    businessWorkspaceObjectId: sessionStorage.getItem('businessWorkspaceObjectId') || null
+    businessWorkspaceObjectId: sessionStorage.getItem('businessWorkspaceObjectId') || null,
+    targetEntityId: sessionStorage.getItem('targetEntityId') || null,
+    containerVersionId: sessionStorage.getItem('containerVersionId') || null,
   }),
   actions: {
     login(loginResponse) {
@@ -28,6 +30,14 @@ export const useAuthStore = defineStore('user', {
       this.businessWorkspaceId = id;
       sessionStorage.setItem('businessWorkspaceId', id);
     },
+    setTargetEntityId(id) {
+      this.targetEntityId = id;
+      sessionStorage.setItem('targetEntityId', id);
+    },
+    setContainerVersionId(id) {
+      this.containerVersionId = id;
+      sessionStorage.setItem('containerVersionId', id);
+    },
     setBusinessWorkspaceObjectId(id) {
       this.businessWorkspaceObjectId = id;
       sessionStorage.setItem('businessWorkspaceObjectId', id);
@@ -41,6 +51,8 @@ export const useAuthStore = defineStore('user', {
       sessionStorage.removeItem('username');
       sessionStorage.removeItem('businessWorkspaceId');
       sessionStorage.removeItem('businessWorkspaceObjectId');
+      sessionStorage.removeItem('targetEntityId');
+      sessionStorage.removeItem('containerVersionId');
     }
   }
 });
