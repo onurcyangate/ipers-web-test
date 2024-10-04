@@ -152,7 +152,7 @@
         <v-col cols="12" class="text-right">
           <v-btn
             :color="COLORS.PRIMARY"
-            @click="sendMessage"
+            @click="saveMessage"
             variant="flat"
             class="no-uppercase"
             :disabled="!newMessage || !newTopic"
@@ -173,6 +173,7 @@ import apiService from '@/services/api.service';
 import {errorMessage, successMessage} from '@/utils/message';
 import {formatDate} from '../utils/common';
 import {consoleError} from '@/utils/logger';
+import {useAuthStore} from "@/store/authStore";
 
 const props = defineProps({
   caseId: {
@@ -190,6 +191,7 @@ const newReplyTopic = ref('');
 const newReplyMessage = ref('');
 const currentUserEmail = ref('cyangateuser1@Appworks.Users');
 
+const userStore = useAuthStore();
 const targetEntityId = ref('12A62609423FA1EF920A1EEAC692847A');
 const containerVersionId = ref('56c3c2d807c036d884c120bb40ef5c17');
 
@@ -241,7 +243,6 @@ const cancelReply = () => {
 
 const saveMessage = async (message, isReply = false, parentId = null) => {
   let parentItemId;
-
   if (isReply && parentId) {
     parentItemId = `${targetEntityId.value}.${props.caseId}.${parentId}`;
   } else {
@@ -256,10 +257,16 @@ const saveMessage = async (message, isReply = false, parentId = null) => {
       template: null,
       item: {
         Discussion: {
-          DiscussionType: message.Discussion.DiscussionType,
-          TopicName: message.Discussion.TopicName,
           Body: message.Discussion.Body,
+          ...(message.Discussion.TopicName ? {TopicName: message.Discussion.TopicName} : {}),
         },
+        ...(isReply
+          ? {
+            DisplayOrganization: {
+              ParentId: parentId,
+            },
+          }
+          : {}),
       },
       targetEntityId: targetEntityId.value,
       targetEntityContainerVersionId: containerVersionId.value,
@@ -270,13 +277,9 @@ const saveMessage = async (message, isReply = false, parentId = null) => {
     loading.value = true;
     const response = await apiService.saveMessage(payload);
     if (response.status === 200) {
-      successMessage(
-        isReply ? 'Reply sent successfully.' : 'Message sent successfully.'
-      );
+      successMessage(isReply ? 'Reply sent successfully.' : 'Message sent successfully.');
     } else {
-      errorMessage(
-        isReply ? 'Failed to send the reply.' : 'Failed to send the message.'
-      );
+      errorMessage(isReply ? 'Failed to send the reply.' : 'Failed to send the message.');
     }
   } catch (err) {
     consoleError(err);
@@ -365,8 +368,9 @@ const deleteMessage = async (messageId) => {
 const fetchDiscussions = async () => {
   try {
     loading.value = true;
-    // const response = await apiService.fetchCaseMessages(targetEntityId.value, props.caseId);
-    parseDiscussions(fallbackDiscussions);
+    const response = await apiService.fetchCaseMessages(userStore.businessWorkspaceId, props.caseId);
+    parseDiscussions(response);
+    // parseDiscussions(fallbackDiscussions);
   } catch (err) {
     consoleError(err);
     errorMessage('Failed to fetch discussions, showing fallback data.');

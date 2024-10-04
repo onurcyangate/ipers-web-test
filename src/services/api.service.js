@@ -67,8 +67,8 @@ class ApiService extends BaseService {
     return this._axiosInstance.post(`/iowa/reset-password?email=${(email)}&token=${(token)}`, payload);
   }
 
-  fetchCaseMessages(targetEntityId, caseId) {
-    return this._axiosInstance.get(`/iowa/get-messages?itemId=${targetEntityId}.${caseId}`)
+  fetchCaseMessages(businessWorkspaceId, businessObjectId) {
+    return this._axiosInstance.get(`/iowa/get-messages?itemId=${businessWorkspaceId}.${businessObjectId}`)
   }
 
   saveMessage(payload){
