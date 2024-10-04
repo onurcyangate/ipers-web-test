@@ -101,7 +101,7 @@ const fetchPendingFiles = async () => {
   try {
     const response = await apiService.listFiles(userStore.businessWorkspaceId);
     pendingFiles.value = Object.keys(response.data).map(filename => ({
-      filename,
+      name: filename,
       fileId: response.data[filename],
     }));
   } catch (error) {
@@ -109,6 +109,7 @@ const fetchPendingFiles = async () => {
     errorMessage('Failed to fetch files');
   }
 };
+
 
 const removePreviouslyUploadedFile = (index) => {
   const fileToRemove = pendingFiles.value[index];
@@ -125,7 +126,7 @@ const resetFileInput = () => {
 };
 
 onMounted(async () => {
-  await fetchPendingFiles
+  await fetchPendingFiles()
 })
 
 watch(
