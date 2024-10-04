@@ -20,7 +20,7 @@
         <!-- Case Details Section -->
         <v-col cols="12" md="5" class="d-flex flex-column">
           <v-card class="flex-grow-1 d-flex flex-column justify-space-between light-border elevation-10 pa-2">
-            <v-card-title class="mb-10" style="color: #003058; font-weight: 800">CASE DETAILS</v-card-title>
+            <v-card-title class="mb-10 blue-header-1">CASE DETAILS</v-card-title>
             <v-card-text>
               <v-row class="pl-2">
                 <v-col cols="12" v-for="(label, key) in caseDetailFields" :key="key">
@@ -66,7 +66,7 @@
             <!-- Downloads Section -->
             <v-col v-if="downloads.length" cols="12" md="4">
               <v-card class="light-border elevation-10 pa-2">
-                <v-card-title>DOWNLOADS</v-card-title>
+                <v-card-title class="blue-header-1">DOWNLOADS</v-card-title>
                 <v-card-text>
                   <div v-for="(download, index) in downloads" :key="index">
                     <v-list-item @click="downloadFile(download.fileId)">

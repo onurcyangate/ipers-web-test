@@ -1,6 +1,6 @@
 <template>
   <v-card class="light-border elevation-10 pa-2">
-    <v-card-title>MANAGE DOCUMENTS</v-card-title>
+    <v-card-title class="blue-header-1">MANAGE DOCUMENTS</v-card-title>
     <v-card-text>
       <v-row>
         <v-col cols="6" class="d-flex flex-column">
@@ -38,7 +38,7 @@
                       </v-btn>{{ file.name }}</v-list-item-title>
                 </v-list-item>
             </div>
-            <div v-else class="font-weight-light pt-2">
+            <div v-else class="font-weight-light pt-2 ml-5">
               No files have been uploaded.
             </div>
           </v-card-text>

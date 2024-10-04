@@ -1,6 +1,6 @@
 <template>
   <v-card class="light-border elevation-10 pa-2">
-    <v-card-title>SECURE MESSAGES</v-card-title>
+    <v-card-title class="blue-header-1">SECURE MESSAGES</v-card-title>
     <v-card-text class="scrollable-messages mx-1" ref="messageContainer" style="border-bottom: 1px solid lightgray;">
       <v-expansion-panels accordion>
         <v-expansion-panel
@@ -328,8 +328,7 @@ const fetchDiscussions = async () => {
     // parseDiscussions(fallbackDiscussions);
   } catch (err) {
     consoleError(err);
-    errorMessage('Failed to fetch discussions, showing fallback data.');
-    parseDiscussions(fallbackDiscussions);
+    errorMessage('Failed to fetch discussions.');
   } finally {
     loading.value = false;
   }
