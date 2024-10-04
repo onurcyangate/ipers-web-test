@@ -242,8 +242,14 @@ const fetchFiles = async () => {
 
 const downloadFile = async (fileId) => {
   try {
-    await apiService.downloadFile(fileId);
-    successMessage('File downloaded successfully.');
+    const response = await apiService.downloadFile(fileId);
+    const fileUrl = response.config.url;
+    const link = document.createElement('a');
+    link.href = fileUrl;
+    link.setAttribute('download', '');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   } catch (error) {
     consoleError('Error downloading file: ', error);
     errorMessage('Failed to download file');
