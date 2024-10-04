@@ -202,16 +202,20 @@ const getReplies = (parentId) =>
   discussionsList.value.filter((d) => d.Identity.ParentId === parentId);
 
 const parseDiscussions = (response) => {
-  if (response && response.item && response.item.Discussions) {
-    discussionsList.value = response.item.Discussions.map((discussion) => ({
+  if (response && response.MessageList) {
+    discussionsList.value = response.MessageList.map((message) => ({
       Identity: {
-        Id1: discussion.Identity.Id,
-        ParentId: discussion.Identity.ParentId || null,
+        Id1: message.Id,
+        ParentId: message.ParentId !== 'null' ? message.ParentId : null, // Handle parent-child relationship
       },
       Discussion: {
-        ...discussion.Discussion,
-        AuthorEmail: extractEmail(discussion.Discussion.Author),
+        DiscussionType: message.DiscussionType,
+        TopicName: message.TopicName !== 'null' ? message.TopicName : 'No Topic', // If TopicName is null, display 'No Topic'
+        Body: message.Body,
+        AuthorEmail: extractEmail(message.Author),
+        PostedDateTime: message.PostedDateTime,
       },
+      HasChildren: message.HasChildren === 'true',
     }));
   } else {
     discussionsList.value = [];
@@ -361,7 +365,7 @@ const deleteMessage = async (messageId) => {
 const fetchDiscussions = async () => {
   try {
     loading.value = true;
-    // const response = await apiService.fetchDiscussions(targetEntityId.value, props.caseId);
+    // const response = await apiService.fetchCaseMessages(targetEntityId.value, props.caseId);
     parseDiscussions(fallbackDiscussions);
   } catch (err) {
     consoleError(err);
@@ -373,50 +377,72 @@ const fetchDiscussions = async () => {
 };
 
 const fallbackDiscussions = {
-  item: {
-    Discussions: [
-      {
-        Identity: {
-          Id: '196609',
-        },
-        Discussion: {
-          DiscussionType: 0,
-          TopicName: 'First Message',
-          Body: 'This is the first message.',
-          Author:
-            'cyangateuser1@Appworks.Users,:userIdValue:cyangateuser1@Appworks.Users',
-          PostedDateTime: '2024-08-07T07:47:09Z',
-        },
-      },
-      {
-        Identity: {
-          Id: '196610',
-        },
-        Discussion: {
-          DiscussionType: 0,
-          TopicName: 'Second Message',
-          Body: 'This is the second message.',
-          Author:
-            'anotheruser@Appworks.Users,:userIdValue:anotheruser@Appworks.Users',
-          PostedDateTime: '2024-08-07T07:50:34Z',
-        },
-      },
-      {
-        Identity: {
-          Id: '196611',
-          ParentId: '196610',
-        },
-        Discussion: {
-          DiscussionType: 1,
-          TopicName: 'Re: Second Message',
-          Body: 'This is a reply to the second message.',
-          Author:
-            'cyangateuser1@Appworks.Users,:userIdValue:cyangateuser1@Appworks.Users',
-          PostedDateTime: '2024-08-07T07:51:21Z',
-        },
-      },
-    ],
-  },
+  "Status": 200,
+  "Message": "Messages listed.",
+  "TargetEntityId": "12A62609423FA1EF920A1EEAC692847A",
+  "ContainerVerisonId": "56c3c2d807c036d884c120bb40ef5c17",
+  "MessageList": [
+    {
+      "Id": "131077",
+      "Author": "cyangateuser1@Appworks.Users,:userIdValue:cyangateuser1@Appworks.Users",
+      "PostedDateTime": "2024-09-19T13:04:19Z",
+      "DiscussionType": 0,
+      "TopicName": "1st",
+      "Body": "1st",
+      "HasChildren": "true",
+      "ParentId": "null"
+    },
+    {
+      "Id": "131078",
+      "Author": "cyangateuser1@Appworks.Users,:userIdValue:cyangateuser1@Appworks.Users",
+      "PostedDateTime": "2024-09-19T13:04:30Z",
+      "DiscussionType": 1,
+      "TopicName": "null",
+      "Body": "1st 1st response",
+      "HasChildren": "true",
+      "ParentId": "131077"
+    },
+    {
+      "Id": "131079",
+      "Author": "cyangateuser1@Appworks.Users,:userIdValue:cyangateuser1@Appworks.Users",
+      "PostedDateTime": "2024-09-19T13:04:47Z",
+      "DiscussionType": 1,
+      "TopicName": "null",
+      "Body": "1st 1st 1st response",
+      "HasChildren": "true",
+      "ParentId": "131078"
+    },
+    {
+      "Id": "131080",
+      "Author": "cyangateuser1@Appworks.Users,:userIdValue:cyangateuser1@Appworks.Users",
+      "PostedDateTime": "2024-09-19T13:05:01Z",
+      "DiscussionType": 1,
+      "TopicName": "null",
+      "Body": "1st 2nd response",
+      "HasChildren": "false",
+      "ParentId": "131077"
+    },
+    {
+      "Id": "147465",
+      "Author": "cyangateuser1@Appworks.Users,:userIdValue:cyangateuser1@Appworks.Users",
+      "PostedDateTime": "2024-09-26T06:42:55Z",
+      "DiscussionType": 1,
+      "TopicName": "null",
+      "Body": "test 4563",
+      "HasChildren": "true",
+      "ParentId": "131079"
+    },
+    {
+      "Id": "147469",
+      "Author": "cyangateuser1@Appworks.Users,:userIdValue:cyangateuser1@Appworks.Users",
+      "PostedDateTime": "2024-09-30T06:29:04Z",
+      "DiscussionType": 1,
+      "TopicName": "null",
+      "Body": "test123",
+      "HasChildren": "false",
+      "ParentId": "147465"
+    }
+  ]
 };
 
 onMounted(() => {
