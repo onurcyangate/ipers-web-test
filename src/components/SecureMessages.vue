@@ -257,9 +257,9 @@ const saveMessage = async (body, topicName = null, isReply = false, parentId = n
     item: {
       Discussion: {
         Body: body,
-        ...(topicName ? { TopicName: topicName } : {}),
+        ...(topicName ? {TopicName: topicName} : {}),
       },
-      ...(isReply ? { DisplayOrganization: { ParentId: parentId } } : {}),
+      ...(isReply ? {DisplayOrganization: {ParentId: parentId}} : {}),
     },
     targetEntityId: targetEntityId.value,
     targetEntityContainerVersionId: containerVersionId.value,
@@ -281,7 +281,6 @@ const saveMessage = async (body, topicName = null, isReply = false, parentId = n
   }
 };
 
-
 const sendMessage = async () => {
   if (newMessage.value.trim() !== '' && newTopic.value.trim() !== '') {
     await saveMessage(newMessage.value, newTopic.value);
@@ -300,7 +299,6 @@ const sendReply = async () => {
     replyTo.value = null;
   }
 };
-
 
 const deleteMessage = async (messageId) => {
   const payload = [

@@ -69,9 +69,9 @@
                 <v-card-title>DOWNLOADS</v-card-title>
                 <v-card-text>
                   <div v-for="(download, index) in downloads" :key="index">
-                    <v-list-item>
+                    <v-list-item @click="downloadFile(download.fileId)">
                       <v-list-item-content>
-                        <v-list-item-title>{{ download.name }}</v-list-item-title>
+                        <v-list-item-title>{{ download.filename }}</v-list-item-title>
                       </v-list-item-content>
                       <v-list-item-icon>
                         <v-icon>mdi-download</v-icon>
@@ -119,7 +119,7 @@ const route = useRoute();
 const caseId = ref(route.params.case_id);
 const fileUploadProgress = ref([]);
 const resetFileInputTrigger = ref(false);
-const previouslyUploadedFiles = ref([{ name: "sampletestt.pdf" }]);
+const previouslyUploadedFiles = ref([{name: "sampletestt.pdf"}]);
 
 const caseDetails = ref({});
 const uploadedFiles = ref([]);
@@ -143,6 +143,7 @@ const fetchCaseDetails = async () => {
     caseDetails.value = response.data._embedded.filterListExternalUID[0].Properties;
     userStore.setBusinessWorkspaceId(response.data._embedded.filterListExternalUID[0].BusinessWorkspace.BusinessWorkspaceId)
     userStore.setBusinessWorkspaceObjectId(response.data._embedded.filterListExternalUID[0].BusinessWorkspace.BusinessWorkspaceObjectId)
+    await fetchFiles();
   } catch (err) {
     consoleError(err);
     errorMessage('Failed to fetch case details.');
@@ -165,7 +166,7 @@ const handleFileUpload = async (files) => {
 
       try {
         await apiService.uploadFile(userStore.businessWorkspaceId, formData);
-        previouslyUploadedFiles.value.push({ name: file.name });
+        previouslyUploadedFiles.value.push({name: file.name});
       } finally {
         stopFileUploadProgressLoader(index);
         progressController.stop = true;
@@ -224,6 +225,29 @@ const simulateFileUploadProgress = (index, controller) => {
       }
     }, 100);
   });
+};
+
+const fetchFiles = async () => {
+  try {
+    const response = await apiService.listFiles(userStore.businessWorkspaceId);
+    downloads.value = Object.keys(response.data).map(fileId => ({
+      fileId,
+      filename: response.data[fileId]
+    }));
+  } catch (error) {
+    consoleError('Error fetching files: ', error);
+    errorMessage('Failed to fetch files');
+  }
+};
+
+const downloadFile = async (fileId) => {
+  try {
+    await apiService.downloadFile(fileId);
+    successMessage('File downloaded successfully.');
+  } catch (error) {
+    consoleError('Error downloading file: ', error);
+    errorMessage('Failed to download file');
+  }
 };
 
 const deleteFile = async (file) => {
