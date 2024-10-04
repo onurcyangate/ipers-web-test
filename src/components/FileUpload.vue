@@ -126,7 +126,6 @@ const fetchPendingFiles = async () => {
 const removePreviouslyUploadedFile = (index) => {
   const fileToRemove = pendingFiles.value[index];
   emit('deleteFile', fileToRemove);
-  pendingFiles.value.splice(index, 1);
 };
 
 const submitDocuments = () => {
