@@ -16,29 +16,37 @@
             :disabled="uploading"
           />
         </v-col>
+
         <v-col cols="6">
           <strong>Pending Documents:</strong>
           <v-card-text>
             <div v-if="pendingFiles.length > 0">
-              <div v-for="(file, index) in pendingFiles" :key="index">
-                <v-list-item>
-                  <v-list-item-content>
+              <v-list dense>
+                <v-list-item
+                  v-for="(file, index) in pendingFiles"
+                  :key="index"
+                  class="py-1"
+                  style="padding-left: 0"
+                >
+                  <v-list-item-content style="padding-left: 0">
                     <v-list-item-title>{{ file.name }}</v-list-item-title>
                   </v-list-item-content>
-                  <v-list-item-icon>
-                    <v-btn icon @click="removePreviouslyUploadedFile(index)">
-                      <v-icon>mdi-delete</v-icon>
-                    </v-btn>
-                  </v-list-item-icon>
+                  <v-btn icon
+                         @click="removePreviouslyUploadedFile(index)"
+                         variant="text"
+                         small
+                         color="red"
+                         style="margin-left: 8px">
+                    <v-icon>mdi-trash-can-outline</v-icon>
+                  </v-btn>
                 </v-list-item>
-              </div>
+              </v-list>
             </div>
             <div v-else class="font-weight-light pt-2">
               No files have been uploaded.
             </div>
           </v-card-text>
         </v-col>
-
       </v-row>
 
       <!-- File Uploading Bars -->
@@ -64,6 +72,7 @@
     </v-card-actions>
   </v-card>
 </template>
+
 
 <script setup>
 import {ref, watch, onMounted} from 'vue';
