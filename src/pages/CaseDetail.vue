@@ -242,8 +242,7 @@ const fetchFiles = async () => {
 
 const downloadFile = async (fileId) => {
   try {
-    const response = await apiService.downloadFile(fileId);
-    const fileUrl = response.config.url;
+    const fileUrl = process.env.BASE_URL + '/iowa/file-download?fileId=' + fileId;
     const link = document.createElement('a');
     link.href = fileUrl;
     link.setAttribute('download', '');
