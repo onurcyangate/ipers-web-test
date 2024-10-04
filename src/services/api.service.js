@@ -84,7 +84,7 @@ class ApiService extends BaseService {
   }
 
   listFiles(businessWorkspaceId) {
-    return this._axiosInstance.get(`/iowa/list-files?itemId=${businessWorkspaceId}`)
+    return this._axiosInstance.get(`/iowa/list-files?businessWorkspaceIdParam=${businessWorkspaceId}`)
   }
 
   downloadFile(fileId) {
