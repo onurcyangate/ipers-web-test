@@ -19,28 +19,24 @@
 
         <v-col cols="6">
           <strong>Pending Documents:</strong>
-          <v-card-text>
+          <v-card-text class=" pl-0" style="margin-left: -20px">
             <div v-if="pendingFiles.length > 0">
-              <v-list dense>
                 <v-list-item
                   v-for="(file, index) in pendingFiles"
                   :key="index"
-                  class="py-1"
+                  class="py-0"
                   style="padding-left: 0"
                 >
-                  <v-list-item-content style="padding-left: 0">
-                    <v-list-item-title>{{ file.name }}</v-list-item-title>
-                  </v-list-item-content>
-                  <v-btn icon
-                         @click="removePreviouslyUploadedFile(index)"
-                         variant="text"
-                         small
-                         color="red"
-                         style="margin-left: 8px">
-                    <v-icon>mdi-trash-can-outline</v-icon>
-                  </v-btn>
+                    <v-list-item-title>
+                      <v-btn icon
+                             @click="removePreviouslyUploadedFile(index)"
+                             variant="text"
+                             small
+                             color="red"
+                             style="margin-left: 8px">
+                        <v-icon>mdi-close</v-icon>
+                      </v-btn>{{ file.name }}</v-list-item-title>
                 </v-list-item>
-              </v-list>
             </div>
             <div v-else class="font-weight-light pt-2">
               No files have been uploaded.
