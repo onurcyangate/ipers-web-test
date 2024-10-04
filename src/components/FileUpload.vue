@@ -17,7 +17,7 @@
           />
         </v-col>
         <v-col cols="6">
-          <strong>Uploaded Documents:</strong>
+          <strong>Pending Documents:</strong>
           <v-chip
             v-for="(file, index) in previouslyUploadedFiles"
             :key="index"

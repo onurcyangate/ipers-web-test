@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar app dark elevation="0" style="border-bottom: 1px solid lightgray">
+    <v-app-bar app dark elevation="0" style="border-bottom: 4px solid #003058" >
       <v-img
         src="@/assets/logo.png"
         alt="Logo"

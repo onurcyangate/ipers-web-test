@@ -20,11 +20,11 @@
         <!-- Case Details Section -->
         <v-col cols="12" md="5" class="d-flex flex-column">
           <v-card class="flex-grow-1 d-flex flex-column justify-space-between light-border elevation-10 pa-2">
-            <v-card-title class="mb-10">CASE DETAILS</v-card-title>
+            <v-card-title class="mb-10" style="color: #003058; font-weight: 800">CASE DETAILS</v-card-title>
             <v-card-text>
               <v-row class="pl-2">
                 <v-col cols="12" v-for="(label, key) in caseDetailFields" :key="key">
-                  <strong>{{ label }}:</strong> {{ caseDetails[key] }}
+                  <strong style="color: #003058">{{ label }}:</strong> {{ caseDetails[key] }}
                 </v-col>
               </v-row>
             </v-card-text>
@@ -140,8 +140,9 @@ const fetchCaseDetails = async () => {
   try {
     loading.value = true;
     const response = await apiService.fetchCaseDetails(caseId.value);
-    caseDetails.value = response.data._embedded.DefaultList[0].Properties;
-    userStore.setBusinessWorkspaceId(response.data._embedded.DefaultList[0].BusinessWorkspace.BusinessWorkspaceId)
+    caseDetails.value = response.data._embedded.filterListExternalUID[0].Properties;
+    //userStore.setBusinessWorkspaceId(response.data._embedded.filterListExternalUID[0].BusinessWorkspace.BusinessWorkspaceObjectId)
+    userStore.setBusinessWorkspaceId(507914)
   } catch (err) {
     consoleError(err);
     errorMessage('Failed to fetch case details.');
