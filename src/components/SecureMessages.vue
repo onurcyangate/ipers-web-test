@@ -152,7 +152,7 @@
         <v-col cols="12" class="text-right">
           <v-btn
             :color="COLORS.PRIMARY"
-            @click="saveMessage"
+            @click="sendMessage"
             variant="flat"
             class="no-uppercase"
             :disabled="!newMessage || !newTopic"
@@ -241,7 +241,7 @@ const cancelReply = () => {
   newReplyMessage.value = '';
 };
 
-const saveMessage = async (message, isReply = false, parentId = null) => {
+const saveMessage = async (body, topicName = null, isReply = false, parentId = null) => {
   let parentItemId;
   if (isReply && parentId) {
     parentItemId = `${targetEntityId.value}.${props.caseId}.${parentId}`;
@@ -249,29 +249,21 @@ const saveMessage = async (message, isReply = false, parentId = null) => {
     parentItemId = `${targetEntityId.value}.${props.caseId}`;
   }
 
-  const payload = [
-    {
-      operationType: 'Create',
-      parentItemId: parentItemId,
-      relationName: 'Discussions',
-      template: null,
-      item: {
-        Discussion: {
-          Body: message.Discussion.Body,
-          ...(message.Discussion.TopicName ? {TopicName: message.Discussion.TopicName} : {}),
-        },
-        ...(isReply
-          ? {
-            DisplayOrganization: {
-              ParentId: parentId,
-            },
-          }
-          : {}),
+  const payload = {
+    operationType: 'Create',
+    parentItemId: parentItemId,
+    relationName: 'Discussions',
+    template: null,
+    item: {
+      Discussion: {
+        Body: body,
+        ...(topicName ? { TopicName: topicName } : {}),
       },
-      targetEntityId: targetEntityId.value,
-      targetEntityContainerVersionId: containerVersionId.value,
+      ...(isReply ? { DisplayOrganization: { ParentId: parentId } } : {}),
     },
-  ];
+    targetEntityId: targetEntityId.value,
+    targetEntityContainerVersionId: containerVersionId.value,
+  };
 
   try {
     loading.value = true;
@@ -289,24 +281,10 @@ const saveMessage = async (message, isReply = false, parentId = null) => {
   }
 };
 
+
 const sendMessage = async () => {
   if (newMessage.value.trim() !== '' && newTopic.value.trim() !== '') {
-    const newDiscussion = {
-      Identity: {
-        Id1: Date.now().toString(),
-      },
-      Discussion: {
-        DiscussionType: 0,
-        TopicName: newTopic.value,
-        Body: newMessage.value,
-        Author: `${currentUserEmail.value},:userIdValue:${currentUserEmail.value}`,
-        AuthorEmail: currentUserEmail.value,
-        PostedDateTime: new Date().toISOString(),
-      },
-    };
-
-    discussionsList.value.push(newDiscussion);
-    await saveMessage(newDiscussion);
+    await saveMessage(newMessage.value, newTopic.value);
 
     newMessage.value = '';
     newTopic.value = '';
@@ -314,33 +292,15 @@ const sendMessage = async () => {
 };
 
 const sendReply = async () => {
-  if (
-    newReplyMessage.value.trim() !== '' &&
-    newReplyTopic.value.trim() !== ''
-  ) {
-    const newDiscussion = {
-      Identity: {
-        Id1: Date.now().toString(),
-        ParentId: replyTo.value.Identity.Id1,
-      },
-      Discussion: {
-        DiscussionType: 1,
-        TopicName: newReplyTopic.value,
-        Body: newReplyMessage.value,
-        Author: `${currentUserEmail.value},:userIdValue:${currentUserEmail.value}`,
-        AuthorEmail: currentUserEmail.value,
-        PostedDateTime: new Date().toISOString(),
-      },
-    };
-
-    discussionsList.value.push(newDiscussion);
-    await saveMessage(newDiscussion, true, replyTo.value.Identity.Id1);
+  if (newReplyMessage.value.trim() !== '') {
+    await saveMessage(newReplyMessage.value, null, true, replyTo.value.ParentId);
 
     newReplyMessage.value = '';
     newReplyTopic.value = '';
     replyTo.value = null;
   }
 };
+
 
 const deleteMessage = async (messageId) => {
   const payload = [
