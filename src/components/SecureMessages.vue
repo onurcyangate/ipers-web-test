@@ -242,16 +242,9 @@ const cancelReply = () => {
 };
 
 const saveMessage = async (body, topicName = null, isReply = false, parentId = null) => {
-  let parentItemId;
-  if (isReply && parentId) {
-    parentItemId = `${targetEntityId.value}.${props.caseId}.${parentId}`;
-  } else {
-    parentItemId = `${targetEntityId.value}.${props.caseId}`;
-  }
-
   const payload = {
     operationType: 'Create',
-    parentItemId: parentItemId,
+    parentItemId: userStore.businessWorkspaceObjectId,
     relationName: 'Discussions',
     template: null,
     item: {
@@ -270,6 +263,7 @@ const saveMessage = async (body, topicName = null, isReply = false, parentId = n
     const response = await apiService.createMessage(payload);
     if (response.status === 200) {
       successMessage(isReply ? 'Reply sent successfully.' : 'Message sent successfully.');
+      await fetchDiscussions()
     } else {
       errorMessage(isReply ? 'Failed to send the reply.' : 'Failed to send the message.');
     }
