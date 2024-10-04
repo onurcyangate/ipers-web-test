@@ -18,20 +18,27 @@
         </v-col>
         <v-col cols="6">
           <strong>Pending Documents:</strong>
-          <v-chip
-            v-for="(file, index) in pendingFiles"
-            :key="index"
-            class="ma-2"
-          >
-            {{ file.name }}
-            <v-btn icon @click="removePreviouslyUploadedFile(index)">
-              <v-icon small>mdi-delete</v-icon>
-            </v-btn>
-          </v-chip>
-          <div v-if="pendingFiles.length === 0" class="font-weight-light pt-2">
-            No files have been uploaded.
-          </div>
+          <v-card-text>
+            <div v-if="pendingFiles.length > 0">
+              <div v-for="(file, index) in pendingFiles" :key="index">
+                <v-list-item>
+                  <v-list-item-content>
+                    <v-list-item-title>{{ file.name }}</v-list-item-title>
+                  </v-list-item-content>
+                  <v-list-item-icon>
+                    <v-btn icon @click="removePreviouslyUploadedFile(index)">
+                      <v-icon>mdi-delete</v-icon>
+                    </v-btn>
+                  </v-list-item-icon>
+                </v-list-item>
+              </div>
+            </div>
+            <div v-else class="font-weight-light pt-2">
+              No files have been uploaded.
+            </div>
+          </v-card-text>
         </v-col>
+
       </v-row>
 
       <!-- File Uploading Bars -->
