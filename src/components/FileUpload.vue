@@ -19,7 +19,7 @@
         <v-col cols="6">
           <strong>Pending Documents:</strong>
           <v-chip
-            v-for="(file, index) in previouslyUploadedFiles"
+            v-for="(file, index) in pendingFiles"
             :key="index"
             class="ma-2"
           >
@@ -28,7 +28,7 @@
               <v-icon small>mdi-delete</v-icon>
             </v-btn>
           </v-chip>
-          <div v-if="previouslyUploadedFiles.length === 0" class="font-weight-light pt-2">
+          <div v-if="pendingFiles.length === 0" class="font-weight-light pt-2">
             No files have been uploaded.
           </div>
         </v-col>
@@ -59,8 +59,12 @@
 </template>
 
 <script setup>
-import {ref, watch} from 'vue';
+import {ref, watch, onMounted} from 'vue';
 import {COLORS} from '@/styles/colors';
+import apiService from "@/services/api.service";
+import {consoleError} from "@/utils/logger";
+import {errorMessage} from "@/utils/message";
+import {useAuthStore} from "@/store/authStore";
 
 const props = defineProps({
   loading: {
@@ -77,8 +81,9 @@ const props = defineProps({
   },
 });
 
+const userStore = useAuthStore();
 const localUploadedFiles = ref([]);
-const previouslyUploadedFiles = ref([]);
+const pendingFiles = ref([]);
 const uploading = ref(false);
 
 const emit = defineEmits(['update:uploadedFiles', 'submitDocuments', 'update:resetTrigger', 'deleteFile']);
@@ -88,13 +93,27 @@ const handleFileChange = async () => {
     uploading.value = true;
     await emit('update:uploadedFiles', localUploadedFiles.value);
     uploading.value = false;
+    fetchPendingFiles()
+  }
+};
+
+const fetchPendingFiles = async () => {
+  try {
+    const response = await apiService.listFiles(userStore.businessWorkspaceId);
+    pendingFiles.value = Object.keys(response.data).map(filename => ({
+      filename,
+      fileId: response.data[filename],
+    }));
+  } catch (error) {
+    consoleError('Error fetching files: ', error);
+    errorMessage('Failed to fetch files');
   }
 };
 
 const removePreviouslyUploadedFile = (index) => {
-  const fileToRemove = previouslyUploadedFiles.value[index];
+  const fileToRemove = pendingFiles.value[index];
   emit('deleteFile', fileToRemove);
-  previouslyUploadedFiles.value.splice(index, 1);
+  pendingFiles.value.splice(index, 1);
 };
 
 const submitDocuments = () => {
@@ -104,6 +123,10 @@ const submitDocuments = () => {
 const resetFileInput = () => {
   localUploadedFiles.value = [];
 };
+
+onMounted(async () => {
+  await fetchPendingFiles
+})
 
 watch(
   () => props.resetTrigger,
