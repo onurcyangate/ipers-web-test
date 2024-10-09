@@ -51,6 +51,7 @@
                 @update:uploadedFiles="handleFileUpload"
                 @submitDocuments="submitAllDocuments"
                 @deleteFile="deleteFile"
+                @update:decisionData="handleDecisionData"
                 :loading="loading"
                 :fileUploadProgress="fileUploadProgress"
                 :resetTrigger="resetFileInputTrigger"
@@ -85,6 +86,7 @@
         </v-col>
       </v-row>
       <Dialog
+        v-if="isUniversityUser"
         v-model="isSetApptDateModalOpen"
         heading="Schedule Appointment Date"
         label="Date"
@@ -92,6 +94,7 @@
         @submit="updateAppointmentDate"
       ></Dialog>
       <DecisionDialog
+        v-if="isUniversityUser"
         v-model="isSetDecisionModalOpen"
         heading="Set Decision"
         @submit="updateAppointmentDate"
@@ -101,7 +104,7 @@
 </template>
 
 <script setup>
-import {ref, onMounted} from 'vue';
+import {ref, onMounted, computed} from 'vue';
 import Dialog from "@/components/common/Dialog.vue";
 import SecureMessages from "@/components/SecureMessages.vue";
 import FileUpload from "@/components/FileUpload.vue";
@@ -115,6 +118,7 @@ import DecisionDialog from "@/components/common/DecisionDialog.vue";
 import router from "@/router";
 
 const userStore = useAuthStore();
+const isUniversityUser = computed(() => userStore.isUniversityUser());
 const route = useRoute();
 const caseId = ref(route.params.case_id);
 const fileUploadProgress = ref([]);
@@ -150,6 +154,16 @@ const fetchCaseDetails = async () => {
   } finally {
     loading.value = false;
   }
+};
+
+const decisionData = ref({
+  uploadForDecision: false,
+  decisionType: null,
+});
+
+const handleDecisionData = (data) => {
+  decisionData.value = data;
+  console.log('Decision data:', data);
 };
 
 const handleFileUpload = async (files) => {

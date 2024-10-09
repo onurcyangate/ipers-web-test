@@ -15,28 +15,55 @@
             style="max-height: 100px"
             :disabled="uploading"
           />
+
+          <v-row class="mt-2" v-if="isUniversityUser">
+            <v-col cols="12" md="7">
+              <v-switch
+                v-model="uploadForDecision"
+                label="Upload file for Decision"
+                color="success"
+                :disabled="uploading"
+              />
+            </v-col>
+            <v-col cols="12" md="5">
+              <v-select
+                v-if="uploadForDecision"
+                v-model="decisionType"
+                :items="['Approve', 'Reject']"
+                label="Decision"
+                :color="COLORS.PRIMARY"
+                variant="outlined"
+                density="compact"
+                :disabled="uploading"
+                style="max-width: 200px;"
+                class="mt-2"
+              />
+            </v-col>
+          </v-row>
         </v-col>
 
         <v-col cols="6">
           <strong>Pending Documents:</strong>
-          <v-card-text class=" pl-0" style="margin-left: -20px">
+          <v-card-text class="pl-0" style="margin-left: -20px">
             <div v-if="pendingFiles.length > 0">
-                <v-list-item
-                  v-for="(file, index) in pendingFiles"
-                  :key="index"
-                  class="py-0"
-                  style="padding-left: 0"
-                >
-                    <v-list-item-title>
-                      <v-btn icon
-                             @click="removePreviouslyUploadedFile(index)"
-                             variant="text"
-                             small
-                             color="red"
-                             style="margin-left: 8px">
-                        <v-icon>mdi-close</v-icon>
-                      </v-btn>{{ file.name }}</v-list-item-title>
-                </v-list-item>
+              <v-list-item
+                v-for="(file, index) in pendingFiles"
+                :key="index"
+                class="py-0"
+                style="padding-left: 0"
+              >
+                <v-list-item-title>
+                  <v-btn icon
+                         @click="removePreviouslyUploadedFile(index)"
+                         variant="text"
+                         small
+                         color="red"
+                         style="margin-left: 8px">
+                    <v-icon>mdi-close</v-icon>
+                  </v-btn>
+                  {{ file.name }}
+                </v-list-item-title>
+              </v-list-item>
             </div>
             <div v-else class="font-weight-light pt-2 ml-5">
               No files have been uploaded.
@@ -45,7 +72,6 @@
         </v-col>
       </v-row>
 
-      <!-- File Uploading Bars -->
       <v-row v-if="fileUploadProgress.length > 0">
         <v-col cols="12" v-for="(file, index) in localUploadedFiles" :key="index">
           <div>{{ file.name }}</div>
@@ -69,9 +95,8 @@
   </v-card>
 </template>
 
-
 <script setup>
-import {ref, watch, onMounted} from 'vue';
+import {ref, watch, onMounted, computed} from 'vue';
 import {COLORS} from '@/styles/colors';
 import apiService from "@/services/api.service";
 import {consoleError} from "@/utils/logger";
@@ -94,18 +119,27 @@ const props = defineProps({
 });
 
 const userStore = useAuthStore();
+const isUniversityUser = computed(() => userStore.isUniversityUser());
 const localUploadedFiles = ref([]);
 const pendingFiles = ref([]);
 const uploading = ref(false);
+const uploadForDecision = ref(false);
+const decisionType = ref(null);
 
-const emit = defineEmits(['update:uploadedFiles', 'submitDocuments', 'update:resetTrigger', 'deleteFile']);
+const emit = defineEmits([
+  'update:uploadedFiles',
+  'submitDocuments',
+  'update:resetTrigger',
+  'deleteFile',
+  'update:decisionData'
+]);
 
 const handleFileChange = async () => {
   if (localUploadedFiles.value.length > 0) {
     uploading.value = true;
     await emit('update:uploadedFiles', localUploadedFiles.value);
     uploading.value = false;
-    fetchPendingFiles()
+    fetchPendingFiles();
   }
 };
 
@@ -122,19 +156,29 @@ const fetchPendingFiles = async () => {
   }
 };
 
-
 const removePreviouslyUploadedFile = (index) => {
   const fileToRemove = pendingFiles.value[index];
   emit('deleteFile', fileToRemove);
 };
 
 const submitDocuments = () => {
-  emit('submitDocuments', localUploadedFiles.value);
+  emit('submitDocuments', {
+    files: localUploadedFiles.value,
+    uploadForDecision: uploadForDecision.value,
+    decisionType: decisionType.value,
+  });
 };
 
 const resetFileInput = () => {
   localUploadedFiles.value = [];
 };
+
+watch([uploadForDecision, decisionType], () => {
+  emit('update:decisionData', {
+    uploadForDecision: uploadForDecision.value,
+    decisionType: decisionType.value,
+  });
+});
 
 onMounted(async () => {
   await fetchPendingFiles()
