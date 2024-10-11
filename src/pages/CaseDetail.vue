@@ -19,9 +19,12 @@
       <v-row class="py-5">
         <v-col cols="12" md="5" class="d-flex flex-column">
           <!-- Case Details Card -->
-          <v-card class="flex-grow-1 d-flex flex-column justify-space-between light-border elevation-10 pa-2 mb-4">
+          <v-card
+            class="flex-grow-1 d-flex flex-column justify-space-between light-border elevation-10 pa-2 mb-4"
+            style="min-height: 300px; max-height: 450px;"
+          >
             <v-card-title class="mb-10 blue-header-1">CASE DETAILS</v-card-title>
-            <v-card-text>
+            <v-card-text style="overflow-y: auto">
               <v-row class="pl-2">
                 <v-col cols="12" v-for="(label, key) in caseDetailFields" :key="key">
                   <strong style="color: #003058">{{ label }}:</strong> {{ caseDetails[key] }}
@@ -29,21 +32,34 @@
               </v-row>
             </v-card-text>
             <v-card-actions v-if="!userStore.user.role">
-              <v-btn :color="COLORS.PRIMARY" variant="outlined" class="mr-auto no-uppercase"
-                     @click="openAppointmentDialog">
+              <v-btn
+                :color="COLORS.PRIMARY"
+                variant="outlined"
+                class="mr-auto no-uppercase"
+                @click="openAppointmentDialog"
+              >
                 {{ caseDetails.appointmentDate ? 'Update Appointment Date' : 'Set Appointment Date' }}
               </v-btn>
-              <v-btn @click="openDecisionDialog" :color="COLORS.PRIMARY" variant="flat" class="no-uppercase"
-                     :disabled="caseDetails.decision">
+              <v-btn
+                @click="openDecisionDialog"
+                :color="COLORS.PRIMARY"
+                variant="flat"
+                class="no-uppercase"
+                :disabled="caseDetails.decision"
+              >
                 Set the Decision
               </v-btn>
             </v-card-actions>
           </v-card>
 
           <!-- Medical Files -->
-          <v-card v-if="isUniversityUser === true" class="light-border elevation-10 pa-2">
+          <v-card
+            v-if="isUniversityUser === true"
+            class="flex-grow-1 light-border elevation-10 pa-2"
+            style="min-height: 100px; max-height: 300px;"
+          >
             <v-card-title class="blue-header-1">MEDICAL FILES</v-card-title>
-            <v-card-text>
+            <v-card-text style="overflow-y: auto">
               <div v-if="downloads.length > 0">
                 <div v-for="(download, index) in downloads" :key="index">
                   <v-list-item @click="downloadFile(download.fileId)">
