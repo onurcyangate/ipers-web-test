@@ -106,9 +106,9 @@
 
             <!-- Downloads Section -->
             <v-col v-if="downloads.length" cols="12" md="4">
-              <v-card class="light-border elevation-10 pa-2">
+              <v-card class="light-border elevation-10 pa-2" style="max-height: 250px">
                 <v-card-title class="blue-header-1">DOWNLOADS</v-card-title>
-                <v-card-text>
+                <v-card-text style="overflow-y: auto">
                   <div v-for="(download, index) in downloads" :key="index">
                     <v-list-item @click="downloadFile(download.fileId)">
                       <v-list-item-content>
