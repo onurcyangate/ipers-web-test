@@ -44,7 +44,7 @@
 
         <v-col cols="6">
           <strong>Pending Documents:</strong>
-          <v-card-text class="pl-0" style="margin-left: -20px; overflow-y: auto; max-height: 250px">
+          <v-card-text class="pl-0" style="margin-left: -20px; overflow-y: auto; max-height: 150px">
             <div v-if="pendingFiles.length > 0">
               <v-list-item
                 v-for="(file, index) in pendingFiles"
