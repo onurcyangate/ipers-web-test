@@ -116,6 +116,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  refreshPendingFilesTrigger: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const userStore = useAuthStore();
@@ -193,6 +197,16 @@ watch(
     }
   }
 );
+
+watch(
+  () => props.refreshPendingFilesTrigger,
+  async (newVal) => {
+    if (newVal) {
+      await fetchPendingFiles();
+    }
+  }
+);
+
 </script>
 
 <style scoped>

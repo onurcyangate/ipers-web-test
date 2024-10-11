@@ -55,6 +55,7 @@
                 :loading="loading"
                 :fileUploadProgress="fileUploadProgress"
                 :resetTrigger="resetFileInputTrigger"
+                :refreshPendingFilesTrigger="refreshPendingFilesTrigger"
               />
             </v-col>
           </v-row>
@@ -123,6 +124,7 @@ const route = useRoute();
 const caseId = ref(route.params.case_id);
 const fileUploadProgress = ref([]);
 const resetFileInputTrigger = ref(false);
+const refreshPendingFilesTrigger = ref(false);
 const previouslyUploadedFiles = ref([{name: "sampletestt.pdf"}]);
 
 const caseDetails = ref({});
@@ -189,8 +191,8 @@ const handleFileUpload = async (files) => {
         fileUploadProgress.value = [];
       }
     }
-
     successMessage('Files uploaded successfully.');
+    refreshPendingFilesTrigger.value = true;
   } catch (error) {
     consoleError('Error uploading documents: ', error);
     errorMessage('Failed to upload documents');
