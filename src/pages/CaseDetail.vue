@@ -21,7 +21,11 @@
           <!-- Case Details Card -->
           <v-card
             class="flex-grow-1 d-flex flex-column justify-space-between light-border elevation-10 pa-2 mb-4"
-            style="min-height: 300px; max-height: 450px;"
+            :style="{
+    maxHeight: isUniversityUser ? '450px' : '600px',
+    minHeight: '300px',
+    flexGrow: medicalFiles.length > 0 ? 1 : 2
+  }"
           >
             <v-card-title class="mb-10 blue-header-1">CASE DETAILS</v-card-title>
             <v-card-text style="overflow-y: auto">
@@ -51,6 +55,7 @@
               </v-btn>
             </v-card-actions>
           </v-card>
+
 
           <!-- Medical Files -->
           <v-card
