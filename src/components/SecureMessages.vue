@@ -189,11 +189,7 @@ const newTopic = ref('');
 const newMessage = ref('');
 const newReplyTopic = ref('');
 const newReplyMessage = ref('');
-const currentUserEmail = ref('cyangateuser1@Appworks.Users');
-
 const userStore = useAuthStore();
-const targetEntityId = ref('12A62609423FA1EF920A1EEAC692847A');
-const containerVersionId = ref('56c3c2d807c036d884c120bb40ef5c17');
 
 const topLevelMessages = computed(() =>
   discussionsList.value.filter((d) => !d.Identity.ParentId)
@@ -297,7 +293,7 @@ const sendReply = async () => {
 const deleteMessage = async (messageId) => {
   const payload = [
     {
-      parentItemId: `${targetEntityId.value}.${props.caseId}.${messageId}`,
+      parentItemId: `${userStore.targetEntityId}.${messageId}`,
     },
   ];
 
