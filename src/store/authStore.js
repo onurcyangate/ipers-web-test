@@ -2,9 +2,10 @@ import {defineStore} from 'pinia';
 
 export const useAuthStore = defineStore('user', {
   state: () => ({
-    user: JSON.parse(sessionStorage.getItem('user')) || {username: null, isExternal: null},
+    user: JSON.parse(sessionStorage.getItem('user')) || {username: null},
     isLoggedIn: JSON.parse(sessionStorage.getItem('isLoggedIn')) || false,
     username: sessionStorage.getItem('username') || null,
+    isExternal: sessionStorage.getItem('isExternal') || null,
     businessWorkspaceId: sessionStorage.getItem('businessWorkspaceId') || null,
     businessWorkspaceObjectId: sessionStorage.getItem('businessWorkspaceObjectId') || null,
     targetEntityId: sessionStorage.getItem('targetEntityId') || null,
@@ -15,7 +16,6 @@ export const useAuthStore = defineStore('user', {
       console.log('login response on state:', loginResponse);
       if (loginResponse.user) {
         this.user.name = loginResponse.user.full_name;
-        this.user.role = loginResponse.user.user_group;
         this.user.isTokenActive = true;
         sessionStorage.setItem('user', JSON.stringify(this.user));
       }
@@ -27,8 +27,8 @@ export const useAuthStore = defineStore('user', {
       sessionStorage.setItem('username', username);
     },
     setUserRole(isExternal) {
-      this.user.isExternal = isExternal;
-      sessionStorage.setItem('role', isExternal);
+      this.isExternal = isExternal;
+      sessionStorage.setItem('isExternal', isExternal);
     },
     setBusinessWorkspaceId(id) {
       this.businessWorkspaceId = id;
@@ -49,7 +49,8 @@ export const useAuthStore = defineStore('user', {
     isUniversityUser() {
       // return this.user.role === 'University';
       // University vs External
-      return !this.user.isExternal;
+      console.log("isUni", !this.isExternal)
+      return !this.isExternal;
       // return true;
     },
     logout() {
@@ -57,7 +58,7 @@ export const useAuthStore = defineStore('user', {
       this.isLoggedIn = false;
       this.username = null;
       sessionStorage.removeItem('user');
-      sessionStorage.removeItem('role');
+      sessionStorage.removeItem('isExternal');
       sessionStorage.removeItem('isLoggedIn');
       sessionStorage.removeItem('username');
       sessionStorage.removeItem('businessWorkspaceId');
