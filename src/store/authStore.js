@@ -2,7 +2,7 @@ import {defineStore} from 'pinia';
 
 export const useAuthStore = defineStore('user', {
   state: () => ({
-    user: JSON.parse(sessionStorage.getItem('user')) || {username: null, role: null},
+    user: JSON.parse(sessionStorage.getItem('user')) || {username: null, isExternal: null},
     isLoggedIn: JSON.parse(sessionStorage.getItem('isLoggedIn')) || false,
     username: sessionStorage.getItem('username') || null,
     businessWorkspaceId: sessionStorage.getItem('businessWorkspaceId') || null,
@@ -26,6 +26,10 @@ export const useAuthStore = defineStore('user', {
       this.username = username;
       sessionStorage.setItem('username', username);
     },
+    setUserRole(isExternal) {
+      this.user.isExternal = isExternal;
+      sessionStorage.setItem('role', isExternal);
+    },
     setBusinessWorkspaceId(id) {
       this.businessWorkspaceId = id;
       sessionStorage.setItem('businessWorkspaceId', id);
@@ -44,13 +48,16 @@ export const useAuthStore = defineStore('user', {
     },
     isUniversityUser() {
       // return this.user.role === 'University';
-      return true;
+      // University vs External
+      return !this.user.isExternal;
+      // return true;
     },
     logout() {
       this.user = {username: null, role: null};
       this.isLoggedIn = false;
       this.username = null;
       sessionStorage.removeItem('user');
+      sessionStorage.removeItem('role');
       sessionStorage.removeItem('isLoggedIn');
       sessionStorage.removeItem('username');
       sessionStorage.removeItem('businessWorkspaceId');

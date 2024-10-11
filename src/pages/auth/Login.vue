@@ -35,6 +35,8 @@ const loginAttempt = async () => {
       return;
     }
     authStore.login(response.data);
+    authStore.setUserRole(response.data.isExternal)
+    console.log("isExternal: ", response.data.isExternal)
     authStore.setUsername(payload.username);
     await router.replace('/dashboard');
   } catch (err) {
