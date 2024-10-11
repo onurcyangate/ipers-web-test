@@ -145,14 +145,14 @@ const handleFileChange = async () => {
 
 const fetchPendingFiles = async () => {
   try {
-    const response = await apiService.listFiles(userStore.businessWorkspaceId);
-    pendingFiles.value = Object.keys(response.data).map(filename => ({
-      name: filename,
-      fileId: response.data[filename],
+    const response = await apiService.listTempFiles(userStore.businessWorkspaceId);
+    pendingFiles.value = response.data.fileList.map(file => ({
+      name: file.fileName,
+      fileId: file.fileId,
     }));
   } catch (error) {
-    consoleError('Error fetching files: ', error);
-    errorMessage('Failed to fetch files');
+    consoleError('Error fetching pending files:', error);
+    errorMessage('Failed to fetch pending files.');
   }
 };
 

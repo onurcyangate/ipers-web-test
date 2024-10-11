@@ -243,13 +243,13 @@ const simulateFileUploadProgress = (index, controller) => {
 
 const fetchFiles = async () => {
   try {
-    const response = await apiService.listFiles(userStore.businessWorkspaceId);
-    downloads.value = Object.keys(response.data).map(filename => ({
-      filename,
-      fileId: response.data[filename],
+    const response = await apiService.listDownloadableFiles(userStore.businessWorkspaceId);
+    downloads.value = response.data.fileList.map(file => ({
+      filename: file.fileName,
+      fileId: file.fileId,
     }));
   } catch (error) {
-    consoleError('Error fetching files: ', error);
+    consoleError('Error fetching files:', error);
     errorMessage('Failed to fetch files');
   }
 };

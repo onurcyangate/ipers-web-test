@@ -87,8 +87,15 @@ class ApiService extends BaseService {
     return this._axiosInstance.post(`/iowa/file-upload?businessWorkspaceIdParam=${businessWorkspaceIdParam}`, payload)
   }
 
-  listFiles(businessWorkspaceId) {
-    return this._axiosInstance.get(`/iowa/list-files?businessWorkspaceIdParam=${businessWorkspaceId}`)
+  listTempFiles(businessWorkspaceId) {
+    return this._axiosInstance.get(`/iowa/list-uploaded-files?businessWorkspaceIdParam=${businessWorkspaceId}`)
+  }
+
+  listMedicalFiles(businessWorkspaceId) {
+    return this._axiosInstance.get(`/iowa/list-medical-files?businessWorkspaceIdParam=${businessWorkspaceId}`)
+  }
+  listDownloadableFiles(businessWorkspaceId) {
+    return this._axiosInstance.get(`/iowa/list-downloadable-files?businessWorkspaceIdParam=${businessWorkspaceId}`)
   }
 
   downloadFile(fileId) {
