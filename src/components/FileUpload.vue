@@ -16,7 +16,7 @@
             :disabled="uploading"
           />
 
-          <v-row class="mt-2" v-if="isUniversityUser">
+          <v-row class="mt-2" v-if="isUniversityUser === true">
             <v-col cols="12" md="7">
               <v-switch
                 v-model="uploadForDecision"

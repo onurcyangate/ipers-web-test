@@ -87,7 +87,7 @@
         </v-col>
       </v-row>
       <Dialog
-        v-if="isUniversityUser"
+        v-if="isUniversityUser === true"
         v-model="isSetApptDateModalOpen"
         heading="Schedule Appointment Date"
         label="Date"
@@ -95,7 +95,7 @@
         @submit="updateAppointmentDate"
       ></Dialog>
       <DecisionDialog
-        v-if="isUniversityUser"
+        v-if="isUniversityUser === true"
         v-model="isSetDecisionModalOpen"
         heading="Set Decision"
         @submit="updateAppointmentDate"

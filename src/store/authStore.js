@@ -47,11 +47,9 @@ export const useAuthStore = defineStore('user', {
       sessionStorage.setItem('businessWorkspaceObjectId', id);
     },
     isUniversityUser() {
-      // return this.user.role === 'University';
       // University vs External
-      console.log("isUni", !this.isExternal)
-      return !this.isExternal;
-      // return true;
+      // return !this.isExternal;
+      return true;
     },
     logout() {
       this.user = {username: null, role: null};
