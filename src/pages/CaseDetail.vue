@@ -17,9 +17,9 @@
     </v-btn>
     <v-container fluid style="padding-right: 5em; padding-left: 5em">
       <v-row class="py-5">
-        <!-- Case Details Section -->
         <v-col cols="12" md="5" class="d-flex flex-column">
-          <v-card class="flex-grow-1 d-flex flex-column justify-space-between light-border elevation-10 pa-2">
+          <!-- Case Details Card -->
+          <v-card class="flex-grow-1 d-flex flex-column justify-space-between light-border elevation-10 pa-2 mb-4">
             <v-card-title class="mb-10 blue-header-1">CASE DETAILS</v-card-title>
             <v-card-text>
               <v-row class="pl-2">
@@ -39,6 +39,29 @@
               </v-btn>
             </v-card-actions>
           </v-card>
+
+          <!-- Medical Files -->
+          <v-card v-if="isUniversityUser === true" class="light-border elevation-10 pa-2">
+            <v-card-title class="blue-header-1">MEDICAL FILES</v-card-title>
+            <v-card-text>
+              <div v-if="downloads.length > 0">
+                <div v-for="(download, index) in downloads" :key="index">
+                  <v-list-item @click="downloadFile(download.fileId)">
+                    <v-list-item-content>
+                      <v-list-item-title>{{ download.filename }}</v-list-item-title>
+                    </v-list-item-content>
+                    <v-list-item-icon>
+                      <v-icon>mdi-download</v-icon>
+                    </v-list-item-icon>
+                  </v-list-item>
+                </div>
+              </div>
+              <div v-else class="font-weight-light pt-2 ml-1">
+                No medical files are currently available.
+              </div>
+            </v-card-text>
+          </v-card>
+
         </v-col>
 
         <v-col cols="12" md="7">
@@ -130,6 +153,7 @@ const previouslyUploadedFiles = ref([{name: "sampletestt.pdf"}]);
 const caseDetails = ref({});
 const uploadedFiles = ref([]);
 const downloads = ref([]);
+const medicalFiles = ref([]);
 const isSetApptDateModalOpen = ref(false);
 const isSetDecisionModalOpen = ref(false);
 const loading = ref(false);
@@ -150,6 +174,7 @@ const fetchCaseDetails = async () => {
     userStore.setBusinessWorkspaceId(response.data._embedded.filterListExternalUID[0].BusinessWorkspace.BusinessWorkspaceId)
     userStore.setBusinessWorkspaceObjectId(response.data._embedded.filterListExternalUID[0].BusinessWorkspace.BusinessWorkspaceObjectId)
     await fetchFiles();
+    await fetchMedicalFiles();
   } catch (err) {
     consoleError(err);
     errorMessage('Failed to fetch case details.');
@@ -252,6 +277,19 @@ const fetchFiles = async () => {
     }));
   } catch (error) {
     consoleError('Error fetching files:', error);
+    errorMessage('Failed to fetch files');
+  }
+};
+
+const fetchMedicalFiles = async () => {
+  try {
+    const response = await apiService.listMedicalFiles(userStore.businessWorkspaceId);
+    medicalFiles.value = response.data.fileList.map(file => ({
+      filename: file.fileName,
+      fileId: file.fileId,
+    }));
+  } catch (error) {
+    consoleError('Error fetching medical files:', error);
     errorMessage('Failed to fetch files');
   }
 };
