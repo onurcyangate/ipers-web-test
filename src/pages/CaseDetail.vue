@@ -114,10 +114,10 @@
               <v-card class="light-border elevation-10 pa-2" style="max-height: 250px">
                 <v-card-title class="blue-header-1">DOWNLOADS</v-card-title>
                 <v-card-text style="overflow-y: auto">
-                  <div v-for="(download, index) in downloads" :key="index">
-                    <v-list-item @click="downloadFile(download.fileId)">
+                  <div v-for="(file, index) in downloads" :key="index">
+                    <v-list-item @click="downloadFile(file)">
                       <v-list-item-content>
-                        <v-list-item-title>{{ download.filename }}</v-list-item-title>
+                        <v-list-item-title>{{ file.filename }}</v-list-item-title>
                       </v-list-item-content>
                       <v-list-item-icon>
                         <v-icon>mdi-download</v-icon>
@@ -317,10 +317,11 @@ const fetchMedicalFiles = async () => {
 
 const downloadFile = async (file) => {
   try {
-    const fileUrl = process.env.BASE_URL + '/iowa/file-download?fileId=' + file.fileId;
+    const fileUrl = import.meta.env.VITE_API_BASE_URL + 'iowa/file-download?fileId=' + file.fileId;
     const link = document.createElement('a');
     link.href = fileUrl;
     link.setAttribute('download', file.filename);
+    console.log("fileUrl", fileUrl)
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
