@@ -142,7 +142,7 @@
         v-if="isUniversityUser === true"
         v-model="isSetDecisionModalOpen"
         heading="Set Decision"
-        @submit="updateAppointmentDate"
+        @submit="updateDecision"
       ></DecisionDialog>
     </v-container>
   </v-app>
@@ -348,7 +348,7 @@ const deleteFile = async (file) => {
 const updateAppointmentDate = async (date) => {
   try {
     loading.value = true;
-    await apiService.updateCase(caseId.value, {Properties: {appointmentDate: date}});
+    await apiService.updateCase(caseId.value, {Properties: {universityAppointmentDate: date}});
   } catch (error) {
     consoleError('Error updating appointment date: ', error);
     errorMessage('Failed to update appointment date');
@@ -361,7 +361,7 @@ const updateAppointmentDate = async (date) => {
 const updateDecision = async (date) => {
   try {
     loading.value = true;
-    await apiService.updateCase(caseId.value, {Properties: {decision: date}});
+    await apiService.updateCase(caseId.value, {Properties: {caseUniversityDecision: date}});
   } catch (error) {
     consoleError('Error updating appointment date: ', error);
     errorMessage('Failed to update appointment date');
