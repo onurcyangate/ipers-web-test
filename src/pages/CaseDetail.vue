@@ -143,6 +143,8 @@
         v-model="isSetDecisionModalOpen"
         heading="Set Decision"
         @submit="updateDecision"
+        @approve="handleApprove"
+        @reject="handleReject"
       ></DecisionDialog>
     </v-container>
   </v-app>
@@ -358,16 +360,24 @@ const updateAppointmentDate = async (date) => {
   }
 };
 
+const handleApprove = () => {
+  updateDecision('Approved');
+};
+
+const handleReject = () => {
+  updateDecision('Rejected');
+};
+
 const updateDecision = async (decision) => {
-  console.log("decision", decision)
   try {
     loading.value = true;
     await apiService.updateCase(caseId.value, {Properties: {caseUniversityDecision: decision}});
+    successMessage(`Decision set to ${decision}`);
   } catch (error) {
-    consoleError('Error updating appointment date: ', error);
-    errorMessage('Failed to update appointment date');
+    consoleError('Error updating decision: ', error);
+    errorMessage('Failed to update decision');
   } finally {
-    isSetApptDateModalOpen.value = false;
+    isSetDecisionModalOpen.value = false;
     loading.value = false;
   }
 };
