@@ -156,7 +156,7 @@ import FileUpload from "@/components/FileUpload.vue";
 import {COLORS} from "@/styles/colors";
 import {useAuthStore} from "@/store/authStore";
 import {consoleError} from "@/utils/logger";
-import {errorMessage, successMessage} from "@/utils/message";
+import {errorMessage, infoMessage, successMessage} from "@/utils/message";
 import apiService from "@/services/api.service";
 import {useRoute} from 'vue-router';
 import DecisionDialog from "@/components/common/DecisionDialog.vue";
@@ -325,6 +325,7 @@ const downloadFile = async (file) => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    infoMessage('File downloaded successfully.')
   } catch (error) {
     consoleError('Error downloading file: ', error);
     errorMessage('Failed to download file');

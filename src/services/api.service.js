@@ -79,8 +79,8 @@ class ApiService extends BaseService {
     return this._axiosInstance.put("/iowa/create-message", payload)
   }
 
-  deleteMessage(id) {
-    return this._axiosInstance.delete("/iowa/delete-message/" + id)
+  deleteMessage(payload) {
+    return this._axiosInstance.delete("/iowa/delete-message/" + payload)
   }
 
   uploadFile(businessWorkspaceIdParam, payload) {
@@ -94,12 +94,9 @@ class ApiService extends BaseService {
   listMedicalFiles(businessWorkspaceId) {
     return this._axiosInstance.get(`/iowa/list-medical-files?businessWorkspaceIdParam=${businessWorkspaceId}`)
   }
+
   listDownloadableFiles(businessWorkspaceId) {
     return this._axiosInstance.get(`/iowa/list-downloadable-files?businessWorkspaceIdParam=${businessWorkspaceId}`)
-  }
-
-  downloadFile(fileId) {
-    return this._axiosInstance.get(`/iowa/file-download?fileId=${fileId}`)
   }
 }
 

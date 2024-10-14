@@ -8,8 +8,8 @@
           :key="index"
           elevation="0"
         >
-          <v-expansion-panel-title class="py-2 px-2 pr-2" :hide-actions="!hasReplies(message.Identity.Id1)"
-                                   :readonly="!hasReplies(message.Identity.Id1)">
+          <v-expansion-panel-title class="py-2 px-2 pr-2" :hide-actions="!hasReplies(message.Id)"
+                                   :readonly="!hasReplies(message.Id)">
             <!-- Parent Message -->
             <div class="message">
               <div class="message-content" style="display: flex; flex-direction: column; gap: 4px">
@@ -33,7 +33,7 @@
                   variant="text"
                   small
                   color="red"
-                  @click.stop="deleteMessage(message.Identity.Id1)"
+                  @click.stop="deleteMessage(message.TargetItemId)"
                 >
                   <v-icon>mdi-trash-can-outline</v-icon>
                 </v-btn>
@@ -41,11 +41,11 @@
             </div>
           </v-expansion-panel-title>
           <!-- Replies -->
-          <v-expansion-panel-text v-if="hasReplies(message.Identity.Id1)">
+          <v-expansion-panel-text v-if="hasReplies(message.Id)">
             <v-row class="replies">
               <v-col
                 cols="12"
-                v-for="(reply, idx) in getReplies(message.Identity.Id1)"
+                v-for="(reply, idx) in getReplies(message.Id)"
                 :key="idx"
                 class="reply-message"
               >
@@ -70,7 +70,7 @@
                       variant="text"
                       small
                       color="red"
-                      @click.stop="deleteMessage(reply.Identity.Id1)"
+                      @click.stop="deleteMessage(reply.Id)"
                     >
                       <v-icon>mdi-trash-can-outline</v-icon>
                     </v-btn>
@@ -192,28 +192,25 @@ const newReplyMessage = ref('');
 const userStore = useAuthStore();
 
 const topLevelMessages = computed(() =>
-  discussionsList.value.filter((d) => !d.Identity.ParentId)
+  discussionsList.value.filter((d) => !d.ParentId)
 );
 const hasReplies = (id) =>
-  discussionsList.value.some((d) => d.Identity.ParentId === id);
+  discussionsList.value.some((d) => d.ParentId === id);
 const getReplies = (parentId) =>
-  discussionsList.value.filter((d) => d.Identity.ParentId === parentId);
+  discussionsList.value.filter((d) => d.ParentId === parentId);
 
 const parseDiscussions = (response) => {
   if (response && response.MessageList) {
     discussionsList.value = response.MessageList.map((message) => ({
-      Identity: {
-        Id1: message.Id,
-        ParentId: message.ParentId !== 'null' ? message.ParentId : null, // Handle parent-child relationship
-      },
-      Discussion: {
-        DiscussionType: message.DiscussionType,
-        TopicName: message.TopicName !== 'null' ? message.TopicName : 'No Topic', // If TopicName is null, display 'No Topic'
-        Body: message.Body,
-        AuthorEmail: extractEmail(message.Author),
-        PostedDateTime: message.PostedDateTime,
-      },
+      Id: message.Id,
+      ParentId: message.ParentId !== 'null' ? message.ParentId : null,
+      DiscussionType: message.DiscussionType,
+      TopicName: message.TopicName !== 'null' ? message.TopicName : 'No Topic',
+      Body: message.Body,
+      AuthorEmail: extractEmail(message.Author),
+      PostedDateTime: message.PostedDateTime,
       HasChildren: message.HasChildren === 'true',
+      TargetItemId: message.TargetItemId,
     }));
   } else {
     discussionsList.value = [];
@@ -290,28 +287,29 @@ const sendReply = async () => {
   }
 };
 
-const deleteMessage = async (messageId) => {
-  const payload = [
-    {
-      parentItemId: `${userStore.targetEntityId}.${messageId}`,
-    },
-  ];
+const deleteMessage = async (targetItemId) => {
+
+  const payload = {
+    deleteTarget: true,
+    itemId: userStore.businessWorkspaceObjectId,
+    operationType: 'delete',
+    relationName: 'Discussions',
+    targetItemId: targetItemId,
+  };
 
   try {
     loading.value = true;
-    const response = await apiService.deleteMessage(payload);
-    if (response.status === 200) {
-      successMessage('Message deleted successfully.');
-    } else {
-      errorMessage('Failed to delete the message.');
-    }
+    await apiService.deleteMessage(payload);
+    successMessage('Message deleted successfully.');
+    await fetchDiscussions();
   } catch (err) {
-    consoleError(err);
+    consoleError('Error deleting message: ', err);
     errorMessage('Failed to delete message.');
   } finally {
     loading.value = false;
   }
 };
+
 
 const fetchDiscussions = async () => {
   try {
