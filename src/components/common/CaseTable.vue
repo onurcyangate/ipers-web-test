@@ -13,7 +13,7 @@
           ></v-text-field>
         </v-col>
         <v-spacer></v-spacer>
-        <v-col cols="3" class="d-flex align-center justify-end">
+        <v-col v-if="isUniversityUser === false" cols="3" class="d-flex align-center justify-end">
           <v-btn @click="isAddCaseModalOpen = true" class="ml-2" :color="COLORS.PRIMARY">Add New Case</v-btn>
         </v-col>
       </v-row>
@@ -80,6 +80,7 @@ const props = defineProps({
   }
 });
 
+const isUniversityUser = computed(() => authStore.isUniversityUser());
 const search = ref('');
 const isAddCaseModalOpen = ref(false);
 const router = useRouter();
