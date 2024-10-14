@@ -80,7 +80,7 @@ class ApiService extends BaseService {
   }
 
   deleteMessage(payload) {
-    return this._axiosInstance.delete("/iowa/delete-message/" + payload)
+    return this._axiosInstance.put("/iowa/delete-message/", payload)
   }
 
   uploadFile(businessWorkspaceIdParam, payload) {

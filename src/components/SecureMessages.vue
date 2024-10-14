@@ -13,9 +13,9 @@
             <!-- Parent Message -->
             <div class="message">
               <div class="message-content" style="display: flex; flex-direction: column; gap: 4px">
-                <strong class="pb-1">{{ message.Discussion.TopicName || 'No Topic' }}</strong>
-                <p class="mt-1">{{ message.Discussion.Body }}</p>
-                <span class="pt-1">{{ formatDate(message.Discussion.PostedDateTime) }}</span>
+                <strong class="pb-1">{{ message.TopicName || 'No Topic' }}</strong>
+                <p class="mt-1">{{ message.Body }}</p>
+                <span class="pt-1">{{ formatDate(message.PostedDateTime) }}</span>
               </div>
               <!-- Message Actions -->
               <div class="message-actions">
@@ -51,8 +51,8 @@
               >
                 <div class="message">
                   <div class="message-content">
-                    <p>{{ reply.Discussion.Body }}</p>
-                    <span>{{ formatDate(reply.Discussion.PostedDateTime) }}</span>
+                    <p>{{ reply.Body }}</p>
+                    <span>{{ formatDate(reply.PostedDateTime) }}</span>
                   </div>
                   <!-- Message Actions -->
                   <div class="message-actions">
@@ -93,8 +93,8 @@
             </v-btn>
             <p class="pt-2">Replying to:</p>
             <div class="reply-preview-message">
-              <strong>{{ replyTo.Discussion.TopicName || 'No Topic' }}</strong>
-              <p>{{ replyTo.Discussion.Body }}</p>
+              <strong>{{ replyTo.TopicName || 'No Topic' }}</strong>
+              <p>{{ replyTo.Body }}</p>
             </div>
           </div>
         </v-col>
