@@ -35,7 +35,7 @@
                 </v-col>
               </v-row>
             </v-card-text>
-            <v-card-actions v-if="!userStore.user.role">
+            <v-card-actions v-if="isUniversityUser === true">
               <v-btn
                 :color="COLORS.PRIMARY"
                 variant="outlined"
@@ -358,10 +358,11 @@ const updateAppointmentDate = async (date) => {
   }
 };
 
-const updateDecision = async (date) => {
+const updateDecision = async (decision) => {
+  console.log("decision", decision)
   try {
     loading.value = true;
-    await apiService.updateCase(caseId.value, {Properties: {caseUniversityDecision: date}});
+    await apiService.updateCase(caseId.value, {Properties: {caseUniversityDecision: decision}});
   } catch (error) {
     consoleError('Error updating appointment date: ', error);
     errorMessage('Failed to update appointment date');

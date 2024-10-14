@@ -56,7 +56,7 @@ class ApiService extends BaseService {
   }
 
   updateCase(params, payload) {
-    return this._axiosInstance.post(`/iowa/update-case?id=${params}`, payload)
+    return this._axiosInstance.put(`/iowa/update-case?id=${params}`, payload)
   }
 
   addCase(caseId, userName) {
@@ -80,7 +80,7 @@ class ApiService extends BaseService {
   }
 
   deleteMessage(payload) {
-    return this._axiosInstance.put("/iowa/delete-message/", payload)
+    return this._axiosInstance.put("/iowa/delete-message", payload)
   }
 
   uploadFile(businessWorkspaceIdParam, payload) {

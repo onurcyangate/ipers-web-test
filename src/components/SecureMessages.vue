@@ -289,13 +289,13 @@ const sendReply = async () => {
 
 const deleteMessage = async (targetItemId) => {
 
-  const payload = {
+  const payload = [{
     deleteTarget: true,
     itemId: userStore.businessWorkspaceObjectId,
     operationType: 'delete',
     relationName: 'Discussions',
     targetItemId: targetItemId,
-  };
+  }];
 
   try {
     loading.value = true;
