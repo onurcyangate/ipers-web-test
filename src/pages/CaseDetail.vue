@@ -63,9 +63,9 @@
             class="flex-grow-1 light-border elevation-10 pa-2"
             style="min-height: 100px; max-height: 300px;"
           >
-            <v-card-title class="blue-header-1">MEDICAL FILES</v-card-title>
+            <v-card-title class="blue-header-1">MEDICAL DOCUMENTS</v-card-title>
             <v-card-text style="overflow-y: auto">
-              <div v-if="downloads.length > 0">
+              <div v-if="false">
                 <div v-for="(file, index) in downloads" :key="index">
                   <v-list-item @click="downloadFile(file)">
                     <v-list-item-content>
@@ -78,7 +78,7 @@
                 </div>
               </div>
               <div v-else class="font-weight-light pt-2 ml-1">
-                No medical files are currently available.
+                No medical documents are currently available.
               </div>
             </v-card-text>
           </v-card>

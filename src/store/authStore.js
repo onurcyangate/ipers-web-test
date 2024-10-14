@@ -48,8 +48,7 @@ export const useAuthStore = defineStore('user', {
     },
     isUniversityUser() {
       // University vs External
-      // return !this.isExternal;
-      return true;
+      return !this.isExternal;
     },
     logout() {
       this.user = {username: null, role: null};
