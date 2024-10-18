@@ -44,22 +44,13 @@
               >
                 {{ caseDetails.appointmentDate ? 'Update Appointment Date' : 'Set Appointment Date' }}
               </v-btn>
-              <v-btn
-                @click="openDecisionDialog"
-                :color="COLORS.PRIMARY"
-                variant="flat"
-                class="no-uppercase"
-                :disabled="caseDetails.decision"
-              >
-                Set the Decision
-              </v-btn>
             </v-card-actions>
           </v-card>
 
           <!-- Medical Files -->
           <v-card
             v-if="isUniversityUser === true"
-            class="flex-grow-1 light-border elevation-10 pa-2"
+            class="flex-grow-1 light-border elevation-10 pa-2 ö"
             style="min-height: 100px; max-height: 300px;"
           >
             <v-card-title class="blue-header-1">MEDICAL DOCUMENTS</v-card-title>
@@ -151,14 +142,6 @@
         inputType="date"
         @submit="updateAppointmentDate"
       ></Dialog>
-      <DecisionDialog
-        v-if="isUniversityUser === true"
-        v-model="isSetDecisionModalOpen"
-        heading="Set Decision"
-        @submit="updateDecision"
-        @approve="handleApprove"
-        @reject="handleReject"
-      ></DecisionDialog>
     </v-container>
   </v-app>
 </template>

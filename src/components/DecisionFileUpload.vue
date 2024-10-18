@@ -1,5 +1,5 @@
 <template>
-  <v-card class="light-border elevation-10 pa-2">
+  <v-card class="light-border elevation-10 pa-2 mt-4">
     <v-card-title class="blue-header-1 d-flex justify-space-between">
       <span>UNIVERSITY DECISION</span>
       <v-spacer></v-spacer>
@@ -17,7 +17,7 @@
       <v-card-text v-if="isExpanded">
         <v-row>
           <v-col cols="12" class="d-flex flex-column">
-            <v-row class="mt-2">
+            <v-row>
               <v-col cols="12" md="5" lg="4">
                 <v-select
                   v-model="decisionType"
@@ -45,8 +45,18 @@
                 />
               </v-col>
             </v-row>
+
             <v-row class="mt-2">
-              put textarea here
+              <v-col cols="12">
+                <v-textarea
+                  v-model="decisionLetter"
+                  label="Decision Letter"
+                  rows="4"
+                  :color="COLORS.PRIMARY"
+                  variant="outlined"
+                  auto-grow
+                />
+              </v-col>
             </v-row>
 
           </v-col>
@@ -104,7 +114,7 @@
         class="no-uppercase"
         @click="submitDocuments"
         :loading="props.loading"
-        :disabled="!decisionType"
+        :disabled="!decisionType || !decisionLetter"
       >
         Set Decision
       </v-btn>
@@ -143,9 +153,9 @@ const userStore = useAuthStore();
 const localUploadedFiles = ref([]);
 const pendingFiles = ref([]);
 const uploading = ref(false);
-const uploadForDecision = ref(false);
 const decisionType = ref(null);
-const isExpanded = ref(true); // Control for expanding and collapsing
+const isExpanded = ref(true);
+const decisionLetter = ref('');
 
 const emit = defineEmits([
   'update:uploadedFiles',
@@ -185,8 +195,8 @@ const removePreviouslyUploadedFile = (index) => {
 const submitDocuments = () => {
   emit('submitDocuments', {
     files: localUploadedFiles.value,
-    uploadForDecision: uploadForDecision.value,
     decisionType: decisionType.value,
+    decisionLetter: decisionLetter.value, // Include the decision letter in the submission
   });
 };
 
@@ -194,9 +204,8 @@ const resetFileInput = () => {
   localUploadedFiles.value = [];
 };
 
-watch([uploadForDecision, decisionType], () => {
+watch([decisionType], () => {
   emit('update:decisionData', {
-    uploadForDecision: uploadForDecision.value,
     decisionType: decisionType.value,
   });
 });
