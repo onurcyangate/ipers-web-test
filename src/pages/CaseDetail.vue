@@ -56,7 +56,6 @@
             </v-card-actions>
           </v-card>
 
-
           <!-- Medical Files -->
           <v-card
             v-if="isUniversityUser === true"
@@ -82,6 +81,20 @@
               </div>
             </v-card-text>
           </v-card>
+
+          <!-- Decision File Upload -->
+            <DecisionFileUpload
+              :uploadedFiles="uploadedFiles"
+              :previouslyUploadedFiles="previouslyUploadedFiles"
+              @update:uploadedFiles="handleFileUpload"
+              @submitDocuments="submitAllDocuments"
+              @deleteFile="deleteFile"
+              @update:decisionData="handleDecisionData"
+              :loading="loading"
+              :fileUploadProgress="fileUploadProgress"
+              :resetTrigger="resetFileInputTrigger"
+              :refreshPendingFilesTrigger="refreshPendingFilesTrigger"
+            />
 
         </v-col>
 
@@ -163,6 +176,7 @@ import apiService from "@/services/api.service";
 import {useRoute} from 'vue-router';
 import DecisionDialog from "@/components/common/DecisionDialog.vue";
 import router from "@/router";
+import DecisionFileUpload from "@/components/DecisionFileUpload.vue";
 
 const userStore = useAuthStore();
 const isUniversityUser = computed(() => userStore.isUniversityUser());

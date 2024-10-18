@@ -15,31 +15,6 @@
             style="max-height: 100px"
             :disabled="uploading"
           />
-
-          <v-row class="mt-2" v-if="isUniversityUser === true">
-            <v-col cols="12" md="7">
-              <v-switch
-                v-model="uploadForDecision"
-                label="Upload file for Decision"
-                color="success"
-                :disabled="uploading"
-              />
-            </v-col>
-            <v-col cols="12" md="5">
-              <v-select
-                v-if="uploadForDecision"
-                v-model="decisionType"
-                :items="['Approve', 'Reject']"
-                label="Decision"
-                :color="COLORS.PRIMARY"
-                variant="outlined"
-                density="compact"
-                :disabled="uploading"
-                style="max-width: 200px;"
-                class="mt-2"
-              />
-            </v-col>
-          </v-row>
         </v-col>
 
         <v-col cols="6">
@@ -123,7 +98,6 @@ const props = defineProps({
 });
 
 const userStore = useAuthStore();
-const isUniversityUser = computed(() => userStore.isUniversityUser());
 const localUploadedFiles = ref([]);
 const pendingFiles = ref([]);
 const uploading = ref(false);
@@ -135,7 +109,6 @@ const emit = defineEmits([
   'submitDocuments',
   'update:resetTrigger',
   'deleteFile',
-  'update:decisionData'
 ]);
 
 const handleFileChange = async () => {
@@ -169,20 +142,12 @@ const submitDocuments = () => {
   emit('submitDocuments', {
     files: localUploadedFiles.value,
     uploadForDecision: uploadForDecision.value,
-    decisionType: decisionType.value,
   });
 };
 
 const resetFileInput = () => {
   localUploadedFiles.value = [];
 };
-
-watch([uploadForDecision, decisionType], () => {
-  emit('update:decisionData', {
-    uploadForDecision: uploadForDecision.value,
-    decisionType: decisionType.value,
-  });
-});
 
 onMounted(async () => {
   await fetchPendingFiles()
