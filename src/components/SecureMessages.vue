@@ -1,90 +1,105 @@
 <template>
   <v-card class="light-border elevation-10 pa-2">
-    <v-card-title class="blue-header-1">SECURE MESSAGES</v-card-title>
-    <v-card-text class="scrollable-messages mx-1" ref="messageContainer" style="border-bottom: 1px solid lightgray;">
-      <v-expansion-panels accordion>
-        <v-expansion-panel
-          v-for="(message, index) in topLevelMessages"
-          :key="index"
-          elevation="0"
-        >
-          <v-expansion-panel-title class="py-2 px-2 pr-2" :hide-actions="!hasReplies(message.Id)"
-                                   :readonly="!hasReplies(message.Id)">
-            <!-- Parent Message -->
-            <div class="message">
-              <div class="message-content" style="display: flex; flex-direction: column; gap: 4px">
-                <strong class="pb-1">{{ message.TopicName || 'No Topic' }}</strong>
-                <p class="mt-1">{{ message.Body }}</p>
-                <span class="pt-1">{{ formatDate(message.PostedDateTime) }}</span>
-              </div>
-              <!-- Message Actions -->
-              <div class="message-actions">
-                <v-btn
-                  icon
-                  small
-                  variant="text"
-                  @click.stop="initReply(message)"
-                  style="margin-right: -10px"
-                >
-                  <v-icon>mdi-reply</v-icon>
-                </v-btn>
-                <v-btn
-                  icon
-                  variant="text"
-                  small
-                  color="red"
-                  @click.stop="deleteMessage(message.TargetItemId)"
-                >
-                  <v-icon>mdi-trash-can-outline</v-icon>
-                </v-btn>
-              </div>
-            </div>
-          </v-expansion-panel-title>
-          <!-- Replies -->
-          <v-expansion-panel-text v-if="hasReplies(message.Id)">
-            <v-row class="replies">
-              <v-col
-                cols="12"
-                v-for="(reply, idx) in getReplies(message.Id)"
-                :key="idx"
-                class="reply-message"
-              >
-                <div class="message">
-                  <div class="message-content">
-                    <p>{{ reply.Body }}</p>
-                    <span>{{ formatDate(reply.PostedDateTime) }}</span>
-                  </div>
-                  <!-- Message Actions -->
-                  <div class="message-actions">
-                    <v-btn
-                      icon
-                      small
-                      variant="text"
-                      @click.stop="initReply(reply)"
-                      style="margin-right: -10px"
-                    >
-                      <v-icon>mdi-reply</v-icon>
-                    </v-btn>
-                    <v-btn
-                      icon
-                      variant="text"
-                      small
-                      color="red"
-                      @click.stop="deleteMessage(reply.Id)"
-                    >
-                      <v-icon>mdi-trash-can-outline</v-icon>
-                    </v-btn>
-                  </div>
+    <v-card-title class="blue-header-1 d-flex justify-space-between">
+      <span>SECURE MESSAGES</span>
+      <v-spacer></v-spacer>
+      <v-btn
+        icon
+        variant="text"
+        @click="isExpanded = !isExpanded"
+        :aria-label="isExpanded ? 'Collapse' : 'Expand'"
+      >
+        <v-icon>{{ isExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+      </v-btn>
+    </v-card-title>
+
+    <v-expand-transition>
+      <v-card-text v-if="isExpanded" class="scrollable-messages mx-1" ref="messageContainer"
+                   style="border-bottom: 1px solid lightgray;">
+        <v-expansion-panels accordion>
+          <v-expansion-panel
+            v-for="(message, index) in topLevelMessages"
+            :key="index"
+            elevation="0"
+          >
+            <v-expansion-panel-title class="py-2 px-2 pr-2" :hide-actions="!hasReplies(message.Id)"
+                                     :readonly="!hasReplies(message.Id)">
+              <!-- Parent Message -->
+              <div class="message">
+                <div class="message-content" style="display: flex; flex-direction: column; gap: 4px">
+                  <strong class="pb-1">{{ message.TopicName || 'No Topic' }}</strong>
+                  <p class="mt-1">{{ message.Body }}</p>
+                  <span class="pt-1">{{ formatDate(message.PostedDateTime) }}</span>
                 </div>
-              </v-col>
-            </v-row>
-          </v-expansion-panel-text>
-        </v-expansion-panel>
-      </v-expansion-panels>
-    </v-card-text>
+                <!-- Message Actions -->
+                <div class="message-actions">
+                  <v-btn
+                    icon
+                    small
+                    variant="text"
+                    @click.stop="initReply(message)"
+                    style="margin-right: -10px"
+                  >
+                    <v-icon>mdi-reply</v-icon>
+                  </v-btn>
+                  <v-btn
+                    icon
+                    variant="text"
+                    small
+                    color="red"
+                    @click.stop="deleteMessage(message.TargetItemId)"
+                  >
+                    <v-icon>mdi-trash-can-outline</v-icon>
+                  </v-btn>
+                </div>
+              </div>
+            </v-expansion-panel-title>
+            <!-- Replies -->
+            <v-expansion-panel-text v-if="hasReplies(message.Id)">
+              <v-row class="replies">
+                <v-col
+                  cols="12"
+                  v-for="(reply, idx) in getReplies(message.Id)"
+                  :key="idx"
+                  class="reply-message"
+                >
+                  <div class="message">
+                    <div class="message-content">
+                      <p>{{ reply.Body }}</p>
+                      <span>{{ formatDate(reply.PostedDateTime) }}</span>
+                    </div>
+                    <!-- Message Actions -->
+                    <div class="message-actions">
+                      <v-btn
+                        icon
+                        small
+                        variant="text"
+                        @click.stop="initReply(reply)"
+                        style="margin-right: -10px"
+                      >
+                        <v-icon>mdi-reply</v-icon>
+                      </v-btn>
+                      <v-btn
+                        icon
+                        variant="text"
+                        small
+                        color="red"
+                        @click.stop="deleteMessage(reply.Id)"
+                      >
+                        <v-icon>mdi-trash-can-outline</v-icon>
+                      </v-btn>
+                    </div>
+                  </div>
+                </v-col>
+              </v-row>
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+        </v-expansion-panels>
+      </v-card-text>
+    </v-expand-transition>
 
     <!-- Reply Input -->
-    <v-card-actions v-if="replyTo">
+    <v-card-actions v-if="replyTo && isExpanded">
       <v-row class="w-100">
         <v-col cols="12">
           <div class="reply-preview">
@@ -128,7 +143,7 @@
     </v-card-actions>
 
     <!-- New Message Input -->
-    <v-card-actions v-else class="px-5 pt-5">
+    <v-card-actions v-else-if="isExpanded" class="px-5 pt-5">
       <v-row class="w-100">
         <v-col cols="12">
           <v-text-field
@@ -190,6 +205,7 @@ const newMessage = ref('');
 const newReplyTopic = ref('');
 const newReplyMessage = ref('');
 const userStore = useAuthStore();
+const isExpanded = ref(true);
 
 const topLevelMessages = computed(() =>
   discussionsList.value.filter((d) => !d.ParentId)

@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar app dark elevation="0" style="border-bottom: 4px solid #003058" >
+    <v-app-bar app dark elevation="0" style="border-bottom: 4px solid #003058">
       <v-img
         src="@/assets/logo.png"
         alt="Logo"
@@ -16,14 +16,16 @@
 
         <v-col cols="auto" class="d-flex align-center">
           <span>Welcome!</span>
-          <v-btn :color="COLORS.PRIMARY" dark class="ml-4" @click="logout">
-            <v-icon size="x-large">mdi-logout</v-icon>
-            <v-tooltip
-              activator="parent"
-              location="bottom"
-            >
-              Logout
-            </v-tooltip>
+          <v-btn
+            class="ml-6 no-uppercase font-weight-bold"
+            :color="COLORS.BLUE"
+            dark
+            @click="router.back()"
+          >
+            Go to Dashboard
+          </v-btn>
+          <v-btn :color="COLORS.PRIMARY" dark class="ml-2 no-uppercase font-weight-bold" @click="logout">
+            Logout
           </v-btn>
         </v-col>
       </v-row>
@@ -39,7 +41,6 @@
 import {useAuthStore} from '@/store/authStore';
 import router from "@/router";
 import {COLORS} from "@/styles/colors";
-
 
 const authStore = useAuthStore();
 
