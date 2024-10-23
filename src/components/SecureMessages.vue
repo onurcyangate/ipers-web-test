@@ -43,7 +43,7 @@
                     <v-icon>mdi-reply</v-icon>
                   </v-btn>
                   <v-btn
-                    v-if="!hasReplies(message.Id)"
+                    v-if="message.HasChildren === 'false'"
                     icon
                     variant="text"
                     small
@@ -83,12 +83,12 @@
                         <v-icon>mdi-reply</v-icon>
                       </v-btn>
                       <v-btn
-                        v-if="!hasReplies(reply.Id)"
+                        v-if="reply.HasChildren === 'false'"
                         icon
                         variant="text"
                         small
                         color="red"
-                        @click.stop="deleteMessage(reply.Id)"
+                        @click.stop="deleteMessage(reply.TargetItemId)"
                       >
                         <v-icon>mdi-trash-can-outline</v-icon>
                       </v-btn>
@@ -119,12 +119,12 @@
                             <v-icon>mdi-reply</v-icon>
                           </v-btn>
                           <v-btn
-                            v-if="!hasReplies(subReply.Id)"
+                            v-if="subReply.HasChildren === 'false'"
                             icon
                             variant="text"
                             small
                             color="red"
-                            @click.stop="deleteMessage(subReply.Id)"
+                            @click.stop="deleteMessage(subReply.TargetItemId)"
                           >
                             <v-icon>mdi-trash-can-outline</v-icon>
                           </v-btn>
@@ -153,12 +153,12 @@
                                 <v-icon>mdi-reply</v-icon>
                               </v-btn>
                               <v-btn
-                                v-if="!hasReplies(subSubReply.Id)"
+                                v-if="subSubReply.HasChildren === 'false'"
                                 icon
                                 variant="text"
                                 small
                                 color="red"
-                                @click.stop="deleteMessage(subSubReply.Id)"
+                                @click.stop="deleteMessage(subSubReply.TargetItemId)"
                               >
                                 <v-icon>mdi-trash-can-outline</v-icon>
                               </v-btn>
@@ -257,6 +257,7 @@
     </v-card-actions>
   </v-card>
 </template>
+
 
 <script setup>
 import {ref, computed, onMounted} from 'vue';
