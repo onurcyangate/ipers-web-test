@@ -43,6 +43,7 @@
                   @change="handleFileChange"
                   style="max-height: 100px"
                   :disabled="uploading"
+                  accept=".doc,.docx,.pdf"
                 />
               </v-col>
             </v-row>
