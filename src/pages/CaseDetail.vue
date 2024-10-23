@@ -225,7 +225,10 @@ const handleFileUpload = async (files) => {
       simulateFileUploadProgress(index, progressController);
 
       try {
-        await apiService.uploadFile(userStore.businessWorkspaceId, formData);
+        const response = await apiService.uploadFile(userStore.businessWorkspaceId, formData);
+        if (response.data.status !== '200 OK') {
+          throw new Error(response.data.message || 'Upload failed');
+        }
         previouslyUploadedFiles.value.push({name: file.name});
       } finally {
         stopFileUploadProgressLoader(index);
