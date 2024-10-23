@@ -269,10 +269,14 @@ const saveMessage = async (body, topicName = null, isReply = false, parentId = n
 
   try {
     loading.value = true;
-    const response = await apiService.createMessage(payload);
+
+    const response = isReply
+      ? await apiService.replyMessage(payload)
+      : await apiService.createMessage(payload);
+
     if (response.status === 200) {
       successMessage(isReply ? 'Reply sent successfully.' : 'Message sent successfully.');
-      await fetchDiscussions()
+      await fetchDiscussions();
     } else {
       errorMessage(isReply ? 'Failed to send the reply.' : 'Failed to send the message.');
     }

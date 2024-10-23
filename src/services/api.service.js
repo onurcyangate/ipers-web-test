@@ -76,7 +76,7 @@ class ApiService extends BaseService {
   }
 
   replyMessage(payload) {
-    return this._axiosInstance.put("/iowa/create-message", payload)
+    return this._axiosInstance.put("/iowa/reply-message", payload)
   }
 
   deleteMessage(payload) {
