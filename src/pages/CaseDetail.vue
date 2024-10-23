@@ -230,6 +230,7 @@ const handleFileUpload = async (files) => {
           throw new Error(response.data.message || 'Upload failed');
         }
         successMessage('Files uploaded successfully.');
+        refreshPendingFilesTrigger.value = true;
         previouslyUploadedFiles.value.push({name: file.name});
       } finally {
         stopFileUploadProgressLoader(index);
@@ -239,7 +240,6 @@ const handleFileUpload = async (files) => {
         fileUploadProgress.value = [];
       }
     }
-    refreshPendingFilesTrigger.value = true;
   } catch (error) {
     consoleError('Error uploading documents: ', error);
     errorMessage('Failed to upload documents');
