@@ -124,6 +124,41 @@
                           </v-btn>
                         </div>
                       </div>
+                      <v-row class="nested-replies" v-if="hasReplies(subReply.Id)">
+                        <v-col
+                          cols="12"
+                          v-for="(subSubReply, subSubIdx) in getReplies(subReply.Id)"
+                          :key="subSubIdx"
+                          class="reply-message"
+                        >
+                          <div class="message">
+                            <div class="message-content">
+                              <p>{{ subSubReply.Body }}</p>
+                              <span>{{ formatDate(subSubReply.PostedDateTime) }}</span>
+                            </div>
+                            <div class="message-actions">
+                              <v-btn
+                                icon
+                                small
+                                variant="text"
+                                @click.stop="initReply(subSubReply)"
+                                style="margin-right: -10px"
+                              >
+                                <v-icon>mdi-reply</v-icon>
+                              </v-btn>
+                              <v-btn
+                                icon
+                                variant="text"
+                                small
+                                color="red"
+                                @click.stop="deleteMessage(subSubReply.Id)"
+                              >
+                                <v-icon>mdi-trash-can-outline</v-icon>
+                              </v-btn>
+                            </div>
+                          </div>
+                        </v-col>
+                      </v-row>
                     </v-col>
                   </v-row>
                 </v-col>
