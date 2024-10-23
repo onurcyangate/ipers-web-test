@@ -131,7 +131,7 @@
             @click="sendReply"
             variant="flat"
             class="no-uppercase"
-            :disabled="!newReplyMessage || !newReplyTopic"
+            :disabled="!newReplyMessage"
           >
             Send Reply
           </v-btn>
@@ -299,7 +299,7 @@ const sendMessage = async () => {
 
 const sendReply = async () => {
   if (newReplyMessage.value.trim() !== '') {
-    await saveMessage(newReplyMessage.value, null, true, replyTo.value.ParentId);
+    await saveMessage(newReplyMessage.value, null, true, replyTo.value.Id);
 
     newReplyMessage.value = '';
     newReplyTopic.value = '';
