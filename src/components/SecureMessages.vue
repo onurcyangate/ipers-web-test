@@ -83,7 +83,7 @@
                         <v-icon>mdi-reply</v-icon>
                       </v-btn>
                       <v-btn
-                        v-if="!hasReplies(reply.Id) || idx === getReplies(message.Id).length - 1"
+                        v-if="!hasReplies(reply.Id)"
                         icon
                         variant="text"
                         small
@@ -119,7 +119,7 @@
                             <v-icon>mdi-reply</v-icon>
                           </v-btn>
                           <v-btn
-                            v-if="!hasReplies(subReply.Id) || subIdx === getReplies(reply.Id).length - 1"
+                            v-if="!hasReplies(subReply.Id)"
                             icon
                             variant="text"
                             small
@@ -153,7 +153,7 @@
                                 <v-icon>mdi-reply</v-icon>
                               </v-btn>
                               <v-btn
-                                v-if="!hasReplies(subSubReply.Id) || subSubIdx === getReplies(subReply.Id).length - 1"
+                                v-if="!hasReplies(subSubReply.Id)"
                                 icon
                                 variant="text"
                                 small
@@ -257,7 +257,6 @@
     </v-card-actions>
   </v-card>
 </template>
-
 
 <script setup>
 import {ref, computed, onMounted} from 'vue';
