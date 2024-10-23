@@ -114,7 +114,7 @@
         :color="COLORS.PRIMARY"
         variant="flat"
         class="no-uppercase"
-        @click="submitDocuments"
+        @click="submitDecision"
         :loading="props.loading"
         :disabled="!decisionType || !decisionLetter"
       >
@@ -125,7 +125,7 @@
 </template>
 
 <script setup>
-import {ref, watch, onMounted, computed} from 'vue';
+import {ref, watch, onMounted} from 'vue';
 import {COLORS} from '@/styles/colors';
 import apiService from "@/services/api.service";
 import {consoleError} from "@/utils/logger";
@@ -192,6 +192,14 @@ const fetchPendingFiles = async () => {
 const removePreviouslyUploadedFile = (index) => {
   const fileToRemove = pendingFiles.value[index];
   emit('deleteFile', fileToRemove);
+};
+
+const submitDecision = () => {
+  if (decisionType.value === 'Approve') {
+    emit('approveDecision');
+  } else if (decisionType.value === 'Reject') {
+    emit('rejectDecision');
+  }
 };
 
 const submitDocuments = () => {

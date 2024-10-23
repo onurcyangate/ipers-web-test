@@ -73,7 +73,6 @@
             </v-card-text>
           </v-card>
 
-          <!-- Decision File Upload -->
           <DecisionFileUpload
             :uploadedFiles="uploadedFiles"
             :previouslyUploadedFiles="previouslyUploadedFiles"
@@ -81,14 +80,14 @@
             @submitDocuments="submitAllDocuments"
             @deleteFile="deleteFile"
             @update:decisionData="handleDecisionData"
+            @approveDecision="handleApprove"
+            @rejectDecision="handleReject"
             :loading="loading"
             :fileUploadProgress="fileUploadProgress"
             :resetTrigger="resetFileInputTrigger"
             :refreshPendingFilesTrigger="refreshPendingFilesTrigger"
           />
-
         </v-col>
-
         <v-col cols="12" md="7">
           <v-row>
             <!-- File Upload Section -->
@@ -100,7 +99,7 @@
                 @submitDocuments="submitAllDocuments"
                 @deleteFile="deleteFile"
                 @update:decisionData="handleDecisionData"
-                :loading="loading"
+                :loading="fileUploadLoading"
                 :fileUploadProgress="fileUploadProgress"
                 :resetTrigger="resetFileInputTrigger"
                 :refreshPendingFilesTrigger="refreshPendingFilesTrigger"
@@ -174,8 +173,8 @@ const uploadedFiles = ref([]);
 const downloads = ref([]);
 const medicalFiles = ref([]);
 const isSetApptDateModalOpen = ref(false);
-const isSetDecisionModalOpen = ref(false);
 const loading = ref(false);
+const fileUploadLoading = ref(false);
 
 const caseDetailFields = {
   caseIdStr: 'Case #',
@@ -214,7 +213,7 @@ const handleDecisionData = (data) => {
 
 const handleFileUpload = async (files) => {
   try {
-    loading.value = true;
+    fileUploadLoading.value = true;
     fileUploadProgress.value = files.map(() => 0);
 
     for (const [index, file] of files.entries()) {
@@ -244,7 +243,7 @@ const handleFileUpload = async (files) => {
     consoleError('Error uploading documents: ', error);
     errorMessage('Failed to upload documents');
   } finally {
-    loading.value = false;
+    fileUploadLoading.value = false;
     resetFileInputTrigger.value = true;
     uploadedFiles.value = [];
     fileUploadProgress.value = [];
