@@ -72,7 +72,7 @@
 </template>
 
 <script setup>
-import {ref, watch, onMounted, computed} from 'vue';
+import {ref, watch, onMounted} from 'vue';
 import {COLORS} from '@/styles/colors';
 import apiService from "@/services/api.service";
 import {consoleError} from "@/utils/logger";
@@ -103,7 +103,6 @@ const localUploadedFiles = ref([]);
 const pendingFiles = ref([]);
 const uploading = ref(false);
 const uploadForDecision = ref(false);
-const decisionType = ref(null);
 
 const emit = defineEmits([
   'update:uploadedFiles',
