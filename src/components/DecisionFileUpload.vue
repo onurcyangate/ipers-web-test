@@ -198,7 +198,7 @@ const submitDocuments = () => {
   emit('submitDocuments', {
     files: localUploadedFiles.value,
     decisionType: decisionType.value,
-    decisionLetter: decisionLetter.value, // Include the decision letter in the submission
+    decisionLetter: decisionLetter.value,
   });
 };
 

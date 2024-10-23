@@ -239,7 +239,7 @@ const extractEmail = (authorField) => {
 
 const initReply = (message) => {
   replyTo.value = message;
-  newReplyTopic.value = message.Discussion.TopicName
+  newReplyTopic.value = message.Discussion?.TopicName
     ? message.Discussion.TopicName
     : '';
 };

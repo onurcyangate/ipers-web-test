@@ -74,18 +74,18 @@
           </v-card>
 
           <!-- Decision File Upload -->
-            <DecisionFileUpload
-              :uploadedFiles="uploadedFiles"
-              :previouslyUploadedFiles="previouslyUploadedFiles"
-              @update:uploadedFiles="handleFileUpload"
-              @submitDocuments="submitAllDocuments"
-              @deleteFile="deleteFile"
-              @update:decisionData="handleDecisionData"
-              :loading="loading"
-              :fileUploadProgress="fileUploadProgress"
-              :resetTrigger="resetFileInputTrigger"
-              :refreshPendingFilesTrigger="refreshPendingFilesTrigger"
-            />
+          <DecisionFileUpload
+            :uploadedFiles="uploadedFiles"
+            :previouslyUploadedFiles="previouslyUploadedFiles"
+            @update:uploadedFiles="handleFileUpload"
+            @submitDocuments="submitAllDocuments"
+            @deleteFile="deleteFile"
+            @update:decisionData="handleDecisionData"
+            :loading="loading"
+            :fileUploadProgress="fileUploadProgress"
+            :resetTrigger="resetFileInputTrigger"
+            :refreshPendingFilesTrigger="refreshPendingFilesTrigger"
+          />
 
         </v-col>
 
@@ -157,7 +157,6 @@ import {consoleError} from "@/utils/logger";
 import {errorMessage, infoMessage, successMessage} from "@/utils/message";
 import apiService from "@/services/api.service";
 import {useRoute} from 'vue-router';
-import DecisionDialog from "@/components/common/DecisionDialog.vue";
 import router from "@/router";
 import DecisionFileUpload from "@/components/DecisionFileUpload.vue";
 
@@ -260,7 +259,7 @@ const submitAllDocuments = async () => {
     fileUploadProgress.value = [];
   } catch (error) {
     consoleError('Error submitting documents: ', error);
-    errorMessage('Failed to submit documents');
+    errorMessage('Failed to submit documents.');
   } finally {
     loading.value = false;
   }
@@ -348,6 +347,7 @@ const updateAppointmentDate = async (date) => {
   try {
     loading.value = true;
     await apiService.updateCase(caseId.value, {Properties: {universityAppointmentDate: date}});
+    successMessage('Appointment date is set successfully.')
   } catch (error) {
     consoleError('Error updating appointment date: ', error);
     errorMessage('Failed to update appointment date');
@@ -369,12 +369,11 @@ const updateDecision = async (decision) => {
   try {
     loading.value = true;
     await apiService.updateCase(caseId.value, {Properties: {caseUniversityDecision: decision}});
-    successMessage(`Decision set to ${decision}`);
+    successMessage(`Decision set to ${decision} successfully.`);
   } catch (error) {
-    consoleError('Error updating decision: ', error);
-    errorMessage('Failed to update decision');
+    consoleError('Error setting decision: ', error);
+    errorMessage('Failed to set decision');
   } finally {
-    isSetDecisionModalOpen.value = false;
     loading.value = false;
   }
 };
@@ -390,10 +389,6 @@ onMounted(async () => {
 
 const openAppointmentDialog = () => {
   isSetApptDateModalOpen.value = true;
-};
-
-const openDecisionDialog = () => {
-  isSetDecisionModalOpen.value = true;
 };
 
 const goBackToDashboard = () => {
