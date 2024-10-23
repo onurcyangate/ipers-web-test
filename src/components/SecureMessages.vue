@@ -22,9 +22,9 @@
             :key="index"
             elevation="0"
           >
+            <!-- Parent Message -->
             <v-expansion-panel-title class="py-2 px-2 pr-2" :hide-actions="!hasReplies(message.Id)"
                                      :readonly="!hasReplies(message.Id)">
-              <!-- Parent Message -->
               <div class="message">
                 <div class="message-content" style="display: flex; flex-direction: column; gap: 4px">
                   <strong class="pb-1">{{ message.TopicName || 'No Topic' }}</strong>
@@ -43,6 +43,7 @@
                     <v-icon>mdi-reply</v-icon>
                   </v-btn>
                   <v-btn
+                    v-if="!hasReplies(message.Id)"
                     icon
                     variant="text"
                     small
@@ -54,6 +55,7 @@
                 </div>
               </div>
             </v-expansion-panel-title>
+
             <!-- Replies -->
             <v-expansion-panel-text v-if="hasReplies(message.Id)">
               <v-row class="replies">
@@ -64,103 +66,108 @@
                   class="reply-message"
                   :style="{ marginLeft: '10px' }"
                 >
-                <div class="message">
-                  <div class="message-content">
-                    <p>{{ reply.Body }}</p>
-                    <span>{{ formatDate(reply.PostedDateTime) }}</span>
-                  </div>
-                  <!-- Message Actions -->
-                  <div class="message-actions">
-                    <v-btn
-                      icon
-                      small
-                      variant="text"
-                      @click.stop="initReply(reply)"
-                      style="margin-right: -10px"
-                    >
-                      <v-icon>mdi-reply</v-icon>
-                    </v-btn>
-                    <v-btn
-                      icon
-                      variant="text"
-                      small
-                      color="red"
-                      @click.stop="deleteMessage(reply.Id)"
-                    >
-                      <v-icon>mdi-trash-can-outline</v-icon>
-                    </v-btn>
-                  </div>
-                </div>
-                <v-row class="nested-replies" v-if="hasReplies(reply.Id)" :style="{ marginLeft: '10px' }">
-                  <v-col
-                    cols="12"
-                    v-for="(subReply, subIdx) in getReplies(reply.Id)"
-                    :key="subIdx"
-                    class="reply-message"
-                  >
-                    <div class="message">
-                      <div class="message-content">
-                        <p>{{ subReply.Body }}</p>
-                        <span>{{ formatDate(subReply.PostedDateTime) }}</span>
-                      </div>
-                      <div class="message-actions">
-                        <v-btn
-                          icon
-                          small
-                          variant="text"
-                          @click.stop="initReply(subReply)"
-                          style="margin-right: -10px"
-                        >
-                          <v-icon>mdi-reply</v-icon>
-                        </v-btn>
-                        <v-btn
-                          icon
-                          variant="text"
-                          small
-                          color="red"
-                          @click.stop="deleteMessage(subReply.Id)"
-                        >
-                          <v-icon>mdi-trash-can-outline</v-icon>
-                        </v-btn>
-                      </div>
+                  <div class="message">
+                    <div class="message-content">
+                      <p>{{ reply.Body }}</p>
+                      <span>{{ formatDate(reply.PostedDateTime) }}</span>
                     </div>
-                    <v-row class="nested-replies" v-if="hasReplies(subReply.Id)" :style="{ marginLeft: '10px' }">
-                      <v-col
-                        cols="12"
-                        v-for="(subSubReply, subSubIdx) in getReplies(subReply.Id)"
-                        :key="subSubIdx"
-                        class="reply-message"
+                    <!-- Message Actions -->
+                    <div class="message-actions">
+                      <v-btn
+                        icon
+                        small
+                        variant="text"
+                        @click.stop="initReply(reply)"
+                        style="margin-right: -10px"
                       >
-                        <div class="message">
-                          <div class="message-content">
-                            <p>{{ subSubReply.Body }}</p>
-                            <span>{{ formatDate(subSubReply.PostedDateTime) }}</span>
-                          </div>
-                          <div class="message-actions">
-                            <v-btn
-                              icon
-                              small
-                              variant="text"
-                              @click.stop="initReply(subSubReply)"
-                              style="margin-right: -10px"
-                            >
-                              <v-icon>mdi-reply</v-icon>
-                            </v-btn>
-                            <v-btn
-                              icon
-                              variant="text"
-                              small
-                              color="red"
-                              @click.stop="deleteMessage(subSubReply.Id)"
-                            >
-                              <v-icon>mdi-trash-can-outline</v-icon>
-                            </v-btn>
-                          </div>
+                        <v-icon>mdi-reply</v-icon>
+                      </v-btn>
+                      <v-btn
+                        v-if="!hasReplies(reply.Id) || idx === getReplies(message.Id).length - 1"
+                        icon
+                        variant="text"
+                        small
+                        color="red"
+                        @click.stop="deleteMessage(reply.Id)"
+                      >
+                        <v-icon>mdi-trash-can-outline</v-icon>
+                      </v-btn>
+                    </div>
+                  </div>
+
+                  <!-- Nested replies -->
+                  <v-row class="nested-replies" v-if="hasReplies(reply.Id)" :style="{ marginLeft: '10px' }">
+                    <v-col
+                      cols="12"
+                      v-for="(subReply, subIdx) in getReplies(reply.Id)"
+                      :key="subIdx"
+                      class="reply-message"
+                    >
+                      <div class="message">
+                        <div class="message-content">
+                          <p>{{ subReply.Body }}</p>
+                          <span>{{ formatDate(subReply.PostedDateTime) }}</span>
                         </div>
-                      </v-col>
-                    </v-row>
-                  </v-col>
-                </v-row>
+                        <div class="message-actions">
+                          <v-btn
+                            icon
+                            small
+                            variant="text"
+                            @click.stop="initReply(subReply)"
+                            style="margin-right: -10px"
+                          >
+                            <v-icon>mdi-reply</v-icon>
+                          </v-btn>
+                          <v-btn
+                            v-if="!hasReplies(subReply.Id) || subIdx === getReplies(reply.Id).length - 1"
+                            icon
+                            variant="text"
+                            small
+                            color="red"
+                            @click.stop="deleteMessage(subReply.Id)"
+                          >
+                            <v-icon>mdi-trash-can-outline</v-icon>
+                          </v-btn>
+                        </div>
+                      </div>
+                      <v-row class="nested-replies" v-if="hasReplies(subReply.Id)" :style="{ marginLeft: '10px' }">
+                        <v-col
+                          cols="12"
+                          v-for="(subSubReply, subSubIdx) in getReplies(subReply.Id)"
+                          :key="subSubIdx"
+                          class="reply-message"
+                        >
+                          <div class="message">
+                            <div class="message-content">
+                              <p>{{ subSubReply.Body }}</p>
+                              <span>{{ formatDate(subSubReply.PostedDateTime) }}</span>
+                            </div>
+                            <div class="message-actions">
+                              <v-btn
+                                icon
+                                small
+                                variant="text"
+                                @click.stop="initReply(subSubReply)"
+                                style="margin-right: -10px"
+                              >
+                                <v-icon>mdi-reply</v-icon>
+                              </v-btn>
+                              <v-btn
+                                v-if="!hasReplies(subSubReply.Id) || subSubIdx === getReplies(subReply.Id).length - 1"
+                                icon
+                                variant="text"
+                                small
+                                color="red"
+                                @click.stop="deleteMessage(subSubReply.Id)"
+                              >
+                                <v-icon>mdi-trash-can-outline</v-icon>
+                              </v-btn>
+                            </div>
+                          </div>
+                        </v-col>
+                      </v-row>
+                    </v-col>
+                  </v-row>
                 </v-col>
               </v-row>
             </v-expansion-panel-text>
