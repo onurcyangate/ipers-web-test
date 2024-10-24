@@ -60,7 +60,7 @@ class ApiService extends BaseService {
   }
 
   addCase(caseId, userName) {
-    return this._axiosInstance.post(`/iowa/check-case?id=${caseId}&username=${userName}`)
+    return this._axiosInstance.post(`/iowa/check-case?username=${userName}&caseId=${caseId}`)
   }
 
   resetPassword(email, token, payload) {
