@@ -7,6 +7,7 @@ import AppLogo from "@/components/app/AppLogo.vue";
 import {useAuthStore} from '@/store/authStore'
 import router from "@/router";
 
+const userStore = useAuthStore();
 const isFormValid = ref(null);
 const authStore = useAuthStore();
 const loading = ref(false);
@@ -27,7 +28,7 @@ const loginAttempt = async () => {
     };
     const response = await apiService.login(payload);
     const responseMessage = response.data.message;
-    console.log('response message: ', responseMessage)
+    userStore.login(response.data.user)
     if (responseMessage === 'Account is disabled') {
       warningMessage('Your account is disabled. Please verify your account.');
       await apiService.resendVerificationEmail();

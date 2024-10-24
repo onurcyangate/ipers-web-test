@@ -6,6 +6,7 @@ export const useAuthStore = defineStore('user', {
     isLoggedIn: JSON.parse(sessionStorage.getItem('isLoggedIn')) || false,
     username: sessionStorage.getItem('username') || null,
     isExternal: sessionStorage.getItem('isExternal') || null,
+    caseIdentityId: sessionStorage.getItem('caseIdentityId') || null,
     businessWorkspaceId: sessionStorage.getItem('businessWorkspaceId') || null,
     businessWorkspaceObjectId: sessionStorage.getItem('businessWorkspaceObjectId') || null,
     targetEntityId: sessionStorage.getItem('targetEntityId') || null,
@@ -15,8 +16,13 @@ export const useAuthStore = defineStore('user', {
     login(loginResponse) {
       console.log('login response on state:', loginResponse);
       if (loginResponse.user) {
-        this.user.name = loginResponse.user.full_name;
-        this.user.isTokenActive = true;
+        this.user = {
+          id: loginResponse.user.id,
+          name: loginResponse.user.name,
+          email: loginResponse.user.email,
+          external: loginResponse.user.external,
+          enabled: loginResponse.user.enabled,
+        };
         sessionStorage.setItem('user', JSON.stringify(this.user));
       }
       this.isLoggedIn = true;
@@ -29,6 +35,13 @@ export const useAuthStore = defineStore('user', {
     setUserRole(isExternal) {
       this.isExternal = isExternal;
       sessionStorage.setItem('isExternal', isExternal);
+    },
+    setCaseIdentityId(id) {
+      return new Promise((resolve) => {
+        this.caseIdentityId = id;
+        sessionStorage.setItem('caseIdentityId', id);
+        resolve();
+      });
     },
     setBusinessWorkspaceId(id) {
       return new Promise((resolve) => {
@@ -65,6 +78,7 @@ export const useAuthStore = defineStore('user', {
       sessionStorage.removeItem('isLoggedIn');
       sessionStorage.removeItem('username');
       sessionStorage.removeItem('businessWorkspaceId');
+      sessionStorage.removeItem('caseIdentityId');
       sessionStorage.removeItem('businessWorkspaceObjectId');
       sessionStorage.removeItem('targetEntityId');
       sessionStorage.removeItem('containerVersionId');

@@ -194,6 +194,7 @@ const fetchCaseDetails = async () => {
 
     await userStore.setBusinessWorkspaceId(caseData.BusinessWorkspace.BusinessWorkspaceId);
     await userStore.setBusinessWorkspaceObjectId(caseData.BusinessWorkspace.BusinessWorkspaceObjectId);
+    await userStore.setCaseIdentityId(caseData.Identity.Id);
     await fetchFiles();
     await fetchMedicalFiles();
 
@@ -352,7 +353,7 @@ const deleteFile = async (file) => {
 const updateAppointmentDate = async (date) => {
   try {
     loading.value = true;
-    await apiService.updateCase(caseId.value, {Properties: {universityAppointmentDate: date}});
+    await apiService.updateCase(userStore.caseIdentityId, {Properties: {universityAppointmentDate: date}});
     successMessage('Appointment date is set successfully.')
   } catch (error) {
     consoleError('Error updating appointment date: ', error);
@@ -374,7 +375,7 @@ const handleReject = () => {
 const updateDecision = async (decision) => {
   try {
     loading.value = true;
-    await apiService.updateCase(caseId.value, {Properties: {caseUniversityDecision: decision}});
+    await apiService.updateCase(userStore.caseIdentityId, {Properties: {caseUniversityDecision: decision}});
     successMessage(`Decision set to ${decision} successfully.`);
   } catch (error) {
     consoleError('Error setting decision: ', error);
