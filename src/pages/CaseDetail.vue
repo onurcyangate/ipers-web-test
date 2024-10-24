@@ -275,7 +275,7 @@ const submitAllDocuments = async () => {
       console.log(`File ${fileId}: ${name} moved`);
     }
     // TODO trigger call
-    await apiService.newDocumentArrives(userStore.businessWorkspaceObjectId);
+    // await apiService.newDocumentArrives(userStore.businessWorkspaceObjectId);
     resetFileInputTrigger.value = true;
     successMessage('Files submitted successfully.');
     uploadedFiles.value = [];
