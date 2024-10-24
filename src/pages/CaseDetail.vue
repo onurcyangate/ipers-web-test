@@ -364,6 +364,9 @@ const deleteFile = async (file) => {
     errorMessage('Failed to delete file');
   } finally {
     loading.value = false;
+    setTimeout(() => {
+      refreshPendingFilesTrigger.value = false;
+    }, 0);
   }
 };
 
