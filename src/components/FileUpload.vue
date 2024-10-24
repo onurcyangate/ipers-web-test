@@ -64,7 +64,7 @@
     <v-card-actions>
       <v-spacer></v-spacer>
       <v-btn :color="COLORS.PRIMARY" variant="flat" class="no-uppercase" @click="submitDocuments"
-             :loading="props.loading" :disabled="localUploadedFiles.length === 0">
+             :loading="props.loading" :disabled="pendingFiles.length === 0">
         Submit All Documents
       </v-btn>
     </v-card-actions>
@@ -109,6 +109,7 @@ const emit = defineEmits([
   'submitDocuments',
   'update:resetTrigger',
   'deleteFile',
+  'updatePendingFiles',
 ]);
 
 const handleFileChange = async () => {
@@ -127,6 +128,7 @@ const fetchPendingFiles = async () => {
       name: file.fileName,
       fileId: file.fileId,
     }));
+    emit('updatePendingFiles', pendingFiles.value);
   } catch (error) {
     consoleError('Error fetching pending files:', error);
     errorMessage('Failed to fetch pending files.');

@@ -21,7 +21,7 @@
               <v-col cols="12" md="5" lg="4">
                 <v-select
                   v-model="decisionType"
-                  :items="['Approve', 'Reject']"
+                  :items="['Approve', 'Deny', 'Archive', 'Cancel']"
                   label="Decision"
                   :color="COLORS.PRIMARY"
                   variant="outlined"
@@ -197,8 +197,12 @@ const removePreviouslyUploadedFile = (index) => {
 const submitDecision = () => {
   if (decisionType.value === 'Approve') {
     emit('approveDecision');
-  } else if (decisionType.value === 'Reject') {
+  } else if (decisionType.value === 'Deny') {
     emit('rejectDecision');
+  } else if (decisionType.value === 'Cancel') {
+    emit('cancelDecision');
+  } else if (decisionType.value === 'Archive') {
+    emit('archiveDecision');
   }
 };
 

@@ -98,6 +98,14 @@ class ApiService extends BaseService {
   listDownloadableFiles(businessWorkspaceId) {
     return this._axiosInstance.get(`/iowa/list-downloadable-files?businessWorkspaceIdParam=${businessWorkspaceId}`)
   }
+
+  deleteFile(fileId) {
+    return this._axiosInstance.delete(`/iowa/file-delete?fileId=${fileId}`)
+  }
+
+  moveFile(fileId, fileName, businessWorkspaceId) {
+    return this._axiosInstance.put(`/iowa/file-move?fileId=${fileId}&fileName=${fileName}&businessWorkspaceId=${businessWorkspaceId}`)
+  }
 }
 
 export default new ApiService()

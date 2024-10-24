@@ -33,7 +33,7 @@
             <td class="text-left">{{ item.memberFirstName }}</td>
             <td class="text-left">{{ item.memberLastName }}</td>
             <td class="text-left">
-              <v-chip :color="statusColorMap[item.caseStatus]" dark>{{ item.caseStatus }}</v-chip>
+              <v-chip :color="statusColorMap[item.LlifeCycleStatusDomained]" dark>{{ item.LlifeCycleStatusDomained }}</v-chip>
             </td>
           </tr>
         </template>
@@ -90,14 +90,15 @@ const headers = [
   {title: 'Case ID', value: 'caseIdStr'},
   {title: 'Member First Name', value: 'memberFirstName'},
   {title: 'Member Last Name', value: 'memberLastName'},
-  {title: 'Case Status', value: 'caseStatus'},
+  {title: 'Case Status', value: 'LlifeCycleStatusDomained'},
 ];
 
 const statusColorMap = {
-  complete: 'green',
-  'in progress': 'orange',
-  Created: 'blue',
-  rejected: 'red',
+  Approved: 'green',
+  None: 'gray',
+  Denied: 'red',
+  Cancel: 'warning',
+  Archive: 'blue',
 };
 
 const addNewCase = async (caseNumber) => {
@@ -122,7 +123,7 @@ const filteredCases = computed(() => {
     (c) =>
       c?.memberFirstName?.toLowerCase().includes(search.value.toLowerCase()) ||
       c?.memberLastName?.toLowerCase().includes(search.value.toLowerCase()) ||
-      c?.caseStatus?.toLowerCase().includes(search.value.toLowerCase())
+      c?.LlifeCycleStatusDomained?.toLowerCase().includes(search.value.toLowerCase())
   );
 });
 </script>

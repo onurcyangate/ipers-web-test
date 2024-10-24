@@ -81,6 +81,8 @@
             @deleteFile="deleteFile"
             @update:decisionData="handleDecisionData"
             @approveDecision="handleApprove"
+            @cancelDecision="handleCancel"
+            @archiveDecision="handleArchive"
             @rejectDecision="handleReject"
             :loading="loading"
             :fileUploadProgress="fileUploadProgress"
@@ -96,6 +98,7 @@
                 :uploadedFiles="uploadedFiles"
                 :previouslyUploadedFiles="previouslyUploadedFiles"
                 @update:uploadedFiles="handleFileUpload"
+                @updatePendingFiles="handlePendingFilesUpdate"
                 @submitDocuments="submitAllDocuments"
                 @deleteFile="deleteFile"
                 @update:decisionData="handleDecisionData"
@@ -175,6 +178,7 @@ const medicalFiles = ref([]);
 const isSetApptDateModalOpen = ref(false);
 const loading = ref(false);
 const fileUploadLoading = ref(false);
+const pendingFilesFromChild = ref([]);
 
 const caseDetailFields = {
   caseIdStr: 'Case #',
@@ -182,6 +186,7 @@ const caseDetailFields = {
   memberLastName: 'Member Last Name',
   caseStatus: 'Case Status',
   appointmentDate: 'Appointment Date',
+  caseUniversityDecision: 'University Decision',
 };
 
 const fetchCaseDetails = async () => {
@@ -214,6 +219,11 @@ const decisionData = ref({
 const handleDecisionData = (data) => {
   decisionData.value = data;
   console.log('Decision data:', data);
+};
+
+const handlePendingFilesUpdate = (files) => {
+  pendingFilesFromChild.value = files;
+  console.log('Pending files from child:', pendingFilesFromChild.value);
 };
 
 const handleFileUpload = async (files) => {
@@ -258,8 +268,10 @@ const handleFileUpload = async (files) => {
 const submitAllDocuments = async () => {
   try {
     loading.value = true;
-    // TODO move files from temp to other folder
-    // await apiService.uploadFile(userStore.businessWorkspaceId, formData);
+    for (const file of pendingFilesFromChild.value) {
+      await apiService.moveFile(file.id, file.name, userStore.businessWorkspaceId);
+      console.log(`File ${file.name}: ${file.id} moved`);
+    }
     resetFileInputTrigger.value = true;
     successMessage('Files submitted successfully.');
     uploadedFiles.value = [];
@@ -340,7 +352,7 @@ const downloadFile = async (file) => {
 const deleteFile = async (file) => {
   try {
     loading.value = true;
-    await apiService.deleteFile(userStore.businessWorkspaceId, file.name);
+    await apiService.deleteFile(file.fileId);
     successMessage('File deleted successfully.');
   } catch (error) {
     consoleError('Error deleting file: ', error);
@@ -368,8 +380,16 @@ const handleApprove = () => {
   updateDecision('Approved');
 };
 
+const handleCancel = () => {
+  updateDecision('Canceled');
+};
+
+const handleArchive = () => {
+  updateDecision('Archived');
+};
+
 const handleReject = () => {
-  updateDecision('Rejected');
+  updateDecision('Denied');
 };
 
 const updateDecision = async (decision) => {
