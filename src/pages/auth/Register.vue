@@ -83,7 +83,6 @@ const registerAttempt = async () => {
       values: [
         {name: 'userPassword', values: [formState.userPassword.value]},
         {name: 'givenName', values: [formState.givenName.value]},
-        {name: 'initials', values: [formState.initials.value]},
         {name: 'mail', values: [formState.mail.value]},
         {name: 'oTTelephoneNumber', values: ['']},
         {name: 'sn', values: [formState.sn.value]},
