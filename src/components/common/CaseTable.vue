@@ -99,6 +99,8 @@ const statusColorMap = {
   Denied: 'red',
   Cancel: 'warning',
   Archive: 'blue',
+  "Case Created": 'blue',
+  "PENDING DOCUMENTATION": 'warning',
 };
 
 const addNewCase = async (caseNumber) => {
