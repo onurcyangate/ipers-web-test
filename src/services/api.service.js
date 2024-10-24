@@ -110,6 +110,10 @@ class ApiService extends BaseService {
   moveFile(fileId, fileName, businessWorkspaceId) {
     return this._axiosInstance.put(`/iowa/file-move?fileId=${fileId}&fileName=${fileName}&businessWorkspaceId=${businessWorkspaceId}`)
   }
+
+  newDocumentArrives(businessWorkspaceObjectId) {
+    return this._axiosInstance.post(`/iowa/new-document-arrives?businessWorkspaceObjectId=${businessWorkspaceObjectId}`)
+  }
 }
 
 export default new ApiService()

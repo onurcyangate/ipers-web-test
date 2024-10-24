@@ -74,7 +74,6 @@ export const useAuthStore = defineStore('user', {
       this.isLoggedIn = false;
       this.username = null;
       sessionStorage.removeItem('user');
-      sessionStorage.removeItem('isExternal');
       sessionStorage.removeItem('isLoggedIn');
       sessionStorage.removeItem('username');
       sessionStorage.removeItem('businessWorkspaceId');

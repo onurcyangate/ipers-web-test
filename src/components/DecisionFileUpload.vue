@@ -115,7 +115,6 @@
         variant="flat"
         class="no-uppercase"
         @click="submitDecision"
-        :loading="props.loading"
         :disabled="!decisionType || !decisionLetter"
       >
         Set Decision
