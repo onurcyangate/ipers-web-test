@@ -20,12 +20,14 @@ const fetchUserCases = async () => {
   try {
     loading.value = true;
     let response;
+    let userCases;
     if (authStore.isUniversityUser()) {
       response = await apiService.fetchUniversityCases();
+      userCases = response.data.caseList.Properties
     } else {
       response = await apiService.fetchUserCases(authStore.username);
+      userCases = response.data.externalUserCaseList._embedded.filterListExternalUID.map(item => item.Properties);
     }
-    const userCases = response.data.externalUserCaseList._embedded.filterListExternalUID.map(item => item.Properties);
     return userCases;
   } catch (err) {
     consoleError(err);
