@@ -90,13 +90,13 @@ const registerAttempt = async () => {
       ],
       name: formState.mail.value.slice(0, formState.mail.value.indexOf('@')),
     };
-    const response = await apiService.register(payload, formState.unique_code.value);
+    await apiService.register(payload, formState.unique_code.value);
     successMessage('Account has been successfully created. Verify your email to login.')
     await router.replace('/verify-email');
   } catch (err) {
-    if (err.response.data.status === '409 CONFLICT') {
+    if (err.response?.data?.status === '409 CONFLICT') {
       errorMessage('Email already exists.');
-    } else if (err.response.data.responseFromUniqueCodeControl.status === '404 NOT_FOUND') {
+    } else if (err.response?.data?.responseFromUniqueCodeControl.status === '404 NOT_FOUND') {
       errorMessage('Case Number is invalid.');
     } else {
       errorMessage('Registration failed.');
