@@ -270,9 +270,9 @@ const submitAllDocuments = async () => {
   try {
     loading.value = true;
     for (const file of pendingFilesFromChild.value) {
-      const {fileId, fileName} = file
-      await apiService.moveFile(fileId, fileName, userStore.businessWorkspaceId);
-      console.log(`File ${fileId}: ${fileName} moved`);
+      const {fileId, name} = file
+      await apiService.moveFile(fileId, name, userStore.businessWorkspaceId);
+      console.log(`File ${fileId}: ${name} moved`);
     }
     resetFileInputTrigger.value = true;
     successMessage('Files submitted successfully.');
