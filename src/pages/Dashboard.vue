@@ -23,7 +23,7 @@ const fetchUserCases = async () => {
     let userCases;
     if (authStore.isUniversityUser()) {
       response = await apiService.fetchUniversityCases();
-      userCases = response.data.caseList.Properties
+      userCases = response.data.caseList.map(item => item.Properties)
     } else {
       response = await apiService.fetchUserCases(authStore.username);
       userCases = response.data.externalUserCaseList._embedded.filterListExternalUID.map(item => item.Properties);
