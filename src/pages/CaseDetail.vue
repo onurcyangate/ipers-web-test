@@ -186,8 +186,8 @@ const caseDetailFields = {
   memberFirstName: 'Member Name',
   memberLastName: 'Member Last Name',
   caseStatus: 'Case Status',
+  lifeCycleStatus: 'Lifecycle Status',
   appointmentDate: 'Appointment Date',
-  caseUniversityDecision: 'University Decision',
 };
 
 const fetchCaseDetails = async () => {
