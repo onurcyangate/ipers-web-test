@@ -184,8 +184,6 @@ const caseDetailFields = {
   caseIdStr: 'Case #',
   memberFirstName: 'Member Name',
   memberLastName: 'Member Last Name',
-  caseStatus: 'Case Status',
-  lifeCycleStatus: 'Lifecycle Status',
   appointmentDate: 'Appointment Date',
 };
 
