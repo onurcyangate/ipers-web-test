@@ -19,7 +19,12 @@ const cases = ref([]);
 const fetchUserCases = async () => {
   try {
     loading.value = true;
-    const response = await apiService.fetchUserCases(authStore.username);
+    let response;
+    if (authStore.isUniversityUser()) {
+      response = await apiService.fetchUniversityCases();
+    } else {
+      response = await apiService.fetchUserCases(authStore.username);
+    }
     const userCases = response.data.externalUserCaseList._embedded.filterListExternalUID.map(item => item.Properties);
     return userCases;
   } catch (err) {
