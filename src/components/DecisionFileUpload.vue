@@ -21,7 +21,7 @@
               <v-col cols="12" md="5" lg="4">
                 <v-select
                   v-model="decisionType"
-                  :items="['Approve', 'Deny', 'Archive', 'Cancel']"
+                  :items="['Approved', 'Denied', 'Approved with Condition']"
                   label="Decision"
                   :color="COLORS.PRIMARY"
                   variant="outlined"
@@ -47,20 +47,6 @@
                 />
               </v-col>
             </v-row>
-
-            <v-row class="mt-2">
-              <v-col cols="12">
-                <v-textarea
-                  v-model="decisionLetter"
-                  label="Decision Comment (O)"
-                  rows="4"
-                  :color="COLORS.PRIMARY"
-                  variant="outlined"
-                  auto-grow
-                />
-              </v-col>
-            </v-row>
-
           </v-col>
 
           <v-col v-if="false" cols="6">
@@ -115,7 +101,7 @@
         variant="flat"
         class="no-uppercase"
         @click="submitDecision"
-        :disabled="!decisionType || !decisionLetter"
+        :disabled="!decisionType || !localUploadedFiles"
       >
         Set Decision
       </v-btn>

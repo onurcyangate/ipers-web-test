@@ -55,8 +55,8 @@
           >
             <v-card-title class="blue-header-1">MEDICAL DOCUMENTS</v-card-title>
             <v-card-text style="overflow-y: auto">
-              <div v-if="false">
-                <div v-for="(file, index) in downloads" :key="index">
+              <div v-if="medicalFiles.length > 0">
+                <div v-for="(file, index) in medicalFiles" :key="index">
                   <v-list-item @click="downloadFile(file)">
                     <v-list-item-content>
                       <v-list-item-title>{{ file.filename }}</v-list-item-title>
@@ -82,9 +82,8 @@
             @deleteFile="deleteFile"
             @update:decisionData="handleDecisionData"
             @approveDecision="handleApprove"
-            @cancelDecision="handleCancel"
-            @archiveDecision="handleArchive"
             @rejectDecision="handleReject"
+            @approveWithConditionDecision="handleApproveWithCondition"
             :loading="loading"
             :fileUploadProgress="fileUploadProgress"
             :resetTrigger="resetFileInputTrigger"
@@ -388,12 +387,8 @@ const handleApprove = () => {
   updateDecision('Approved');
 };
 
-const handleCancel = () => {
-  updateDecision('Canceled');
-};
-
-const handleArchive = () => {
-  updateDecision('Archived');
+const handleApproveWithCondition = () => {
+  updateDecision('Approved with Condition');
 };
 
 const handleReject = () => {
