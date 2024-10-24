@@ -274,6 +274,8 @@ const submitAllDocuments = async () => {
       await apiService.moveFile(fileId, name, userStore.businessWorkspaceId);
       console.log(`File ${fileId}: ${name} moved`);
     }
+    // TODO trigger call
+    await apiService.moveFile(fileId, name, userStore.businessWorkspaceId);
     resetFileInputTrigger.value = true;
     successMessage('Files submitted successfully.');
     uploadedFiles.value = [];
@@ -355,6 +357,7 @@ const deleteFile = async (file) => {
   try {
     loading.value = true;
     await apiService.deleteFile(file.fileId);
+    refreshPendingFilesTrigger.value = true;
     successMessage('File deleted successfully.');
   } catch (error) {
     consoleError('Error deleting file: ', error);
