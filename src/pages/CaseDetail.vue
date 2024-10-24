@@ -108,7 +108,7 @@
           </v-row>
 
           <v-row>
-            <v-col :cols="12" :md="downloads.length ? 8 : 12">
+            <v-col :cols="12" :md="downloads.length ? 8 : 12" v-if="userStore.businessWorkspaceId">
               <SecureMessages/>
             </v-col>
 
