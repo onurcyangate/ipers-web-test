@@ -31,8 +31,11 @@ export const useAuthStore = defineStore('user', {
       sessionStorage.setItem('isExternal', isExternal);
     },
     setBusinessWorkspaceId(id) {
-      this.businessWorkspaceId = id;
-      sessionStorage.setItem('businessWorkspaceId', id);
+      return new Promise((resolve) => {
+        this.businessWorkspaceId = id;
+        sessionStorage.setItem('businessWorkspaceId', id);
+        resolve();
+      });
     },
     setTargetEntityId(id) {
       this.targetEntityId = id;
@@ -43,8 +46,11 @@ export const useAuthStore = defineStore('user', {
       sessionStorage.setItem('containerVersionId', id);
     },
     setBusinessWorkspaceObjectId(id) {
-      this.businessWorkspaceObjectId = id;
-      sessionStorage.setItem('businessWorkspaceObjectId', id);
+      return new Promise((resolve) => {
+        this.businessWorkspaceObjectId = id;
+        sessionStorage.setItem('businessWorkspaceObjectId', id);
+        resolve();
+      });
     },
     isUniversityUser() {
       // University vs External
