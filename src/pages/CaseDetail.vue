@@ -38,7 +38,6 @@
             <v-card-actions v-if="isUniversityUser === true">
               <v-btn
                 :color="COLORS.PRIMARY"
-                variant="outlined"
                 class="mr-auto no-uppercase"
                 @click="openAppointmentDialog"
               >

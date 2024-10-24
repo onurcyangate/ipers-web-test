@@ -35,7 +35,7 @@
                 <v-file-input
                   v-if="decisionType"
                   v-model="localUploadedFiles"
-                  label="Upload File (Optional)"
+                  label="Upload Decision Document"
                   :color="COLORS.PRIMARY"
                   multiple
                   chips
@@ -52,7 +52,7 @@
               <v-col cols="12">
                 <v-textarea
                   v-model="decisionLetter"
-                  label="Decision Letter"
+                  label="Decision Comment (O)"
                   rows="4"
                   :color="COLORS.PRIMARY"
                   variant="outlined"
