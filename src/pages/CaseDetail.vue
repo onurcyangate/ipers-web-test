@@ -74,6 +74,7 @@
           </v-card>
 
           <DecisionFileUpload
+            v-if="isUniversityUser === true"
             :uploadedFiles="uploadedFiles"
             :previouslyUploadedFiles="previouslyUploadedFiles"
             @update:uploadedFiles="handleFileUpload"
