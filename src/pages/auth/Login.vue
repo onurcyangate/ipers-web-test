@@ -24,7 +24,7 @@ const loginAttempt = async () => {
     const modifiedUsername = formState.username.slice(0, formState.username.indexOf('@'));
     const payload = {
       username: modifiedUsername,
-      password: formState.password
+      password: formState.password.trim()
     };
     const response = await apiService.login(payload);
     const responseMessage = response.data.message;
