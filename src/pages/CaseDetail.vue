@@ -39,7 +39,7 @@
               <v-btn
                 :color="COLORS.PRIMARY"
                 variant="flat"
-                class="mr-auto no-uppercase"
+                class="ml-auto no-uppercase"
                 @click="openAppointmentDialog"
               >
                 {{ caseDetails.appointmentDate ? 'Update Appointment Date' : 'Set Appointment Date' }}
@@ -104,6 +104,7 @@
                 :fileUploadProgress="fileUploadProgress"
                 :resetTrigger="resetFileInputTrigger"
                 :refreshPendingFilesTrigger="refreshPendingFilesTrigger"
+                @update:refreshPendingFilesTrigger="updateRefreshPendingFilesTrigger"
               />
             </v-col>
           </v-row>
@@ -225,6 +226,10 @@ const handleDecisionData = (data) => {
 const handlePendingFilesUpdate = (files) => {
   pendingFilesFromChild.value = files;
   console.log('Pending files from child:', pendingFilesFromChild.value);
+};
+
+const updateRefreshPendingFilesTrigger = (newVal) => {
+  refreshPendingFilesTrigger.value = newVal;
 };
 
 const handleFileUpload = async (files) => {

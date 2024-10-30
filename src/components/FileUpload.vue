@@ -110,6 +110,7 @@ const emit = defineEmits([
   'update:resetTrigger',
   'deleteFile',
   'updatePendingFiles',
+  'update:refreshPendingFilesTrigger'
 ]);
 
 const handleFileChange = async () => {
@@ -129,6 +130,7 @@ const fetchPendingFiles = async () => {
       fileId: file.fileId,
     }));
     emit('updatePendingFiles', pendingFiles.value);
+    props.refreshPendingFilesTrigger = false;
   } catch (error) {
     consoleError('Error fetching pending files:', error);
     errorMessage('Failed to fetch pending files.');
@@ -168,8 +170,10 @@ watch(
 watch(
   () => props.refreshPendingFilesTrigger,
   async (newVal) => {
+    // TODO, can set this to true always?
     if (newVal) {
       await fetchPendingFiles();
+      emit('update:refreshPendingFilesTrigger', false)
     }
   }
 );
