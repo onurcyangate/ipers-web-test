@@ -181,15 +181,15 @@ const medicalFiles = ref([]);
 const isSetApptDateModalOpen = ref(false);
 const loading = ref(false);
 const fileUploadLoading = ref(false);
-const medicalFilesLoading = ref(true);
+const medicalFilesLoading = ref(false);
 const pendingFilesFromChild = ref([]);
 
-const caseDetailFields = {
+const caseDetailFields = computed(() => ({
   caseIdStr: 'Case #',
   memberFirstName: 'Member Name',
   memberLastName: 'Member Last Name',
-  appointmentDate: 'Appointment Date',
-};
+  ...(isUniversityUser.value && {appointmentDate: 'Appointment Date'}),
+}));
 
 const fetchCaseDetails = async () => {
   try {
