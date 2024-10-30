@@ -55,20 +55,23 @@
           >
             <v-card-title class="blue-header-1">MEDICAL DOCUMENTS</v-card-title>
             <v-card-text style="overflow-y: auto">
-              <div v-if="medicalFiles.length > 0">
-                <div v-for="(file, index) in medicalFiles" :key="index">
-                  <v-list-item @click="downloadFile(file)">
-                    <v-list-item-content>
-                      <v-list-item-title>{{ file.filename }}</v-list-item-title>
-                    </v-list-item-content>
-                    <v-list-item-icon>
-                      <v-icon>mdi-download</v-icon>
-                    </v-list-item-icon>
-                  </v-list-item>
+              <span v-if="medicalFilesLoading" class="loader"></span>
+              <div v-else>
+                <div v-if="medicalFiles.length > 0">
+                  <div v-for="(file, index) in medicalFiles" :key="index">
+                    <v-list-item @click="downloadFile(file)">
+                      <v-list-item-content>
+                        <v-list-item-title>{{ file.filename }}</v-list-item-title>
+                      </v-list-item-content>
+                      <v-list-item-icon>
+                        <v-icon>mdi-download</v-icon>
+                      </v-list-item-icon>
+                    </v-list-item>
+                  </div>
                 </div>
-              </div>
-              <div v-else class="font-weight-light pt-2 ml-1">
-                No medical documents are currently available.
+                <div v-else class="font-weight-light pt-2 ml-1">
+                  No medical documents are currently available.
+                </div>
               </div>
             </v-card-text>
           </v-card>
@@ -178,6 +181,7 @@ const medicalFiles = ref([]);
 const isSetApptDateModalOpen = ref(false);
 const loading = ref(false);
 const fileUploadLoading = ref(false);
+const medicalFilesLoading = ref(true);
 const pendingFilesFromChild = ref([]);
 
 const caseDetailFields = {
@@ -271,8 +275,6 @@ const submitAllDocuments = async () => {
       await apiService.moveFile(fileId, name, userStore.businessWorkspaceId);
       console.log(`File ${fileId}: ${name} moved`);
     }
-    // TODO trigger call
-    // await apiService.newDocumentArrives(userStore.businessWorkspaceObjectId);
     resetFileInputTrigger.value = true;
     successMessage('Files submitted successfully.');
     uploadedFiles.value = [];
@@ -322,6 +324,7 @@ const fetchFiles = async () => {
 
 const fetchMedicalFiles = async () => {
   try {
+    medicalFilesLoading.value = true;
     const response = await apiService.listMedicalFiles(userStore.businessWorkspaceId);
     medicalFiles.value = response.data.fileList.map(file => ({
       filename: file.fileName,
@@ -330,6 +333,8 @@ const fetchMedicalFiles = async () => {
   } catch (error) {
     consoleError('Error fetching medical files:', error);
     errorMessage('Failed to fetch files');
+  } finally {
+    medicalFilesLoading.value = true;
   }
 };
 
