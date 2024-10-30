@@ -61,7 +61,7 @@
                   <div v-for="(file, index) in medicalFiles" :key="index">
                     <v-list-item @click="downloadFile(file)">
                       <v-list-item-content>
-                        <v-list-item-title>{{ file.filename }}</v-list-item-title>
+                        <v-list-item-title style="white-space: normal">{{ file.filename }}</v-list-item-title>
                       </v-list-item-content>
                       <v-list-item-icon>
                         <v-icon>mdi-download</v-icon>
@@ -126,7 +126,7 @@
                   <div v-for="(file, index) in downloads" :key="index">
                     <v-list-item @click="downloadFile(file)">
                       <v-list-item-content>
-                        <v-list-item-title>{{ file.filename }}</v-list-item-title>
+                        <v-list-item-title style="white-space: normal">{{ file.filename }}</v-list-item-title>
                       </v-list-item-content>
                       <v-list-item-icon>
                         <v-icon>mdi-download</v-icon>
