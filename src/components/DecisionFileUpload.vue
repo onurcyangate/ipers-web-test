@@ -100,7 +100,7 @@
         :color="COLORS.PRIMARY"
         variant="flat"
         class="no-uppercase"
-        @click="submitDecision"
+        @click="setDecision"
         :disabled="!decisionType || !localUploadedFiles"
       >
         Set Decision
@@ -142,24 +142,12 @@ const pendingFiles = ref([]);
 const uploading = ref(false);
 const decisionType = ref(null);
 const isExpanded = ref(true);
-const decisionLetter = ref('');
 
 const emit = defineEmits([
-  'update:uploadedFiles',
   'submitDocuments',
   'update:resetTrigger',
-  'deleteFile',
-  'update:decisionData',
+  'setDecisionWithFile'
 ]);
-
-const handleFileChange = async () => {
-  if (localUploadedFiles.value.length > 0) {
-    uploading.value = true;
-    await emit('update:uploadedFiles', localUploadedFiles.value);
-    uploading.value = false;
-    fetchPendingFiles();
-  }
-};
 
 const fetchPendingFiles = async () => {
   try {
@@ -174,43 +162,34 @@ const fetchPendingFiles = async () => {
   }
 };
 
-const removePreviouslyUploadedFile = (index) => {
-  const fileToRemove = pendingFiles.value[index];
-  emit('deleteFile', fileToRemove);
-};
-
 const submitDecision = () => {
-  if (decisionType.value === 'Approve') {
-    emit('approveDecision');
-  } else if (decisionType.value === 'Deny') {
-    emit('rejectDecision');
-  } else if (decisionType.value === 'Cancel') {
-    emit('cancelDecision');
-  } else if (decisionType.value === 'Archive') {
-    emit('archiveDecision');
-  }
+  emit('setDecision', decisionType.value);
+  // if (decisionType.value === 'Approve') {
+  //   emit('approveDecision');
+  // } else if (decisionType.value === 'Deny') {
+  //   emit('rejectDecision');
+  // } else if (decisionType.value === 'Cancel') {
+  //   emit('cancelDecision');
+  // } else if (decisionType.value === 'Archive') {
+  //   emit('archiveDecision');
+  // }
 };
 
-const submitDocuments = () => {
-  emit('submitDocuments', {
+const setDecision = () => {
+  uploading.value = true;
+  emit('setDecisionWithFile', {
     files: localUploadedFiles.value,
-    decisionType: decisionType.value,
-    decisionLetter: decisionLetter.value,
+    decisionType: decisionType.value
   });
+  uploading.value = false;
 };
 
 const resetFileInput = () => {
   localUploadedFiles.value = [];
 };
 
-watch([decisionType], () => {
-  emit('update:decisionData', {
-    decisionType: decisionType.value,
-  });
-});
-
 onMounted(async () => {
-  await fetchPendingFiles();
+  // await fetchPendingFiles();
 });
 
 watch(
@@ -227,7 +206,7 @@ watch(
   () => props.refreshPendingFilesTrigger,
   async (newVal) => {
     if (newVal) {
-      await fetchPendingFiles();
+      // await fetchPendingFiles();
     }
   }
 );

@@ -78,19 +78,14 @@
 
           <DecisionFileUpload
             v-if="isUniversityUser === true"
-            :uploadedFiles="uploadedFiles"
-            :previouslyUploadedFiles="previouslyUploadedFiles"
-            @update:uploadedFiles="handleFileUpload"
-            @submitDocuments="submitAllDocuments"
-            @deleteFile="deleteFile"
+            @setDecisionWithFile="handleDecisionFileUpload"
             @update:decisionData="handleDecisionData"
             @approveDecision="handleApprove"
             @rejectDecision="handleReject"
             @approveWithConditionDecision="handleApproveWithCondition"
-            :loading="loading"
-            :fileUploadProgress="fileUploadProgress"
-            :resetTrigger="resetFileInputTrigger"
-            :refreshPendingFilesTrigger="refreshPendingFilesTrigger"
+            :loading="decisionFileUploadLoading"
+            :resetTrigger="resetDecisionFileInputTrigger"
+            :refreshPendingFilesTrigger="refreshPendingDecisionFilesTrigger"
           />
         </v-col>
         <v-col cols="12" md="7">
@@ -171,16 +166,20 @@ const route = useRoute();
 const caseId = ref(route.params.case_id);
 const fileUploadProgress = ref([]);
 const resetFileInputTrigger = ref(false);
+const resetDecisionFileInputTrigger = ref(false);
 const refreshPendingFilesTrigger = ref(false);
+const refreshPendingDecisionFilesTrigger = ref(false);
 const previouslyUploadedFiles = ref([{name: "sampletestt.pdf"}]);
 
 const caseDetails = ref({});
 const uploadedFiles = ref([]);
+const uploadedDecisionFiles = ref([]);
 const downloads = ref([]);
 const medicalFiles = ref([]);
 const isSetApptDateModalOpen = ref(false);
 const loading = ref(false);
 const fileUploadLoading = ref(false);
+const decisionFileUploadLoading = ref(false);
 const medicalFilesLoading = ref(false);
 const pendingFilesFromChild = ref([]);
 
@@ -264,6 +263,36 @@ const handleFileUpload = async (files) => {
     resetFileInputTrigger.value = true;
     uploadedFiles.value = [];
     fileUploadProgress.value = [];
+  }
+};
+
+const handleDecisionFileUpload = async (args) => {
+  try {
+    decisionFileUploadLoading.value = true;
+    await updateDecision(args.decisionType)
+    for (const [index, file] of args.files.entries()) {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const response = await apiService.uploadFile(userStore.businessWorkspaceId, formData);
+        if (response.data.status !== '200 OK') {
+          throw new Error(response.data.message || 'Upload failed');
+        }
+        successMessage('Files uploaded successfully.');
+        refreshPendingDecisionFilesTrigger.value = true;
+      } finally {
+        resetDecisionFileInputTrigger.value = true;
+        uploadedDecisionFiles.value = [];
+      }
+    }
+  } catch (error) {
+    consoleError('Error uploading documents: ', error);
+    errorMessage('Failed to upload documents');
+  } finally {
+    decisionFileUploadLoading.value = false;
+    resetDecisionFileInputTrigger.value = true;
+    uploadedDecisionFiles.value = [];
   }
 };
 
@@ -384,18 +413,6 @@ const updateAppointmentDate = async (date) => {
     isSetApptDateModalOpen.value = false;
     loading.value = false;
   }
-};
-
-const handleApprove = () => {
-  updateDecision('Approved');
-};
-
-const handleApproveWithCondition = () => {
-  updateDecision('Approved with Condition');
-};
-
-const handleReject = () => {
-  updateDecision('Denied');
 };
 
 const updateDecision = async (decision) => {
