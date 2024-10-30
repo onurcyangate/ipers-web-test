@@ -5,7 +5,7 @@ export const useAuthStore = defineStore('user', {
     user: JSON.parse(sessionStorage.getItem('user')) || {username: null},
     isLoggedIn: JSON.parse(sessionStorage.getItem('isLoggedIn')) || false,
     username: sessionStorage.getItem('username') || null,
-    isExternal: sessionStorage.getItem('isExternal') || null,
+    isExternal: JSON.parse(sessionStorage.getItem('isExternal')) || false,
     caseIdentityId: sessionStorage.getItem('caseIdentityId') || null,
     businessWorkspaceId: sessionStorage.getItem('businessWorkspaceId') || null,
     businessWorkspaceObjectId: sessionStorage.getItem('businessWorkspaceObjectId') || null,
@@ -33,8 +33,8 @@ export const useAuthStore = defineStore('user', {
       sessionStorage.setItem('username', username);
     },
     setUserRole(isExternal) {
-      this.isExternal = isExternal;
-      sessionStorage.setItem('isExternal', isExternal);
+      this.isExternal = Boolean(isExternal);
+      sessionStorage.setItem('isExternal', JSON.stringify(this.isExternal));
     },
     setCaseIdentityId(id) {
       return new Promise((resolve) => {
