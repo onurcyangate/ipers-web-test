@@ -32,9 +32,6 @@
             <td class="text-left">{{ item.caseIdStr }}</td>
             <td class="text-left">{{ item.memberFirstName }}</td>
             <td class="text-left">{{ item.memberLastName }}</td>
-            <td class="text-left">
-              <v-chip :color="statusColorMap[item.LlifeCycleStatusDomained]" dark>{{ item.LlifeCycleStatusDomained }}</v-chip>
-            </td>
           </tr>
         </template>
         <template v-slot:no-data>
@@ -124,7 +121,6 @@ const filteredCases = computed(() => {
     (c) =>
       c?.memberFirstName?.toLowerCase().includes(search.value.toLowerCase()) ||
       c?.memberLastName?.toLowerCase().includes(search.value.toLowerCase()) ||
-      c?.LlifeCycleStatusDomained?.toLowerCase().includes(search.value.toLowerCase())
   );
 });
 </script>
