@@ -32,6 +32,7 @@
               <v-row class="pl-2">
                 <v-col cols="12" v-for="(label, key) in caseDetailFields" :key="key">
                   <strong style="color: #003058">{{ label }}:</strong> {{ caseDetails[key] }}
+                  {{ key === 'appointmentDate' ? caseDetails.formattedUniversityAppointmentDate || '' : caseDetails[key] }}
                 </v-col>
               </v-row>
             </v-card-text>
@@ -188,6 +189,7 @@ const decisionFileUploadLoading = ref(false);
 const medicalFilesLoading = ref(false);
 const pendingFilesFromChild = ref([]);
 const universityDecision = ref(null);
+import { format } from 'date-fns';
 
 const caseDetailFields = computed(() => ({
   caseIdStr: 'Case #',
@@ -200,8 +202,11 @@ const fetchCaseDetails = async () => {
   try {
     loading.value = true;
     const response = await apiService.fetchCaseDetails(caseId.value);
-
     const caseData = response.data._embedded.filterListExternalUID[0];
+    const properties = caseData.Properties;
+    if (properties.universityAppointmentDate) {
+      properties.formattedUniversityAppointmentDate = format(new Date(properties.universityAppointmentDate), "MMM d, yyyy, hh:mm a");
+    }
     caseDetails.value = caseData.Properties;
     universityDecision.value = caseData.Properties.caseUniversityDecision || null;
 
