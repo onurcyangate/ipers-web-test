@@ -120,7 +120,7 @@ const filteredCases = computed(() => {
   return props.cases.filter(
     (c) =>
       c?.memberFirstName?.toLowerCase().includes(search.value.toLowerCase()) ||
-      c?.memberLastName?.toLowerCase().includes(search.value.toLowerCase()) ||
+      c?.memberLastName?.toLowerCase().includes(search.value.toLowerCase())
   );
 });
 </script>
