@@ -61,11 +61,11 @@
                   <div v-for="(file, index) in medicalFiles" :key="index">
                     <v-list-item @click="downloadFile(file)">
                       <v-row align="center" no-gutters>
-                        <v-col cols="auto">
-                          <v-icon>mdi-download</v-icon>
+                        <v-col cols="auto mr-1">
+                          <v-icon size="large">mdi-download</v-icon>
                         </v-col>
                         <v-col>
-                          <span style="white-space: normal">{{ file.filename }}</span>
+                          <span style="white-space: normal; font-size: 1rem">{{ file.filename }}</span>
                         </v-col>
                       </v-row>
                     </v-list-item>
