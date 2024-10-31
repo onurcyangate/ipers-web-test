@@ -152,6 +152,7 @@ const submitDocuments = () => {
     files: localUploadedFiles.value,
     uploadForDecision: uploadForDecision.value,
   });
+  props.refreshPendingFilesTrigger = false;
 };
 
 const resetFileInput = () => {
