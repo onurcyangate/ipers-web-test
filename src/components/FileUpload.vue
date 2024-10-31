@@ -35,7 +35,7 @@
                          variant="text"
                          small
                          color="red"
-                         class="mr-0"
+                         class="mr-0 pb-0"
                          style="margin-left: 8px;">
                     <v-icon>mdi-close</v-icon>
                   </v-btn>
