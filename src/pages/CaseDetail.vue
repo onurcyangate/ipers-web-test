@@ -149,7 +149,7 @@
 </template>
 
 <script setup>
-import {ref, onMounted, computed} from 'vue';
+import {ref, onMounted, computed, nextTick} from 'vue';
 import Dialog from "@/components/common/Dialog.vue";
 import SecureMessages from "@/components/SecureMessages.vue";
 import FileUpload from "@/components/FileUpload.vue";
@@ -206,6 +206,8 @@ const fetchCaseDetails = async () => {
     await userStore.setBusinessWorkspaceId(caseData.BusinessWorkspace.BusinessWorkspaceId);
     await userStore.setBusinessWorkspaceObjectId(caseData.BusinessWorkspace.BusinessWorkspaceObjectId);
     await userStore.setCaseIdentityId(caseData.Identity.Id);
+    await nextTick();
+
     await fetchFiles();
     await fetchMedicalFiles();
 
