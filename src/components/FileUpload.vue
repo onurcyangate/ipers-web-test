@@ -138,6 +138,7 @@ const fetchPendingFiles = async () => {
     emit('updatePendingFiles', pendingFiles.value);
     props.refreshPendingFilesTrigger = false;
     props.resetTrigger = false;
+    resetFileInput();
   } catch (error) {
     consoleError('Error fetching pending files:', error);
     errorMessage('Failed to fetch pending files.');
@@ -158,6 +159,7 @@ const submitDocuments = () => {
   });
   props.refreshPendingFilesTrigger = false;
   props.resetTrigger = false;
+  resetFileInput();
 };
 
 const resetFileInput = () => {
