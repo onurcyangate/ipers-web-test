@@ -118,6 +118,7 @@
             <v-col v-if="downloads.length" cols="12" md="4">
               <v-card class="light-border elevation-10 pa-2" style="max-height: 250px">
                 <v-card-title class="blue-header-1">DOWNLOADS</v-card-title>
+                <span v-if="downloadableFilesLoading" class="loader"></span>
                 <v-card-text style="overflow-y: auto">
                   <div v-for="(file, index) in downloads" :key="index">
                     <v-list-item @click="downloadFile(file)">
@@ -180,6 +181,7 @@ const medicalFiles = ref([]);
 const isSetApptDateModalOpen = ref(false);
 const loading = ref(false);
 const fileUploadLoading = ref(false);
+const downloadableFilesLoading = ref(false);
 const decisionFileUploadLoading = ref(false);
 const medicalFilesLoading = ref(false);
 const pendingFilesFromChild = ref([]);
@@ -345,6 +347,7 @@ const simulateFileUploadProgress = (index, controller) => {
 
 const fetchFiles = async () => {
   try {
+    downloadableFilesLoading.value = true;
     const response = await apiService.listDownloadableFiles(userStore.businessWorkspaceId);
     downloads.value = response.data.fileList.map(file => ({
       filename: file.fileName,
@@ -353,6 +356,8 @@ const fetchFiles = async () => {
   } catch (error) {
     consoleError('Error fetching files:', error);
     errorMessage('Failed to fetch files');
+  } finally {
+    downloadableFilesLoading.value = false;
   }
 };
 
@@ -368,7 +373,7 @@ const fetchMedicalFiles = async () => {
     consoleError('Error fetching medical files:', error);
     errorMessage('Failed to fetch files');
   } finally {
-    medicalFilesLoading.value = true;
+    medicalFilesLoading.value = false;
   }
 };
 

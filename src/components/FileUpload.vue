@@ -21,6 +21,7 @@
         <v-col cols="6">
           <strong>Pending Documents:</strong>
           <v-card-text class="pl-0" style="margin-left: -20px; overflow-y: auto; max-height: 150px">
+            <span v-if="pendingFilesLoading" class="loader"></span>
             <div v-if="pendingFiles.length > 0">
               <v-list-item
                 v-for="(file, index) in pendingFiles"
@@ -103,6 +104,7 @@ const localUploadedFiles = ref([]);
 const pendingFiles = ref([]);
 const uploading = ref(false);
 const uploadForDecision = ref(false);
+const pendingFilesLoading = ref(false);
 
 const emit = defineEmits([
   'update:uploadedFiles',
@@ -124,6 +126,7 @@ const handleFileChange = async () => {
 
 const fetchPendingFiles = async () => {
   try {
+    pendingFilesLoading.value = true;
     const response = await apiService.listTempFiles(userStore.businessWorkspaceId);
     pendingFiles.value = response.data.fileList.map(file => ({
       name: file.fileName,
@@ -134,6 +137,8 @@ const fetchPendingFiles = async () => {
   } catch (error) {
     consoleError('Error fetching pending files:', error);
     errorMessage('Failed to fetch pending files.');
+  } finally {
+    pendingFilesLoading.value = false;
   }
 };
 

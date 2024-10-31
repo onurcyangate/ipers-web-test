@@ -2,6 +2,7 @@
   <v-card class="light-border elevation-10 pa-2">
     <v-card-title class="blue-header-1 d-flex justify-space-between">
       <span>SECURE MESSAGES</span>
+      <span v-if="messagesLoading" class="loader"></span>
       <v-spacer></v-spacer>
       <v-btn
         icon
@@ -276,6 +277,7 @@ const props = defineProps({
 });
 
 const loading = ref(false);
+const messagesLoading = ref(false);
 const discussionsList = ref([]);
 const replyTo = ref(null);
 const newTopic = ref('');
@@ -386,7 +388,6 @@ const sendReply = async () => {
 };
 
 const deleteMessage = async (targetItemId) => {
-
   const payload = [{
     deleteTarget: true,
     itemId: userStore.businessWorkspaceObjectId,
@@ -411,7 +412,7 @@ const deleteMessage = async (targetItemId) => {
 
 const fetchDiscussions = async () => {
   try {
-    loading.value = true;
+    messagesLoading.value = true;
     const response = await apiService.fetchCaseMessages(userStore.businessWorkspaceObjectId);
     const responseBody = response.data
     parseDiscussions(responseBody);
@@ -422,7 +423,7 @@ const fetchDiscussions = async () => {
     consoleError(err);
     errorMessage('Failed to fetch discussions.');
   } finally {
-    loading.value = false;
+    messagesLoading.value = false;
   }
 };
 
