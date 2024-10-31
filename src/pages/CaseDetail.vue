@@ -296,13 +296,13 @@ const handleDecisionFileUpload = async (args) => {
 
 const submitAllDocuments = async () => {
   try {
-    loading.value = true;
+    fileUploadLoading.value = true;
     for (const file of pendingFilesFromChild.value) {
       const {fileId, name} = file
       await apiService.moveFile(fileId, name, userStore.businessWorkspaceId);
       console.log(`File ${fileId}: ${name} moved`);
     }
-    await apiService.newDocumentArrives(caseId)
+    await apiService.newDocumentArrives(caseDetails.value.caseIdStr)
     resetFileInputTrigger.value = true;
     successMessage('Files submitted successfully.');
     uploadedFiles.value = [];
@@ -311,7 +311,7 @@ const submitAllDocuments = async () => {
     consoleError('Error submitting documents: ', error);
     errorMessage('Failed to submit documents.');
   } finally {
-    loading.value = false;
+    fileUploadLoading.value = false;
   }
 };
 

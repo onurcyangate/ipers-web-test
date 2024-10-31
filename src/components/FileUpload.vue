@@ -15,7 +15,7 @@
             style="max-height: 100px"
             :disabled="uploading"
             accept=".doc,.docx,.pdf"
-            :rules="[fileSizeRule]"
+            persistent-hint="Maximum file size limit is 10MB."
           />
         </v-col>
 
@@ -81,7 +81,6 @@ import apiService from "@/services/api.service";
 import {consoleError} from "@/utils/logger";
 import {errorMessage} from "@/utils/message";
 import {useAuthStore} from "@/store/authStore";
-import {fileSizeRule} from "@/utils/common";
 
 const props = defineProps({
   loading: {
@@ -102,6 +101,7 @@ const props = defineProps({
   },
 });
 
+const loading = ref(false)
 const userStore = useAuthStore();
 const localUploadedFiles = ref([]);
 const pendingFiles = ref([]);
