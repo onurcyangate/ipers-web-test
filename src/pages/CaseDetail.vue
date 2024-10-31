@@ -43,7 +43,7 @@
                 class="ml-auto no-uppercase"
                 @click="openAppointmentDialog"
               >
-                {{ caseDetails.appointmentDate ? 'Update Appointment Date' : 'Set Appointment Date' }}
+                {{ caseDetails.formattedUniversityAppointmentDate ? 'Update Appointment Date' : 'Set Appointment Date' }}
               </v-btn>
             </v-card-actions>
           </v-card>
