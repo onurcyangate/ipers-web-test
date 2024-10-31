@@ -224,7 +224,8 @@ watch(
   (newDecision) => {
     if (newDecision) {
       decisionType.value = newDecision;
-      isDecisionSetPreviously.value = true;
+      // TODO uncomment after demo
+      // isDecisionSetPreviously.value = true;
     }
   },
   {immediate: true}
