@@ -61,7 +61,7 @@
                   <div v-for="(file, index) in medicalFiles" :key="index">
                     <v-list-item @click="downloadFile(file)">
                       <v-row align="center" no-gutters>
-                        <v-col cols="auto mr-1">
+                        <v-col cols="auto mr-2">
                           <v-icon size="large">mdi-download</v-icon>
                         </v-col>
                         <v-col>

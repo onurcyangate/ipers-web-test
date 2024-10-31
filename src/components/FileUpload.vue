@@ -35,7 +35,8 @@
                          variant="text"
                          small
                          color="red"
-                         style="margin-left: 8px">
+                         class="mr-0"
+                         style="margin-left: 8px;">
                     <v-icon>mdi-close</v-icon>
                   </v-btn>
                   {{ file.name }}
