@@ -283,6 +283,7 @@ const handleDecisionFileUpload = async (args) => {
         uploadedDecisionFiles.value = [];
       }
     }
+    await fetchCaseDetails()
   } catch (error) {
     consoleError('Error uploading documents: ', error);
     errorMessage('Failed to upload documents');
