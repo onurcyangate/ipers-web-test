@@ -186,6 +186,7 @@ const setDecision = () => {
 
 const resetFileInput = () => {
   localUploadedFiles.value = [];
+  props.resetTrigger = false;
 };
 
 onMounted(async () => {

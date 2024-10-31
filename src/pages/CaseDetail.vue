@@ -79,10 +79,6 @@
           <DecisionFileUpload
             v-if="isUniversityUser === true"
             @setDecisionWithFile="handleDecisionFileUpload"
-            @update:decisionData="handleDecisionData"
-            @approveDecision="handleApprove"
-            @rejectDecision="handleReject"
-            @approveWithConditionDecision="handleApproveWithCondition"
             :loading="decisionFileUploadLoading"
             :resetTrigger="resetDecisionFileInputTrigger"
             :refreshPendingFilesTrigger="refreshPendingDecisionFilesTrigger"
@@ -99,7 +95,6 @@
                 @updatePendingFiles="handlePendingFilesUpdate"
                 @submitDocuments="submitAllDocuments"
                 @deleteFile="deleteFile"
-                @update:decisionData="handleDecisionData"
                 :loading="fileUploadLoading"
                 :fileUploadProgress="fileUploadProgress"
                 :resetTrigger="resetFileInputTrigger"
@@ -213,16 +208,6 @@ const fetchCaseDetails = async () => {
   } finally {
     loading.value = false;
   }
-};
-
-const decisionData = ref({
-  uploadForDecision: false,
-  decisionType: null,
-});
-
-const handleDecisionData = (data) => {
-  decisionData.value = data;
-  console.log('Decision data:', data);
 };
 
 const handlePendingFilesUpdate = (files) => {
