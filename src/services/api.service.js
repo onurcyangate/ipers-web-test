@@ -111,8 +111,8 @@ class ApiService extends BaseService {
     return this._axiosInstance.put(`/iowa/file-move?fileId=${fileId}&fileName=${fileName}&businessWorkspaceId=${businessWorkspaceId}`)
   }
 
-  newDocumentArrives(businessWorkspaceObjectId) {
-    return this._axiosInstance.post(`/iowa/new-document-arrives?businessWorkspaceObjectId=${businessWorkspaceObjectId}`)
+  newDocumentArrives(caseId) {
+    return this._axiosInstance.post(`/iowa/new-document-arrives?caseId=${caseId}`)
   }
 }
 

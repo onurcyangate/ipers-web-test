@@ -298,6 +298,7 @@ const submitAllDocuments = async () => {
       await apiService.moveFile(fileId, name, userStore.businessWorkspaceId);
       console.log(`File ${fileId}: ${name} moved`);
     }
+    await apiService.newDocumentArrives(caseId)
     resetFileInputTrigger.value = true;
     successMessage('Files submitted successfully.');
     uploadedFiles.value = [];
