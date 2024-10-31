@@ -413,11 +413,15 @@ const deleteFile = async (file) => {
 const updateAppointmentDate = async (date) => {
   try {
     loading.value = true;
-    await apiService.updateCase(userStore.caseIdentityId, {Properties: {universityAppointmentDate: date}});
-    successMessage('Appointment date is set successfully.')
+
+    // Format date to YYYY-MM-DDTHH:mm:ssZ
+    const formattedDate = new Date(date).toISOString().replace(/\.\d{3}Z$/, "Z");
+
+    await apiService.updateCase(userStore.caseIdentityId, {Properties: {universityAppointmentDate: formattedDate}});
+    successMessage('Appointment date is set successfully.');
   } catch (error) {
-    consoleError('Error updating appointment date: ', error);
-    errorMessage('Failed to update appointment date');
+    consoleError('Error updating appointment date:', error);
+    errorMessage('Failed to update appointment date.');
   } finally {
     isSetApptDateModalOpen.value = false;
     loading.value = false;
