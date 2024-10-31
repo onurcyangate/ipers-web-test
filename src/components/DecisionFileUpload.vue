@@ -26,7 +26,7 @@
                   :color="COLORS.PRIMARY"
                   variant="outlined"
                   density="compact"
-                  :disabled="isDecisionSetPreviously || uploading"
+                  :disabled="uploading"
                   class="mt-2"
                 />
 
@@ -42,7 +42,7 @@
                   variant="outlined"
                   @change="handleFileChange"
                   style="max-height: 100px"
-                  :disabled="isDecisionSetPreviously || uploading"
+                  :disabled="uploading"
                   accept=".doc,.docx,.pdf"
                   :rules="[fileSizeRule]"
                 />
@@ -102,7 +102,7 @@
         variant="flat"
         class="no-uppercase"
         @click="setDecision"
-        :disabled="isDecisionSetPreviously || !decisionType || localUploadedFiles.length === 0"
+        :disabled="!decisionType || localUploadedFiles.length === 0"
       >
         Set Decision
       </v-btn>
