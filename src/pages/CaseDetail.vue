@@ -424,6 +424,7 @@ const updateAppointmentDate = async (date) => {
 
     await apiService.updateCase(userStore.caseIdentityId, {Properties: {universityAppointmentDate: formattedDate}});
     successMessage('Appointment date is set successfully.');
+    await fetchCaseDetails();
   } catch (error) {
     consoleError('Error updating appointment date:', error);
     errorMessage('Failed to update appointment date.');
@@ -438,6 +439,7 @@ const updateDecision = async (decision) => {
     loading.value = true;
     await apiService.updateCase(userStore.caseIdentityId, {Properties: {caseUniversityDecision: decision}});
     successMessage(`Decision set to ${decision} successfully.`);
+    await fetchCaseDetails();
   } catch (error) {
     consoleError('Error setting decision: ', error);
     errorMessage('Failed to set decision');
