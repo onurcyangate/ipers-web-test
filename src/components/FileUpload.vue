@@ -29,7 +29,7 @@
                 class="py-0"
                 style="padding-left: 0; height: 1rem"
               >
-                <v-list-item-title>
+                <v-list-item-title class="text-wrap">
                   <v-btn icon
                          @click="removePreviouslyUploadedFile(index)"
                          variant="text"

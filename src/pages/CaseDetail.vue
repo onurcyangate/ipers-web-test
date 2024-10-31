@@ -65,7 +65,7 @@
                           <v-icon size="large">mdi-download</v-icon>
                         </v-col>
                         <v-col>
-                          <span style="white-space: normal; font-size: 1rem">{{ file.filename }}</span>
+                          <span class="text-wrap" style="font-size: 1rem">{{ file.filename }}</span>
                         </v-col>
                       </v-row>
                     </v-list-item>
@@ -120,7 +120,7 @@
                   <div v-for="(file, index) in downloads" :key="index">
                     <v-list-item @click="downloadFile(file)">
                       <v-list-item-content>
-                        <v-list-item-title style="white-space: normal">{{ file.filename }}</v-list-item-title>
+                        <v-list-item-title class="text-wrap">{{ file.filename }}</v-list-item-title>
                       </v-list-item-content>
                       <v-list-item-icon>
                         <v-icon>mdi-download</v-icon>
