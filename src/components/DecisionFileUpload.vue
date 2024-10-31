@@ -101,7 +101,7 @@
         variant="flat"
         class="no-uppercase"
         @click="setDecision"
-        :disabled="isDecisionSetPreviously || !decisionType || !localUploadedFiles"
+        :disabled="isDecisionSetPreviously || !decisionType || localUploadedFiles.length === 0"
       >
         Set Decision
       </v-btn>
