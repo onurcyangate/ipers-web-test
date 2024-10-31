@@ -90,7 +90,6 @@ const headers = [
   {title: 'Case ID', value: 'caseIdStr'},
   {title: 'Member First Name', value: 'memberFirstName'},
   {title: 'Member Last Name', value: 'memberLastName'},
-  {title: 'Lifecycle Status', value: 'LlifeCycleStatusDomained'},
 ];
 
 const statusColorMap = {
