@@ -44,6 +44,7 @@
                   style="max-height: 100px"
                   :disabled="isDecisionSetPreviously || uploading"
                   accept=".doc,.docx,.pdf"
+                  :rules="[fileSizeRule]"
                 />
               </v-col>
             </v-row>
@@ -116,6 +117,7 @@ import apiService from "@/services/api.service";
 import {consoleError} from "@/utils/logger";
 import {errorMessage} from "@/utils/message";
 import {useAuthStore} from "@/store/authStore";
+import {fileSizeRule} from "@/utils/common";
 
 const props = defineProps({
   loading: {

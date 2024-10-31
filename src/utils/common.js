@@ -52,3 +52,17 @@ export const onBeforeRouteEnter = async (to) => {
 export const refreshPage = () => {
   window.location.reload();
 };
+
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB in bytes
+
+export const fileSizeRule = (files) => {
+  if (!files || files.length === 0) return true;
+
+  for (const file of files) {
+    if (file.size > MAX_FILE_SIZE) {
+      return `Each file must be smaller than 10MB. "${file.name}" exceeds this limit.`;
+    }
+  }
+  return true;
+};
+
