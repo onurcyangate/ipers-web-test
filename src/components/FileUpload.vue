@@ -27,7 +27,7 @@
                 v-for="(file, index) in pendingFiles"
                 :key="index"
                 class="py-0"
-                style="padding-left: 0"
+                style="padding-left: 0; height: 1rem"
               >
                 <v-list-item-title>
                   <v-btn icon
@@ -35,7 +35,7 @@
                          variant="text"
                          small
                          color="red"
-                         class="mr-0 pb-0"
+                         class="mr-0"
                          style="margin-left: 8px;">
                     <v-icon>mdi-close</v-icon>
                   </v-btn>
