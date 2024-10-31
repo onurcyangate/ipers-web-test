@@ -53,7 +53,7 @@ export const refreshPage = () => {
   window.location.reload();
 };
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB in bytes
+const MAX_FILE_SIZE = 1 * 1024 * 1024; // 10MB in bytes
 
 export const fileSizeRule = (files) => {
   if (!files || files.length === 0) return true;
