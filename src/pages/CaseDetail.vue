@@ -103,13 +103,14 @@
                 :resetTrigger="resetFileInputTrigger"
                 :refreshPendingFilesTrigger="refreshPendingFilesTrigger"
                 @update:refreshPendingFilesTrigger="updateRefreshPendingFilesTrigger"
+                :ready="isReady"
               />
             </v-col>
           </v-row>
 
           <v-row>
             <v-col :cols="12" :md="downloads.length ? 8 : 12" v-if="userStore.businessWorkspaceId">
-              <SecureMessages/>
+              <SecureMessages :ready="isReady"/>
             </v-col>
 
             <!-- Downloads Section -->
@@ -172,6 +173,7 @@ const resetDecisionFileInputTrigger = ref(false);
 const refreshPendingFilesTrigger = ref(false);
 const refreshPendingDecisionFilesTrigger = ref(false);
 const previouslyUploadedFiles = ref([{name: "sampletestt.pdf"}]);
+const isReady = ref(false); // Control when Message and File upload components can start loading
 
 const caseDetails = ref({});
 const uploadedFiles = ref([]);
@@ -208,6 +210,7 @@ const fetchCaseDetails = async () => {
     await userStore.setCaseIdentityId(caseData.Identity.Id);
     await nextTick();
 
+    isReady.value = true;
     await fetchFiles();
     await fetchMedicalFiles();
 

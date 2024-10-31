@@ -260,9 +260,8 @@
   </v-card>
 </template>
 
-
 <script setup>
-import {ref, computed, onMounted} from 'vue';
+import {ref, computed, watch} from 'vue';
 import {COLORS} from '@/styles/colors';
 import apiService from '@/services/api.service';
 import {errorMessage, successMessage} from '@/utils/message';
@@ -274,6 +273,10 @@ const props = defineProps({
   caseId: {
     type: Number,
     default: 196609,
+  },
+  ready: {
+    type: Boolean,
+    default: false,
   },
 });
 
@@ -497,9 +500,14 @@ const fallbackDiscussions = {
   ]
 };
 
-onMounted(() => {
-  fetchDiscussions();
-});
+watch(
+  () => props.ready,
+  async (isReady) => {
+    if (isReady) {
+      await fetchDiscussions();
+    }
+  }
+);
 </script>
 
 <style scoped>

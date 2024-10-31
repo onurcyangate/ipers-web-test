@@ -83,6 +83,10 @@ import {errorMessage} from "@/utils/message";
 import {useAuthStore} from "@/store/authStore";
 
 const props = defineProps({
+  ready: {
+    type: Boolean,
+    default: false,
+  },
   loading: {
     type: Boolean,
     default: false,
@@ -166,10 +170,6 @@ const resetFileInput = () => {
   localUploadedFiles.value = [];
 };
 
-onMounted(async () => {
-  await fetchPendingFiles()
-})
-
 watch(
   () => props.resetTrigger,
   (newVal) => {
@@ -187,6 +187,15 @@ watch(
     if (newVal) {
       await fetchPendingFiles();
       emit('update:refreshPendingFilesTrigger', false)
+    }
+  }
+);
+
+watch(
+  () => props.ready,
+  async (isReady) => {
+    if (isReady) {
+      await fetchPendingFiles();
     }
   }
 );
