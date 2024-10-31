@@ -84,6 +84,7 @@
             :loading="decisionFileUploadLoading"
             :resetTrigger="resetDecisionFileInputTrigger"
             :refreshPendingFilesTrigger="refreshPendingDecisionFilesTrigger"
+            :existingDecision="universityDecision"
           />
         </v-col>
         <v-col cols="12" md="7">
@@ -182,6 +183,7 @@ const downloadableFilesLoading = ref(false);
 const decisionFileUploadLoading = ref(false);
 const medicalFilesLoading = ref(false);
 const pendingFilesFromChild = ref([]);
+const universityDecision = ref(null);
 
 const caseDetailFields = computed(() => ({
   caseIdStr: 'Case #',
@@ -197,6 +199,7 @@ const fetchCaseDetails = async () => {
 
     const caseData = response.data._embedded.filterListExternalUID[0];
     caseDetails.value = caseData.Properties;
+    universityDecision.value = caseData.Properties.caseUniversityDecision || null;
 
     await userStore.setBusinessWorkspaceId(caseData.BusinessWorkspace.BusinessWorkspaceId);
     await userStore.setBusinessWorkspaceObjectId(caseData.BusinessWorkspace.BusinessWorkspaceObjectId);

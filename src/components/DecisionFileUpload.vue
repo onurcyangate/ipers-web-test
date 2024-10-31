@@ -26,7 +26,7 @@
                   :color="COLORS.PRIMARY"
                   variant="outlined"
                   density="compact"
-                  :disabled="uploading"
+                  :disabled="isDecisionSetPreviously || uploading"
                   class="mt-2"
                 />
 
@@ -42,7 +42,7 @@
                   variant="outlined"
                   @change="handleFileChange"
                   style="max-height: 100px"
-                  :disabled="uploading"
+                  :disabled="isDecisionSetPreviously || uploading"
                   accept=".doc,.docx,.pdf"
                 />
               </v-col>
@@ -101,7 +101,7 @@
         variant="flat"
         class="no-uppercase"
         @click="setDecision"
-        :disabled="!decisionType || !localUploadedFiles"
+        :disabled="isDecisionSetPreviously || !decisionType || !localUploadedFiles"
       >
         Set Decision
       </v-btn>
@@ -134,6 +134,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  existingDecision: {
+    type: String,
+    default: null,
+  },
 });
 
 const userStore = useAuthStore();
@@ -142,6 +146,7 @@ const pendingFiles = ref([]);
 const uploading = ref(false);
 const decisionType = ref(null);
 const isExpanded = ref(true);
+const isDecisionSetPreviously = ref(false);
 
 const emit = defineEmits([
   'submitDocuments',
@@ -211,6 +216,18 @@ watch(
     }
   }
 );
+
+watch(
+  () => props.existingDecision,
+  (newDecision) => {
+    if (newDecision) {
+      decisionType.value = newDecision;
+      isDecisionSetPreviously.value = true;
+    }
+  },
+  {immediate: true}
+);
+
 </script>
 
 <style scoped>
