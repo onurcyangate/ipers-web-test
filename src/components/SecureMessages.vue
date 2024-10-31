@@ -5,6 +5,7 @@
       <span v-if="messagesLoading" class="loader"></span>
       <v-spacer></v-spacer>
       <v-btn
+        v-if="!messagesLoading"
         icon
         variant="text"
         @click="isExpanded = !isExpanded"
