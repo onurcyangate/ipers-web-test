@@ -158,7 +158,7 @@ import FileUpload from "@/components/FileUpload.vue";
 import {COLORS} from "@/styles/colors";
 import {useAuthStore} from "@/store/authStore";
 import {consoleError} from "@/utils/logger";
-import {errorMessage, infoMessage, successMessage} from "@/utils/message";
+import {errorMessage, infoMessage, successMessage, warningMessage} from "@/utils/message";
 import apiService from "@/services/api.service";
 import {useRoute} from 'vue-router';
 import router from "@/router";
@@ -384,14 +384,27 @@ const fetchMedicalFiles = async () => {
 const downloadFile = async (file) => {
   try {
     const fileUrl = import.meta.env.VITE_API_BASE_URL + 'iowa/file-download?fileId=' + file.fileId;
-    const link = document.createElement('a');
-    link.href = fileUrl;
-    link.setAttribute('download', file.filename);
-    console.log("fileUrl", fileUrl)
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    infoMessage('File downloaded successfully.')
+    const isPDF = file.mimeType === 'application/pdf' || file.filename.toLowerCase().endsWith('.pdf');
+
+    if (isPDF) {
+      const newWindow = window.open();
+      if (newWindow) {
+        newWindow.location.href = fileUrl;
+      } else {
+        // If popup was blocked
+        window.location.href = fileUrl;
+        warningMessage('Please allow popups to open PDF in new tab');
+      }
+    } else {
+      const link = document.createElement('a');
+      link.href = fileUrl;
+      link.setAttribute('download', file.filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    infoMessage('File downloaded successfully.');
   } catch (error) {
     consoleError('Error downloading file: ', error);
     errorMessage('Failed to download file');
