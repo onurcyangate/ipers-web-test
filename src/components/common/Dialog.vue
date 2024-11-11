@@ -61,7 +61,7 @@ const inputValue = ref('');
 watch(() => props.modelValue, (newVal) => {
   dialog.value = newVal;
   if (newVal) {
-    inputValue.value = ''; // Reset input value when the dialog is opened
+    inputValue.value = '';
   }
 });
 
