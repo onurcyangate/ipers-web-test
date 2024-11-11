@@ -26,10 +26,8 @@
                   :color="COLORS.PRIMARY"
                   variant="outlined"
                   density="compact"
-                  :disabled="uploading"
                   class="mt-2"
                 />
-
               </v-col>
               <v-col cols="12" md="7" lg="8">
                 <v-file-input
@@ -42,7 +40,6 @@
                   variant="outlined"
                   @change="handleFileChange"
                   style="max-height: 100px"
-                  :disabled="uploading"
                   accept=".doc,.docx,.pdf"
                   :rules="[fileSizeRule]"
                 />
@@ -61,12 +58,14 @@
                   style="padding-left: 0"
                 >
                   <v-list-item-title>
-                    <v-btn icon
-                           @click="removePreviouslyUploadedFile(index)"
-                           variant="text"
-                           small
-                           color="red"
-                           style="margin-left: 8px">
+                    <v-btn
+                      icon
+                      @click="removePreviouslyUploadedFile(index)"
+                      variant="text"
+                      small
+                      color="red"
+                      style="margin-left: 8px"
+                    >
                       <v-icon>mdi-close</v-icon>
                     </v-btn>
                     {{ file.name }}
@@ -104,7 +103,7 @@
         @click="setDecision"
         :disabled="!decisionType || localUploadedFiles.length === 0"
       >
-        Set Decision
+        {{ existingDecision ? 'Update Decision' : 'Set Decision' }}
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -148,7 +147,6 @@ const pendingFiles = ref([]);
 const uploading = ref(false);
 const decisionType = ref(null);
 const isExpanded = ref(true);
-const isDecisionSetPreviously = ref(false);
 
 const emit = defineEmits([
   'submitDocuments',
@@ -169,19 +167,6 @@ const fetchPendingFiles = async () => {
   }
 };
 
-const submitDecision = () => {
-  emit('setDecision', decisionType.value);
-  // if (decisionType.value === 'Approve') {
-  //   emit('approveDecision');
-  // } else if (decisionType.value === 'Deny') {
-  //   emit('rejectDecision');
-  // } else if (decisionType.value === 'Cancel') {
-  //   emit('cancelDecision');
-  // } else if (decisionType.value === 'Archive') {
-  //   emit('archiveDecision');
-  // }
-};
-
 const setDecision = () => {
   uploading.value = true;
   emit('setDecisionWithFile', {
@@ -195,10 +180,6 @@ const resetFileInput = () => {
   localUploadedFiles.value = [];
   props.resetTrigger = false;
 };
-
-onMounted(async () => {
-  // await fetchPendingFiles();
-});
 
 watch(
   () => props.resetTrigger,
@@ -224,14 +205,8 @@ watch(
   (newDecision) => {
     if (newDecision) {
       decisionType.value = newDecision;
-      // TODO uncomment after demo
-      // isDecisionSetPreviously.value = true;
     }
   },
   {immediate: true}
 );
-
 </script>
-
-<style scoped>
-</style>

@@ -85,7 +85,7 @@
             :loading="decisionFileUploadLoading"
             :resetTrigger="resetDecisionFileInputTrigger"
             :refreshPendingFilesTrigger="refreshPendingDecisionFilesTrigger"
-            :existingDecision="null"
+            :existingDecision="universityDecision"
           />
         </v-col>
         <v-col cols="12" md="7">
