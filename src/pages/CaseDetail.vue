@@ -32,7 +32,9 @@
               <v-row class="pl-2">
                 <v-col cols="12" v-for="(label, key) in caseDetailFields" :key="key">
                   <strong style="color: #003058">{{ label }}:</strong> {{ caseDetails[key] }}
-                  {{ key === 'appointmentDate' ? caseDetails.formattedUniversityAppointmentDate || '' : caseDetails[key] }}
+                  {{
+                    key === 'appointmentDate' ? caseDetails.formattedUniversityAppointmentDate || '' : caseDetails[key]
+                  }}
                 </v-col>
               </v-row>
             </v-card-text>
@@ -43,7 +45,9 @@
                 class="ml-auto no-uppercase"
                 @click="openAppointmentDialog"
               >
-                {{ caseDetails.formattedUniversityAppointmentDate ? 'Update Appointment Date' : 'Set Appointment Date' }}
+                {{
+                  caseDetails.formattedUniversityAppointmentDate ? 'Update Appointment Date' : 'Set Appointment Date'
+                }}
               </v-btn>
             </v-card-actions>
           </v-card>
@@ -189,7 +193,7 @@ const decisionFileUploadLoading = ref(false);
 const medicalFilesLoading = ref(false);
 const pendingFilesFromChild = ref([]);
 const universityDecision = ref(null);
-import { format } from 'date-fns';
+import {format} from 'date-fns';
 
 const caseDetailFields = computed(() => ({
   caseIdStr: 'Case #',
@@ -432,10 +436,23 @@ const updateAppointmentDate = async (date) => {
   try {
     loading.value = true;
 
-    // Format date to YYYY-MM-DDTHH:mm:ssZ
-    const formattedDate = new Date(date).toISOString().replace(/\.\d{3}Z$/, "Z");
+    const now = new Date();
+    const selectedDate = new Date(date);
+    selectedDate.setHours(
+      now.getHours(),
+      now.getMinutes(),
+      now.getSeconds()
+    );
 
-    await apiService.updateCase(userStore.caseIdentityId, {Properties: {universityAppointmentDate: formattedDate}});
+    // Format date with current time to YYYY-MM-DDTHH:mm:ssZ
+    const formattedDateTime = selectedDate.toISOString().replace(/\.\d{3}Z$/, "Z");
+
+    await apiService.updateCase(userStore.caseIdentityId, {
+      Properties: {
+        universityAppointmentDate: formattedDateTime
+      }
+    });
+
     successMessage('Appointment date is set successfully.');
     await fetchCaseDetails();
   } catch (error) {
