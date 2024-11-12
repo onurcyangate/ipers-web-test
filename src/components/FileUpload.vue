@@ -27,21 +27,23 @@
               <v-list-item
                 v-for="(file, index) in pendingFiles"
                 :key="index"
-                class="py-0"
-                style="padding-left: 0; height: 1rem"
+                class="py-1 file-list-item"
+                density="compact"
               >
-                <v-list-item-title class="text-wrap">
-                  <v-btn icon
-                         @click="removePreviouslyUploadedFile(index)"
-                         variant="text"
-                         small
-                         color="red"
-                         class="mr-0"
-                         style="margin-left: 8px;">
-                    <v-icon>mdi-close</v-icon>
+                <div class="d-flex align-start" style="width: 100%">
+                  <v-btn
+                    icon
+                    @click="removePreviouslyUploadedFile(index)"
+                    variant="text"
+                    size="small"
+                    color="red"
+                    class="mt-1 flex-shrink-0"
+                    style="margin-right: 8px;"
+                  >
+                    <v-icon size="small">mdi-close</v-icon>
                   </v-btn>
-                  {{ file.name }}
-                </v-list-item-title>
+                  <span class="file-name">{{ file.name }}</span>
+                </div>
               </v-list-item>
             </div>
             <div v-else class="font-weight-light pt-2 ml-5">
@@ -203,4 +205,14 @@ watch(
 </script>
 
 <style scoped>
+.file-list-item {
+  padding-left: 16px !important;
+  min-height: 32px;
+}
+
+.file-name {
+  word-break: break-word;
+  line-height: 1.2;
+  padding-top: 4px;
+}
 </style>
