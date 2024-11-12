@@ -15,7 +15,7 @@
         <v-icon>mdi-reply</v-icon>
       </v-btn>
       <v-btn
-        v-if="reply.HasChildren === 'false'"
+        v-if="!hasReplies(reply.Id)"
         icon
         variant="text"
         small

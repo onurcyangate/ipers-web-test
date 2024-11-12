@@ -45,7 +45,7 @@
                     <v-icon>mdi-reply</v-icon>
                   </v-btn>
                   <v-btn
-                    v-if="message.HasChildren === 'false'"
+                    v-if="!hasReplies(message.Id)"
                     icon
                     variant="text"
                     small
@@ -168,7 +168,7 @@
 </template>
 
 <script setup>
-import {ref, computed, watch} from 'vue';
+import {ref, computed, watch, onMounted} from 'vue';
 import {COLORS} from '@/styles/colors';
 import apiService from '@/services/api.service';
 import {errorMessage, successMessage} from '@/utils/message';
@@ -202,6 +202,7 @@ const isExpanded = ref(true);
 const topLevelMessages = computed(() =>
   discussionsList.value.filter((d) => !d.ParentId)
 );
+
 const hasReplies = (id) => {
   if (!id) return false;
   return discussionsList.value.some((d) => d.ParentId === id);
