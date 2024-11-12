@@ -21,7 +21,7 @@
 
         <v-col cols="6">
           <strong>Pending Documents:</strong>
-          <v-card-text class="pl-0" style="margin-left: -20px; overflow-y: auto; max-height: 150px">
+          <v-card-text class="pl-0 pt-1" style="margin-left: -20px; overflow-y: auto; max-height: 150px">
             <span v-if="pendingFilesLoading" class="loader"></span>
             <div v-if="pendingFiles.length > 0">
               <v-list-item
