@@ -73,7 +73,7 @@
                     :get-replies="getReplies"
                     :has-replies="hasReplies"
                     :format-date="formatDate"
-                    depth="0"
+                    :depth="0"
                     @reply="initReply"
                     @delete="deleteMessage"
                   />
