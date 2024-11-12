@@ -77,7 +77,7 @@
                     @reply="initReply"
                     @delete="deleteMessage"
                   />
-                  </v-col>
+                </v-col>
               </v-row>
             </v-expansion-panel-text>
           </v-expansion-panel>
@@ -122,7 +122,7 @@
           >
             Send Reply
           </v-btn>
-          <v-btn variant="text" @click="cancelReply">
+          <v-btn class="no-uppercase" variant="outlined" @click="cancelReply">
             Cancel
           </v-btn>
         </v-col>
@@ -132,36 +132,59 @@
     <!-- New Message Input -->
     <v-card-actions v-else-if="isExpanded" class="px-5 pt-5">
       <v-row class="w-100">
-        <v-col cols="12">
-          <v-text-field
-            v-model="newTopic"
-            label="Subject"
-            variant="outlined"
-            density="compact"
-            class="mt-1"
-            style="width: 100%; margin-bottom: -10px"
-          ></v-text-field>
-        </v-col>
-        <v-col cols="12">
-          <v-textarea
-            v-model="newMessage"
-            label="Message"
-            variant="outlined"
-            rows="3"
-            style="width: 100%;"
-          ></v-textarea>
-        </v-col>
-        <v-col cols="12" class="text-right">
+        <!-- Create Message Button -->
+        <v-col v-if="!showNewMessageForm" cols="12" class="text-right">
           <v-btn
             :color="COLORS.PRIMARY"
-            @click="sendMessage"
+            @click="showNewMessageForm = true"
             variant="flat"
             class="no-uppercase"
-            :disabled="!newMessage || !newTopic"
           >
-            Send
+            Create Message
           </v-btn>
         </v-col>
+
+        <!-- New Message Form -->
+        <template v-if="showNewMessageForm">
+          <v-col cols="12">
+            <v-text-field
+              v-model="newTopic"
+              label="Subject"
+              variant="outlined"
+              density="compact"
+              class="mt-1"
+              style="width: 100%; margin-bottom: -10px"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12">
+            <v-textarea
+              v-model="newMessage"
+              label="Message"
+              variant="outlined"
+              rows="3"
+              style="width: 100%;"
+            ></v-textarea>
+          </v-col>
+          <v-col cols="12" class="text-right">
+            <v-btn
+              :color="COLORS.PRIMARY"
+              @click="sendMessage"
+              variant="flat"
+              class="no-uppercase"
+              :disabled="!newMessage || !newTopic"
+            >
+              Send
+            </v-btn>
+            <v-btn
+              class="ml-2 no-uppercase"
+              color="#003058"
+              variant="outlined"
+              @click="cancelNewMessage"
+            >
+              Cancel
+            </v-btn>
+          </v-col>
+        </template>
       </v-row>
     </v-card-actions>
   </v-card>
@@ -198,6 +221,7 @@ const newReplyTopic = ref('');
 const newReplyMessage = ref('');
 const userStore = useAuthStore();
 const isExpanded = ref(true);
+const showNewMessageForm = ref(false);
 
 const topLevelMessages = computed(() =>
   discussionsList.value.filter((d) => !d.ParentId)
@@ -212,10 +236,8 @@ const getReplies = (parentId) => {
   if (!parentId) return [];
   // Add a check to prevent replies appearing in their own thread
   return discussionsList.value.filter((d) => {
-    // Check if this is a valid reply
     if (d.ParentId !== parentId) return false;
 
-    // Check for circular references
     let currentId = parentId;
     let visited = new Set([d.Id]);
 
@@ -256,12 +278,20 @@ const initReply = (message) => {
   newReplyTopic.value = message.Discussion?.TopicName
     ? message.Discussion.TopicName
     : '';
+  showNewMessageForm.value = true;
 };
 
 const cancelReply = () => {
   replyTo.value = null;
   newReplyTopic.value = '';
   newReplyMessage.value = '';
+  showNewMessageForm.value = false;
+};
+
+const cancelNewMessage = () => {
+  showNewMessageForm.value = false;
+  newMessage.value = '';
+  newTopic.value = '';
 };
 
 const saveMessage = async (body, topicName = null, isReply = false, parentId = null) => {
@@ -305,19 +335,19 @@ const saveMessage = async (body, topicName = null, isReply = false, parentId = n
 const sendMessage = async () => {
   if (newMessage.value.trim() !== '' && newTopic.value.trim() !== '') {
     await saveMessage(newMessage.value, newTopic.value);
-
     newMessage.value = '';
     newTopic.value = '';
+    showNewMessageForm.value = false;
   }
 };
 
 const sendReply = async () => {
   if (newReplyMessage.value.trim() !== '') {
     await saveMessage(newReplyMessage.value, null, true, replyTo.value.Id);
-
     newReplyMessage.value = '';
     newReplyTopic.value = '';
     replyTo.value = null;
+    showNewMessageForm.value = false;
   }
 };
 
@@ -343,20 +373,18 @@ const deleteMessage = async (targetItemId) => {
   }
 };
 
-
 const fetchDiscussions = async () => {
   try {
     messagesLoading.value = true;
     const response = await apiService.fetchCaseMessages(userStore.businessWorkspaceObjectId);
-    const responseBody = response.data
+    const responseBody = response.data;
     parseDiscussions(responseBody);
-    userStore.setTargetEntityId(responseBody.TargetEntityId)
-    userStore.setContainerVersionId(responseBody.ContainerVerisonId)
-    // parseDiscussions(fallbackDiscussions);
+    userStore.setTargetEntityId(responseBody.TargetEntityId);
+    userStore.setContainerVersionId(responseBody.ContainerVerisonId);
+    // parseDiscussions(fallbackDiscussions)
   } catch (err) {
     consoleError(err);
     errorMessage('Failed to fetch discussions.');
-
   } finally {
     messagesLoading.value = false;
   }
@@ -441,7 +469,7 @@ const fallbackDiscussions = {
   ]
 };
 
-onMounted(()=> fetchDiscussions())
+onMounted(() => fetchDiscussions());
 
 watch(
   () => props.ready,
@@ -492,6 +520,7 @@ watch(
   background-color: #f0f0f0;
   padding: 3px 10px 10px;
   border-left: 3px solid #ccc;
+  position: relative;
 }
 
 .reply-preview-message {
