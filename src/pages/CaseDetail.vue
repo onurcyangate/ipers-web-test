@@ -31,10 +31,13 @@
             <v-card-text style="overflow-y: auto">
               <v-row class="pl-2">
                 <v-col cols="12" v-for="(label, key) in caseDetailFields" :key="key">
-                  <strong style="color: #003058">{{ label }}:</strong> {{ caseDetails[key] }}
-                  {{
-                    key === 'appointmentDate' ? caseDetails.formattedUniversityAppointmentDate || '' : caseDetails[key]
-                  }}
+                  <strong style="color: #003058">{{ label }}:</strong>
+                  <span v-if="key === 'appointmentDate'">
+            {{ caseDetails.formattedUniversityAppointmentDate || '' }}
+          </span>
+                  <span v-else>
+            {{ caseDetails[key] }}
+          </span>
                 </v-col>
               </v-row>
             </v-card-text>
