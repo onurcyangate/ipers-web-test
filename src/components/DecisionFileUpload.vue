@@ -173,6 +173,7 @@ const setDecision = () => {
     files: localUploadedFiles.value,
     decisionType: decisionType.value
   });
+  resetFileInput()
   uploading.value = false;
 };
 
