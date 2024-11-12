@@ -9,10 +9,19 @@
         variant="outlined"
         density="comfortable"
         hint="Format: YYYY-MM-DD"
-        :rules="rules"
+        :rules="[
+          ...(rules || []),
+          value => !value || value >= minDate || 'Cannot select a date before minimum date'
+        ]"
       ></v-text-field>
     </template>
-    <v-date-picker v-model="selectedDate" hide-header title="" :color="color">
+    <v-date-picker
+      v-model="selectedDate"
+      hide-header
+      title=""
+      :color="color"
+      :min="minDate"
+    >
       <template v-slot:header></template>
     </v-date-picker>
   </v-menu>
@@ -22,12 +31,23 @@
 import { ref, computed, defineEmits, defineProps } from "vue";
 
 const emit = defineEmits(["update:modelValue"]);
-const props = defineProps([
-  "label",
-  "color",
-  "modelValue",
-  "rules",
-]);
+const props = defineProps({
+  label: String,
+  color: String,
+  modelValue: String,
+  rules: {
+    type: Array,
+    default: () => []
+  },
+  minDate: {
+    type: String,
+    default: () => {
+      const today = new Date();
+      return today.toISOString().split('T')[0];
+    }
+  }
+});
+
 let isMenuOpen = ref(false);
 
 const formatDate = (date) => {
@@ -51,10 +71,11 @@ const selectedDate = computed({
     return props.modelValue ? new Date(props.modelValue) : new Date();
   },
   set: (val) => {
-    emit('update:modelValue', formatDate(val));
-    isMenuOpen.value = false;
+    const formattedVal = formatDate(val);
+    if (formattedVal >= props.minDate) {
+      emit('update:modelValue', formattedVal);
+      isMenuOpen.value = false;
+    }
   },
 });
 </script>
-<style>
-</style>
