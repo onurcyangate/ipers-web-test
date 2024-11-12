@@ -30,7 +30,7 @@
                 class="py-1 file-list-item"
                 density="compact"
               >
-                <div class="d-flex align-start" style="width: 100%">
+                <div class="d-flex align-center" style="width: 100%">
                   <v-btn
                     icon
                     @click="removePreviouslyUploadedFile(index)"
