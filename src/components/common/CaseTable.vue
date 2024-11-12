@@ -32,6 +32,16 @@
             <td class="text-left">{{ item.caseIdStr }}</td>
             <td class="text-left">{{ item.memberFirstName }}</td>
             <td class="text-left">{{ item.memberLastName }}</td>
+            <td class="text-left">
+              <v-chip
+                :color="getStatusColor(item.LlifeCycleStatusDomained)"
+                text-color="white"
+                size="small"
+                class="font-weight-medium"
+              >
+                {{ getStatusText(item.LlifeCycleStatusDomained) }}
+              </v-chip>
+            </td>
           </tr>
         </template>
         <template v-slot:no-data>
@@ -87,16 +97,15 @@ const headers = [
   {title: 'Case ID', value: 'caseIdStr'},
   {title: 'Member First Name', value: 'memberFirstName'},
   {title: 'Member Last Name', value: 'memberLastName'},
+  {title: 'Case Status', value: 'LlifeCycleStatusDomained'},
 ];
 
-const statusColorMap = {
-  Approved: 'green',
-  None: 'gray',
-  Denied: 'red',
-  Cancel: 'warning',
-  Archive: 'blue',
-  "Case Created": 'blue',
-  "PENDING DOCUMENTATION": 'warning',
+const getStatusColor = (status) => {
+  return status === 'Created' ? 'info' : 'success';
+};
+
+const getStatusText = (status) => {
+  return status === 'Created' ? 'Created' : 'In Progress';
 };
 
 const addNewCase = async (caseNumber) => {
