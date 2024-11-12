@@ -68,109 +68,16 @@
                   class="reply-message"
                   :style="{ marginLeft: '10px' }"
                 >
-                  <div class="message">
-                    <div class="message-content">
-                      <p>{{ reply.Body }}</p>
-                      <span>{{ formatDate(reply.PostedDateTime) }}</span>
-                    </div>
-                    <!-- Message Actions -->
-                    <div class="message-actions">
-                      <v-btn
-                        icon
-                        small
-                        variant="text"
-                        @click.stop="initReply(reply)"
-                        style="margin-right: -10px"
-                      >
-                        <v-icon>mdi-reply</v-icon>
-                      </v-btn>
-                      <v-btn
-                        v-if="reply.HasChildren === 'false'"
-                        icon
-                        variant="text"
-                        small
-                        color="red"
-                        @click.stop="deleteMessage(reply.TargetItemId)"
-                      >
-                        <v-icon>mdi-trash-can-outline</v-icon>
-                      </v-btn>
-                    </div>
-                  </div>
-
-                  <!-- Nested replies -->
-                  <v-row class="nested-replies" v-if="hasReplies(reply.Id)" :style="{ marginLeft: '10px' }">
-                    <v-col
-                      cols="12"
-                      v-for="(subReply, subIdx) in getReplies(reply.Id)"
-                      :key="subIdx"
-                      class="reply-message"
-                    >
-                      <div class="message">
-                        <div class="message-content">
-                          <p>{{ subReply.Body }}</p>
-                          <span>{{ formatDate(subReply.PostedDateTime) }}</span>
-                        </div>
-                        <div class="message-actions">
-                          <v-btn
-                            icon
-                            small
-                            variant="text"
-                            @click.stop="initReply(subReply)"
-                            style="margin-right: -10px"
-                          >
-                            <v-icon>mdi-reply</v-icon>
-                          </v-btn>
-                          <v-btn
-                            v-if="subReply.HasChildren === 'false'"
-                            icon
-                            variant="text"
-                            small
-                            color="red"
-                            @click.stop="deleteMessage(subReply.TargetItemId)"
-                          >
-                            <v-icon>mdi-trash-can-outline</v-icon>
-                          </v-btn>
-                        </div>
-                      </div>
-                      <v-row class="nested-replies" v-if="hasReplies(subReply.Id)" :style="{ marginLeft: '10px' }">
-                        <v-col
-                          cols="12"
-                          v-for="(subSubReply, subSubIdx) in getReplies(subReply.Id)"
-                          :key="subSubIdx"
-                          class="reply-message"
-                        >
-                          <div class="message">
-                            <div class="message-content">
-                              <p>{{ subSubReply.Body }}</p>
-                              <span>{{ formatDate(subSubReply.PostedDateTime) }}</span>
-                            </div>
-                            <div class="message-actions">
-                              <v-btn
-                                icon
-                                small
-                                variant="text"
-                                @click.stop="initReply(subSubReply)"
-                                style="margin-right: -10px"
-                              >
-                                <v-icon>mdi-reply</v-icon>
-                              </v-btn>
-                              <v-btn
-                                v-if="subSubReply.HasChildren === 'false'"
-                                icon
-                                variant="text"
-                                small
-                                color="red"
-                                @click.stop="deleteMessage(subSubReply.TargetItemId)"
-                              >
-                                <v-icon>mdi-trash-can-outline</v-icon>
-                              </v-btn>
-                            </div>
-                          </div>
-                        </v-col>
-                      </v-row>
-                    </v-col>
-                  </v-row>
-                </v-col>
+                  <MessageReply
+                    :reply="reply"
+                    :get-replies="getReplies"
+                    :has-replies="hasReplies"
+                    :format-date="formatDate"
+                    depth="0"
+                    @reply="initReply"
+                    @delete="deleteMessage"
+                  />
+                  </v-col>
               </v-row>
             </v-expansion-panel-text>
           </v-expansion-panel>
@@ -268,6 +175,7 @@ import {errorMessage, successMessage} from '@/utils/message';
 import {formatDate} from '../utils/common';
 import {consoleError} from '@/utils/logger';
 import {useAuthStore} from "@/store/authStore";
+import MessageReply from "@/components/MessageReply.vue";
 
 const props = defineProps({
   caseId: {
@@ -294,10 +202,31 @@ const isExpanded = ref(true);
 const topLevelMessages = computed(() =>
   discussionsList.value.filter((d) => !d.ParentId)
 );
-const hasReplies = (id) =>
-  discussionsList.value.some((d) => d.ParentId === id);
-const getReplies = (parentId) =>
-  discussionsList.value.filter((d) => d.ParentId === parentId);
+const hasReplies = (id) => {
+  if (!id) return false;
+  return discussionsList.value.some((d) => d.ParentId === id);
+};
+
+const getReplies = (parentId) => {
+  if (!parentId) return [];
+  // Add a check to prevent replies appearing in their own thread
+  return discussionsList.value.filter((d) => {
+    // Check if this is a valid reply
+    if (d.ParentId !== parentId) return false;
+
+    // Check for circular references
+    let currentId = parentId;
+    let visited = new Set([d.Id]);
+
+    while (currentId) {
+      if (visited.has(currentId)) return false;
+      visited.add(currentId);
+      currentId = discussionsList.value.find(m => m.Id === currentId)?.ParentId;
+    }
+
+    return true;
+  });
+};
 
 const parseDiscussions = (response) => {
   if (response && response.MessageList) {
@@ -426,6 +355,7 @@ const fetchDiscussions = async () => {
   } catch (err) {
     consoleError(err);
     errorMessage('Failed to fetch discussions.');
+
   } finally {
     messagesLoading.value = false;
   }
@@ -494,11 +424,23 @@ const fallbackDiscussions = {
       "DiscussionType": 1,
       "TopicName": "null",
       "Body": "test123",
-      "HasChildren": "false",
+      "HasChildren": "true",
       "ParentId": "147465"
+    },
+    {
+      "Id": "147462",
+      "Author": "cyangateuser1@Appworks.Users,:userIdValue:cyangateuser1@Appworks.Users",
+      "PostedDateTime": "2024-09-30T06:29:04Z",
+      "DiscussionType": 1,
+      "TopicName": "null",
+      "Body": "test123 - re",
+      "HasChildren": "false",
+      "ParentId": "147469"
     }
   ]
 };
+
+onMounted(()=> fetchDiscussions())
 
 watch(
   () => props.ready,
