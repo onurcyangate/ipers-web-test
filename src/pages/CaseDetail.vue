@@ -320,6 +320,7 @@ const submitAllDocuments = async () => {
     }
     await apiService.newDocumentArrives(caseDetails.value.caseIdStr)
     resetFileInputTrigger.value = true;
+    refreshPendingFilesTrigger.value = true;
     successMessage('Files submitted successfully.');
     uploadedFiles.value = [];
     fileUploadProgress.value = [];
