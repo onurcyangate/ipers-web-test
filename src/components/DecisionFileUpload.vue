@@ -38,7 +38,6 @@
                   multiple
                   chips
                   variant="outlined"
-                  @change="handleFileChange"
                   style="max-height: 100px"
                   accept=".doc,.docx,.pdf"
                   :rules="[fileSizeRule]"
@@ -48,34 +47,6 @@
           </v-col>
 
           <v-col v-if="false" cols="6">
-            <strong>Pending Documents:</strong>
-            <v-card-text class="pl-0" style="margin-left: -20px; overflow-y: auto; max-height: 150px">
-              <div v-if="pendingFiles.length > 0">
-                <v-list-item
-                  v-for="(file, index) in pendingFiles"
-                  :key="index"
-                  class="py-0"
-                  style="padding-left: 0"
-                >
-                  <v-list-item-title>
-                    <v-btn
-                      icon
-                      @click="removePreviouslyUploadedFile(index)"
-                      variant="text"
-                      small
-                      color="red"
-                      style="margin-left: 8px"
-                    >
-                      <v-icon>mdi-close</v-icon>
-                    </v-btn>
-                    {{ file.name }}
-                  </v-list-item-title>
-                </v-list-item>
-              </div>
-              <div v-else class="font-weight-light pt-2 ml-5">
-                No files have been uploaded.
-              </div>
-            </v-card-text>
           </v-col>
         </v-row>
 
@@ -110,12 +81,8 @@
 </template>
 
 <script setup>
-import {ref, watch, onMounted} from 'vue';
+import {ref, watch} from 'vue';
 import {COLORS} from '@/styles/colors';
-import apiService from "@/services/api.service";
-import {consoleError} from "@/utils/logger";
-import {errorMessage} from "@/utils/message";
-import {useAuthStore} from "@/store/authStore";
 import {fileSizeRule} from "@/utils/common";
 
 const props = defineProps({
@@ -141,9 +108,7 @@ const props = defineProps({
   },
 });
 
-const userStore = useAuthStore();
 const localUploadedFiles = ref([]);
-const pendingFiles = ref([]);
 const uploading = ref(false);
 const decisionType = ref(null);
 const isExpanded = ref(true);
@@ -153,19 +118,6 @@ const emit = defineEmits([
   'update:resetTrigger',
   'setDecisionWithFile'
 ]);
-
-const fetchPendingFiles = async () => {
-  try {
-    const response = await apiService.listTempFiles(userStore.businessWorkspaceId);
-    pendingFiles.value = response.data.fileList.map((file) => ({
-      name: file.fileName,
-      fileId: file.fileId,
-    }));
-  } catch (error) {
-    consoleError('Error fetching pending files:', error);
-    errorMessage('Failed to fetch pending files.');
-  }
-};
 
 const setDecision = () => {
   uploading.value = true;
