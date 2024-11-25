@@ -12,7 +12,7 @@
 </template>
 
 <script setup>
-import {ref} from 'vue';
+import {ref, watchEffect, watch} from 'vue';
 
 const props = defineProps({
   title: String,

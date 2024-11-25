@@ -94,7 +94,7 @@ const resendVerificationEmail = async () => {
     const payload = {
       email: email.value
     }
-    const response = await apiService.resendVerificationEmail(payload)
+    await apiService.resendVerificationEmail(payload)
     await router.replace('/verify-email');
     infoMessage("Account verification email has been sent.")
   } catch (err) {

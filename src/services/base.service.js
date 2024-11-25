@@ -1,7 +1,5 @@
 import axios from 'axios'
 
-import { getAccessToken, refreshToken } from '@/utils/token'
-
 export default class BaseService {
   constructor(baseURL) {
     this._axiosInstance = axios.create({

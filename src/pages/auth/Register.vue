@@ -43,7 +43,6 @@ import apiService from "@/services/api.service";
 import {errorMessage, successMessage} from "@/utils/message";
 import {consoleError} from "@/utils/logger";
 import AppLogo from "@/components/app/AppLogo.vue";
-import {useAuthStore} from '@/store/authStore';
 import router from "@/router";
 import Recaptcha from '../../components/Recaptcha.vue';
 

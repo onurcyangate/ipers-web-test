@@ -42,12 +42,12 @@
 </template>
 
 <script setup>
-import {ref, reactive} from 'vue'
-import {useRoute, useRouter} from 'vue-router'
+import {reactive, ref} from 'vue'
+import {useRouter} from 'vue-router'
 import apiService from "@/services/api.service"
 import {consoleError} from "@/utils/logger"
 import AppLogo from "@/components/app/AppLogo.vue"
-import {successMessage, errorMessage} from "@/utils/message"
+import {errorMessage, successMessage} from "@/utils/message"
 import Recaptcha from '@/components/Recaptcha.vue'
 
 const loading = ref(false)
@@ -55,7 +55,6 @@ const isFormValid = ref(null)
 const showPassword = ref(false)
 const showConfirmPassword = ref(false)
 const captchaVerified = ref(false)
-const route = useRoute()
 const router = useRouter()
 
 const formState = reactive({

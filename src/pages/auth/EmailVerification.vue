@@ -45,7 +45,7 @@
 <script setup>
 import {ref, computed, onMounted} from 'vue'
 import apiService from "@/services/api.service"
-import {errorMessage, infoMessage, successMessage, warningMessage} from "@/utils/message"
+import {errorMessage, infoMessage, warningMessage} from "@/utils/message"
 import {consoleError} from "@/utils/logger"
 import AppLogo from "@/components/app/AppLogo.vue"
 import router from "@/router";
@@ -75,7 +75,7 @@ const resendVerificationEmail = async () => {
     const payload = {
       email: email.value
     }
-    const response = await apiService.resendVerificationEmail(payload)
+    await apiService.resendVerificationEmail(payload)
     await router.replace('/verify-email');
     infoMessage("Account verification email has been sent.")
   } catch (err) {
