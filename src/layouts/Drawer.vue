@@ -2,7 +2,6 @@
     <v-navigation-drawer :color="COLORS.PRIMARY" permanent>
       <v-list dense>
         <div v-for="menuItem in menuItems" :key="menuItem.title">
-          <!-- If it's a group -->
           <v-list-group v-if="menuItem.children" :value="menuItem.title" style="padding-right: 0">
             <template v-slot:activator="{ props }">
               <v-list-item :prepend-icon="menuItem.icon" v-bind="props" class="white--text">
@@ -14,7 +13,6 @@
               <v-list-item-title>{{ child.title }}</v-list-item-title>
             </v-list-item>
           </v-list-group>
-          <!-- If it's not a group -->
           <v-list-item v-else :to="menuItem.to" :prepend-icon="menuItem.icon">
             <v-list-item-title class="white--text">{{ menuItem.title }}</v-list-item-title>
 

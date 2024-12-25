@@ -399,7 +399,6 @@ const downloadFile = async (file) => {
       if (newWindow) {
         newWindow.location.href = fileUrl;
       } else {
-        // If popup was blocked
         window.location.href = fileUrl;
         warningMessage('Please allow popups to open PDF in new tab');
       }

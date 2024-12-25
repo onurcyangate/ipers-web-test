@@ -132,7 +132,6 @@
     <!-- New Message Input -->
     <v-card-actions v-else-if="isExpanded" class="px-5 pt-5">
       <v-row class="w-100">
-        <!-- Create Message Button -->
         <v-col v-if="!showNewMessageForm" cols="12" class="text-right">
           <v-btn
             :color="COLORS.PRIMARY"
