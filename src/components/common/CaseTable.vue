@@ -110,10 +110,8 @@ const getStatusText = (status) => {
 
 const addNewCase = async (caseNumber) => {
   try {
-    const response = await apiService.addCase(caseNumber, authStore.username);
-    const userCases = response.data.externalUserCaseList._embedded.filterListExternalUID.map(item => item.Properties);
+    await apiService.addCase(caseNumber, authStore.username);
     emit('cases-updated');
-    return userCases;
   } catch (err) {
     consoleError(err);
     errorMessage('Failed to add case.');
