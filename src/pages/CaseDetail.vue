@@ -451,7 +451,7 @@ const updateAppointmentDate = async (date) => {
     // Format date with current time to YYYY-MM-DDTHH:mm:ssZ
     const formattedDateTime = selectedDate.toISOString().replace(/\.\d{3}Z$/, "Z");
 
-    await apiService.updateCase(userStore.caseIdentityId, {
+    await apiService.updateCase(caseId.value, {
       Properties: {
         universityAppointmentDate: formattedDateTime
       }
@@ -471,7 +471,7 @@ const updateAppointmentDate = async (date) => {
 const updateDecision = async (decision) => {
   try {
     loading.value = true;
-    await apiService.updateCase(userStore.caseIdentityId, {Properties: {caseUniversityDecision: decision}});
+    await apiService.updateCase(caseId.value, {Properties: {caseUniversityDecision: decision}});
     successMessage(`Decision set to ${decision} successfully.`);
     await fetchCaseDetails();
   } catch (error) {
