@@ -60,7 +60,7 @@ class ApiService extends BaseService {
   }
 
   updateCase(params, payload) {
-    return this._axiosInstance.put(`/iowa/update-case?id=${params}`, payload)
+    return this._axiosInstance.put(`/iowa/update-case?caseId=${params}`, payload)
   }
 
   addCase(caseId, userName) {
