@@ -87,28 +87,28 @@ class ApiService extends BaseService {
     return this._axiosInstance.put("/iowa/delete-message", payload)
   }
 
-  uploadFile(businessWorkspaceIdParam, payload) {
-    return this._axiosInstance.post(`/iowa/file-upload?businessWorkspaceIdParam=${businessWorkspaceIdParam}`, payload)
+  uploadFile(caseId, payload) {
+    return this._axiosInstance.post(`/iowa/file-upload?caseId=${caseId}`, payload)
   }
 
-  listTempFiles(businessWorkspaceId) {
-    return this._axiosInstance.get(`/iowa/list-uploaded-files?businessWorkspaceIdParam=${businessWorkspaceId}`)
+  listTempFiles(caseId) {
+    return this._axiosInstance.get(`/iowa/list-uploaded-files?caseId=${caseId}`)
   }
 
-  listMedicalFiles(businessWorkspaceId) {
-    return this._axiosInstance.get(`/iowa/list-medical-files?businessWorkspaceIdParam=${businessWorkspaceId}`)
+  listMedicalFiles(caseId) {
+    return this._axiosInstance.get(`/iowa/list-medical-files?caseId=${caseId}`)
   }
 
-  listDownloadableFiles(businessWorkspaceId) {
-    return this._axiosInstance.get(`/iowa/list-downloadable-files?businessWorkspaceIdParam=${businessWorkspaceId}`)
+  listDownloadableFiles(caseId) {
+    return this._axiosInstance.get(`/iowa/list-downloadable-files?caseId=${caseId}`)
   }
 
   deleteFile(fileId) {
     return this._axiosInstance.delete(`/iowa/file-delete?fileId=${fileId}`)
   }
 
-  moveFile(fileId, fileName, businessWorkspaceId) {
-    return this._axiosInstance.put(`/iowa/file-move?fileId=${fileId}&fileName=${fileName}&businessWorkspaceId=${businessWorkspaceId}`)
+  moveFile(fileId, fileName, caseId) {
+    return this._axiosInstance.put(`/iowa/file-move?fileId=${fileId}&fileName=${fileName}&caseId=${caseId}`)
   }
 
   newDocumentArrives(caseId) {

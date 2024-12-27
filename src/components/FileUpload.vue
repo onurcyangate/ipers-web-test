@@ -105,6 +105,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  caseId: {
+    type: String,
+    default: null,
+  },
 });
 
 const loading = ref(false)
@@ -136,7 +140,7 @@ const handleFileChange = async () => {
 const fetchPendingFiles = async () => {
   try {
     pendingFilesLoading.value = true;
-    const response = await apiService.listTempFiles(userStore.businessWorkspaceId);
+    const response = await apiService.listTempFiles(props.caseId);
     pendingFiles.value = response.data.fileList.map(file => ({
       name: file.fileName,
       fileId: file.fileId,

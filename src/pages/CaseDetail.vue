@@ -112,12 +112,13 @@
                 :refreshPendingFilesTrigger="refreshPendingFilesTrigger"
                 @update:refreshPendingFilesTrigger="updateRefreshPendingFilesTrigger"
                 :ready="isReady"
+                :caseId="caseDetails.value.caseIdStr"
               />
             </v-col>
           </v-row>
 
           <v-row>
-            <v-col :cols="12" :md="downloads.length ? 8 : 12" v-if="userStore.businessWorkspaceId">
+            <v-col :cols="12" :md="downloads.length ? 8 : 12" v-if="caseDetails.value.caseIdStr">
               <SecureMessages :ready="isReady"/>
             </v-col>
 
@@ -256,7 +257,7 @@ const handleFileUpload = async (files) => {
       simulateFileUploadProgress(index, progressController);
 
       try {
-        const response = await apiService.uploadFile(userStore.businessWorkspaceId, formData);
+        const response = await apiService.uploadFile(caseDetails.value.caseIdStr, formData);
         if (response.data.status !== '200 OK') {
           throw new Error(response.data.message || 'Upload failed');
         }
@@ -291,7 +292,7 @@ const handleDecisionFileUpload = async (args) => {
       formData.append('file', file);
 
       try {
-        const response = await apiService.uploadFile(userStore.businessWorkspaceId, formData);
+        const response = await apiService.uploadFile(caseDetails.value.caseIdStr, formData);
         if (response.data.status !== '200 OK') {
           throw new Error(response.data.message || 'Upload failed');
         }
@@ -318,7 +319,7 @@ const submitAllDocuments = async () => {
     fileUploadLoading.value = true;
     for (const file of pendingFilesFromChild.value) {
       const {fileId, name} = file
-      await apiService.moveFile(fileId, name, userStore.businessWorkspaceId);
+      await apiService.moveFile(fileId, name, caseDetails.value.caseIdStr);
       console.log(`File ${fileId}: ${name} moved`);
     }
     await apiService.newDocumentArrives(caseDetails.value.caseIdStr)
@@ -360,7 +361,7 @@ const simulateFileUploadProgress = (index, controller) => {
 const fetchFiles = async () => {
   try {
     downloadableFilesLoading.value = true;
-    const response = await apiService.listDownloadableFiles(userStore.businessWorkspaceId);
+    const response = await apiService.listDownloadableFiles(caseDetails.value.caseIdStr);
     downloads.value = response.data.fileList.map(file => ({
       filename: file.fileName,
       fileId: file.fileId,
@@ -376,7 +377,7 @@ const fetchFiles = async () => {
 const fetchMedicalFiles = async () => {
   try {
     medicalFilesLoading.value = true;
-    const response = await apiService.listMedicalFiles(userStore.businessWorkspaceId);
+    const response = await apiService.listMedicalFiles(caseDetails.value.caseIdStr);
     medicalFiles.value = response.data.fileList.map(file => ({
       filename: file.fileName,
       fileId: file.fileId,
