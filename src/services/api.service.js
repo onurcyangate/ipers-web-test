@@ -114,6 +114,11 @@ class ApiService extends BaseService {
   newDocumentArrives(caseId) {
     return this._axiosInstance.post(`/iowa/new-document-arrives?caseId=${caseId}`)
   }
+
+  sendResetPasswordEmail(payload) {
+    return this._axiosInstance.post('/iowa/reset-password-email', payload)
+
+  }
 }
 
 export default new ApiService()
