@@ -98,7 +98,7 @@
         <v-col cols="12" md="7">
           <v-row>
             <!-- File Upload Section -->
-            <v-col cols="12" v-if="caseDetails.value.caseIdStr">
+            <v-col cols="12" v-if="caseDetails.caseIdStr">
               <FileUpload
                 :uploadedFiles="uploadedFiles"
                 :previouslyUploadedFiles="previouslyUploadedFiles"
@@ -118,7 +118,7 @@
           </v-row>
 
           <v-row>
-            <v-col :cols="12" :md="downloads.length ? 8 : 12" v-if="caseDetails.value.caseIdStr">
+            <v-col :cols="12" :md="downloads.length ? 8 : 12" v-if="caseDetails.caseIdStr">
               <SecureMessages :ready="isReady"/>
             </v-col>
 
