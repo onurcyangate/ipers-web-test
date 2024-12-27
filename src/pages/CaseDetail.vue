@@ -98,7 +98,7 @@
         <v-col cols="12" md="7">
           <v-row>
             <!-- File Upload Section -->
-            <v-col cols="12" v-if="caseDetails.caseIdStr">
+            <v-col cols="12" v-if="caseId">
               <FileUpload
                 :uploadedFiles="uploadedFiles"
                 :previouslyUploadedFiles="previouslyUploadedFiles"
@@ -112,7 +112,7 @@
                 :refreshPendingFilesTrigger="refreshPendingFilesTrigger"
                 @update:refreshPendingFilesTrigger="updateRefreshPendingFilesTrigger"
                 :ready="isReady"
-                :caseId="caseDetails.value.caseIdStr"
+                :caseId="caseId"
               />
             </v-col>
           </v-row>
