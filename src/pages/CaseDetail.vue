@@ -209,7 +209,7 @@ const fetchCaseDetails = async () => {
   try {
     loading.value = true;
     const response = await apiService.fetchCaseDetails(caseId.value);
-    const caseData = response.data._embedded.filterListExternalUID[0];
+    const caseData = response.data;
     const properties = caseData.Properties;
     if (properties.universityAppointmentDate) {
       properties.formattedUniversityAppointmentDate = format(new Date(properties.universityAppointmentDate), "MMM d, yyyy, hh:mm a");
