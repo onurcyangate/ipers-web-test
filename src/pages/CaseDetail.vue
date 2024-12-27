@@ -98,7 +98,7 @@
         <v-col cols="12" md="7">
           <v-row>
             <!-- File Upload Section -->
-            <v-col cols="12">
+            <v-col cols="12" v-if="caseDetails.value.caseIdStr">
               <FileUpload
                 :uploadedFiles="uploadedFiles"
                 :previouslyUploadedFiles="previouslyUploadedFiles"
