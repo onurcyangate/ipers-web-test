@@ -15,7 +15,7 @@
         </v-col>
 
         <v-col cols="auto" class="d-flex align-center">
-          <span>Welcome {{authStore.user.nameVerbose}}</span>
+          <span>Welcome {{authStore.user.name}}</span>
           <v-btn
             class="ml-6 no-uppercase font-weight-bold"
             :color="COLORS.BLUE"

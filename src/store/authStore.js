@@ -19,7 +19,7 @@ export const useAuthStore = defineStore('user', {
         this.user = {
           id: loginResponse.user.id,
           name: loginResponse.user.name,
-          nameVerbose: loginResponse.user.username,
+          username: loginResponse.user.username,
           email: loginResponse.user.email,
           external: loginResponse.user.external,
           enabled: loginResponse.user.enabled,
