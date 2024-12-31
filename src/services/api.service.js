@@ -103,8 +103,8 @@ class ApiService extends BaseService {
     return this._axiosInstance.get(`/iowa/list-downloadable-files?caseId=${caseId}`)
   }
 
-  deleteFile(fileId) {
-    return this._axiosInstance.delete(`/iowa/file-delete?fileId=${fileId}`)
+  deleteFile(fileId, fileName, caseId) {
+    return this._axiosInstance.delete(`/iowa/file-delete?fileId=${fileId}&fileName=${fileName}&caseId=${caseId}`)
   }
 
   moveFile(fileId, fileName, caseId) {

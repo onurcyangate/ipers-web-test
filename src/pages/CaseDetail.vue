@@ -422,7 +422,7 @@ const downloadFile = async (file) => {
 const deleteFile = async (file) => {
   try {
     loading.value = true;
-    await apiService.deleteFile(file.fileId);
+    await apiService.deleteFile(file.fileId, file.name, caseId.value);
     refreshPendingFilesTrigger.value = true;
     successMessage('File deleted successfully.');
   } catch (error) {
