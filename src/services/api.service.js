@@ -14,109 +14,99 @@ class ApiService extends BaseService {
    * @returns Promise
    */
   login(payload) {
-    return this._axiosInstance.post('iowa/login', payload)
-  }
-
-  /**
-   *
-   * @param {Object} payload
-   * @param {string} payload.refresh
-   * @returns Promise
-   */
-  refreshToken(payload) {
-    return this._axiosInstance.post('token/refresh/', payload)
+    return this._axiosInstance.post('/login', payload)
   }
 
   register(payload, params) {
-    return this._axiosInstance.post(`/iowa/createUser?uniqueCode=${params}`, payload)
+    return this._axiosInstance.post(`/createUser?uniqueCode=${params}`, payload)
   }
 
   verifyEmail(params) {
-    return this._axiosInstance.get(`/iowa/verify-email?token=${params}`)
+    return this._axiosInstance.get(`/verify-email?token=${params}`)
   }
 
   validateUniqueCode(params) {
-    return this._axiosInstance.get(`/iowa/check-unique-caseid?caseID=${params}`)
+    return this._axiosInstance.get(`/check-unique-caseid?caseID=${params}`)
   }
 
   resendVerificationEmail() {
-    return this._axiosInstance.post('/iowa/resend-email')
+    return this._axiosInstance.post('/resend-email')
   }
 
   fetchUserCases(params) {
-    return this._axiosInstance.get(`/iowa/external-user-case-list?username=${params}&caseId=`)
+    return this._axiosInstance.get(`/external-user-case-list?username=${params}&caseId=`)
   }
 
   fetchUniversityCases() {
-    return this._axiosInstance.get(`/iowa/university-user-case-list`)
+    return this._axiosInstance.get(`/university-user-case-list`)
   }
 
   fetchCaseDetails(id) {
-    return this._axiosInstance.get(`/iowa/fetch-case?caseId=${id}`)
+    return this._axiosInstance.get(`/fetch-case?caseId=${id}`)
   }
 
   fetchDiscussions(userName, id) {
-    return this._axiosInstance.get(`/iowa/external-user-case-list?username=${userName}&caseId=${id}`)
+    return this._axiosInstance.get(`/external-user-case-list?username=${userName}&caseId=${id}`)
   }
 
   updateCase(params, payload) {
-    return this._axiosInstance.put(`/iowa/update-case?caseId=${params}`, payload)
+    return this._axiosInstance.put(`/update-case?caseId=${params}`, payload)
   }
 
   addCase(caseId, userName) {
-    return this._axiosInstance.post(`/iowa/check-case?username=${userName}&caseId=${caseId}`)
+    return this._axiosInstance.post(`/check-case?username=${userName}&caseId=${caseId}`)
   }
 
   resetPassword(email, token, payload) {
-    return this._axiosInstance.post(`/iowa/reset-password?email=${(email)}&token=${(token)}`, payload);
+    return this._axiosInstance.post(`/reset-password?email=${(email)}&token=${(token)}`, payload);
   }
 
   fetchCaseMessages(businessWorkspaceObjectId) {
-    return this._axiosInstance.get(`/iowa/get-messages?itemId=${businessWorkspaceObjectId}`)
+    return this._axiosInstance.get(`/get-messages?itemId=${businessWorkspaceObjectId}`)
   }
 
   createMessage(payload) {
-    return this._axiosInstance.put("/iowa/create-message", payload)
+    return this._axiosInstance.put("/create-message", payload)
   }
 
   replyMessage(payload) {
-    return this._axiosInstance.put("/iowa/reply-message", payload)
+    return this._axiosInstance.put("/reply-message", payload)
   }
 
   deleteMessage(payload) {
-    return this._axiosInstance.put("/iowa/delete-message", payload)
+    return this._axiosInstance.put("/delete-message", payload)
   }
 
   uploadFile(caseId, payload) {
-    return this._axiosInstance.post(`/iowa/file-upload?caseId=${caseId}`, payload)
+    return this._axiosInstance.post(`/file-upload?caseId=${caseId}`, payload)
   }
 
   listTempFiles(caseId) {
-    return this._axiosInstance.get(`/iowa/list-uploaded-files?caseId=${caseId}`)
+    return this._axiosInstance.get(`/list-uploaded-files?caseId=${caseId}`)
   }
 
   listMedicalFiles(caseId) {
-    return this._axiosInstance.get(`/iowa/list-medical-files?caseId=${caseId}`)
+    return this._axiosInstance.get(`/list-medical-files?caseId=${caseId}`)
   }
 
   listDownloadableFiles(caseId) {
-    return this._axiosInstance.get(`/iowa/list-downloadable-files?caseId=${caseId}`)
+    return this._axiosInstance.get(`/list-downloadable-files?caseId=${caseId}`)
   }
 
   deleteFile(fileId, fileName, caseId) {
-    return this._axiosInstance.delete(`/iowa/file-delete?fileId=${fileId}&fileName=${fileName}&caseId=${caseId}`)
+    return this._axiosInstance.delete(`/file-delete?fileId=${fileId}&fileName=${fileName}&caseId=${caseId}`)
   }
 
   moveFile(fileId, fileName, caseId) {
-    return this._axiosInstance.put(`/iowa/file-move?fileId=${fileId}&fileName=${fileName}&caseId=${caseId}`)
+    return this._axiosInstance.put(`/file-move?fileId=${fileId}&fileName=${fileName}&caseId=${caseId}`)
   }
 
   newDocumentArrives(caseId) {
-    return this._axiosInstance.post(`/iowa/new-document-arrives?caseId=${caseId}`)
+    return this._axiosInstance.post(`/new-document-arrives?caseId=${caseId}`)
   }
 
   sendResetPasswordEmail(payload) {
-    return this._axiosInstance.post('/iowa/reset-password-email', payload)
+    return this._axiosInstance.post('/reset-password-email', payload)
 
   }
 }
