@@ -10,8 +10,6 @@ Set up your project using your preferred package manager. Use the corresponding 
 
 ## 💡 Usage
 
-This section covers how to start the development server and build your project for production.
-
 ### Starting the Development Server
 
 To start the development server with hot-reload, run the following command. The server will be accessible at [http://localhost:3000](http://localhost:3000):
@@ -33,8 +31,8 @@ Once the build process is completed, application will be ready for deployment in
 
 ____
 
-## Deploy to IIS
-### Configure IIS
+## 🚀 Deploy to IIS
+### 1. Configure IIS
 - Open IIS Manager
 - Right-click on "Sites"
 - Select "Add Website"
@@ -43,14 +41,23 @@ ____
   - Physical path: Path to the copied dist folder content. Typically under _C:\inetpub\wwwroot_
   - Binding information: Port number and hostname
 
-### Configure URL Rewrite Rules
+### 2. Configure URL Rewrite Rules
 - Copy the web.config file located in this repository's root level and put it under application's root directory(where index.html):
 
-### Deploy the build
+### 3. Deploy the Build
 - Copy all contents under the dist folder of this repository to the IIS website/application directory
 - Set folder permissions:
   - Right-click on your application folder in IIS 
   - Select "Edit Permissions"
 
-### Troubleshoot
-- If you see file permission errors (e.g., “Access Denied”), then check the folder permissions of the physical path or consider giving “Connect As” credentials. 
+### 4. Test Deployment
+-  Open a browser and go to _**hostname:port**_
+
+
+
+## 🔧 Troubleshooting
+
+- “Access Denied” Errors:
+  - Check the folder permissions for the physical path, or consider configuring Connect As credentials if your files are on a network share or require special permissions.
+- Rewrite/Redirect Issues:
+  - Confirm that URL Rewrite is installed and that the web.config rules are correctly placed in the application’s root directory.
