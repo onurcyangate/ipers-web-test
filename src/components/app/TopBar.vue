@@ -21,6 +21,7 @@
             :color="COLORS.BLUE"
             dark
             @click="router.back()"
+            v-if="!isDashboard"
           >
             Go to Dashboard
           </v-btn>
@@ -41,7 +42,10 @@
 import {useAuthStore} from '@/store/authStore';
 import router from "@/router";
 import {COLORS} from "@/styles/colors";
+import {computed} from 'vue';
 
+
+const isDashboard = computed(() => router.path === '/dashboard');
 const authStore = useAuthStore();
 
 const logout = () => {

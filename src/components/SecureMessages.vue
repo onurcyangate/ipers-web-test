@@ -469,7 +469,18 @@ const fallbackDiscussions = {
   ]
 };
 
-onMounted(() => fetchDiscussions());
+onMounted(() => {
+  discussionsList.value = [];
+  replyTo.value = null;
+  newTopic.value = '';
+  newMessage.value = '';
+  newReplyTopic.value = '';
+  newReplyMessage.value = '';
+  showNewMessageForm.value = false;
+
+  fetchDiscussions();
+});
+
 
 watch(
   () => props.ready,
