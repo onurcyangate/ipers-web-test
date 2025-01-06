@@ -70,7 +70,8 @@ import {ref, computed, defineEmits} from 'vue';
 import {useRouter} from 'vue-router';
 import Dialog from "@/components/common/Dialog.vue";
 import {COLORS} from "@/styles/colors";
-import apiService from "@/services/api.service";
+import { getApiService } from '@/services/api.service'
+const apiService = getApiService()
 import {consoleError} from "@/utils/logger";
 import {errorMessage} from "@/utils/message";
 import {useAuthStore} from "@/store/authStore";

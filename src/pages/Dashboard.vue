@@ -6,7 +6,8 @@
 
 <script setup>
 import {ref, onMounted} from 'vue';
-import apiService from "@/services/api.service";
+import { getApiService } from '@/services/api.service'
+const apiService = getApiService()
 import {errorMessage} from "@/utils/message";
 import {consoleError} from "@/utils/logger";
 import CaseTable from "@/components/common/CaseTable.vue";

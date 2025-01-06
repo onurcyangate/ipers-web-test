@@ -44,7 +44,8 @@
 <script setup>
 import {reactive, ref} from 'vue'
 import {useRouter} from 'vue-router'
-import apiService from "@/services/api.service"
+import { getApiService } from '@/services/api.service'
+const apiService = getApiService()
 import {consoleError} from "@/utils/logger"
 import AppLogo from "@/components/app/AppLogo.vue"
 import {errorMessage, successMessage} from "@/utils/message"

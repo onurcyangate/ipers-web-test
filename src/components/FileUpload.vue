@@ -77,9 +77,10 @@
 </template>
 
 <script setup>
-import {ref, watch, onMounted} from 'vue';
+import {ref, watch} from 'vue';
 import {COLORS} from '@/styles/colors';
-import apiService from "@/services/api.service";
+import { getApiService } from '@/services/api.service'
+const apiService = getApiService()
 import {consoleError} from "@/utils/logger";
 import {errorMessage} from "@/utils/message";
 import {useAuthStore} from "@/store/authStore";

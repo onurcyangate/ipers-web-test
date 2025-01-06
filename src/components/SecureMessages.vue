@@ -192,7 +192,8 @@
 <script setup>
 import {ref, computed, watch, onMounted} from 'vue';
 import {COLORS} from '@/styles/colors';
-import apiService from '@/services/api.service';
+import { getApiService } from '@/services/api.service'
+const apiService = getApiService()
 import {errorMessage, successMessage} from '@/utils/message';
 import {formatDate} from '../utils/common';
 import {consoleError} from '@/utils/logger';

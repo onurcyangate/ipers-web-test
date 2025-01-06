@@ -33,7 +33,8 @@
 
 <script setup>
 import {ref, reactive} from 'vue'
-import apiService from "@/services/api.service";
+import { getApiService } from '@/services/api.service'
+const apiService = getApiService()
 import {errorMessage, successMessage} from "@/utils/message";
 import {consoleError} from "@/utils/logger";
 import AppLogo from "@/components/app/AppLogo.vue";

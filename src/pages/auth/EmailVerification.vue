@@ -44,7 +44,8 @@
 
 <script setup>
 import {ref, computed, onMounted} from 'vue'
-import apiService from "@/services/api.service"
+import { getApiService } from '@/services/api.service'
+const apiService = getApiService()
 import {errorMessage, infoMessage, warningMessage} from "@/utils/message"
 import {consoleError} from "@/utils/logger"
 import AppLogo from "@/components/app/AppLogo.vue"

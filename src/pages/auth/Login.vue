@@ -1,12 +1,12 @@
 <script setup>
 import {ref, reactive} from 'vue'
-import apiService from "@/services/api.service";
 import {errorMessage, warningMessage} from "@/utils/message";
 import {consoleError} from "@/utils/logger";
 import AppLogo from "@/components/app/AppLogo.vue";
 import {useAuthStore} from '@/store/authStore'
 import router from "@/router";
-
+import { getApiService } from '@/services/api.service'
+const apiService = getApiService()
 const userStore = useAuthStore();
 const isFormValid = ref(null);
 const authStore = useAuthStore();
@@ -41,7 +41,7 @@ const loginAttempt = async () => {
     authStore.setUsername(payload.username);
     await router.replace('/dashboard');
   } catch (err) {
-    if (err.response.data.status === '401 UNAUTHORIZED') {
+    if (err.response?.data?.status === '401 UNAUTHORIZED') {
       warningMessage('Account is not verified. Please verify your email.')
     } else {
       errorMessage('Login failed.');

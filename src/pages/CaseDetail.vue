@@ -167,7 +167,8 @@ import {COLORS} from "@/styles/colors";
 import {useAuthStore} from "@/store/authStore";
 import {consoleError} from "@/utils/logger";
 import {errorMessage, infoMessage, successMessage, warningMessage} from "@/utils/message";
-import apiService from "@/services/api.service";
+import { getApiService } from '@/services/api.service'
+const apiService = getApiService()
 import {useRoute} from 'vue-router';
 import router from "@/router";
 import DecisionFileUpload from "@/components/DecisionFileUpload.vue";

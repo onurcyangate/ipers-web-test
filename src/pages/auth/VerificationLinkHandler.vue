@@ -42,7 +42,8 @@
 <script setup>
 import {ref, computed, onMounted} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
-import apiService from "@/services/api.service"
+import { getApiService } from '@/services/api.service'
+const apiService = getApiService()
 import {consoleError} from "@/utils/logger"
 import AppLogo from "@/components/app/AppLogo.vue"
 import {errorMessage, infoMessage, successMessage, warningMessage} from "@/utils/message"
