@@ -45,6 +45,7 @@ import {COLORS} from "@/styles/colors";
 import {computed} from 'vue';
 
 
+console.log("router path: ", router.path)
 const isDashboard = computed(() => router.path === '/dashboard');
 const authStore = useAuthStore();
 
