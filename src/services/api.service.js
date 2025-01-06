@@ -116,6 +116,10 @@ class ApiService extends BaseService {
     return this._axiosInstance.post('/reset-password-email', payload)
 
   }
+
+  addMessageSender(payload) {
+    return this._axiosInstance.put('/add-message-sender', payload)
+  }
 }
 
 export default new ApiService()

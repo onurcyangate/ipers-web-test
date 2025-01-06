@@ -2,7 +2,11 @@
   <div class="message">
     <div class="message-content">
       <p>{{ reply.Body }}</p>
-      <span>{{ formatDate(reply.PostedDateTime) }}</span>
+      <div class="message-info">
+        <span class="author-name">{{ reply.Author }}</span>
+        <span class="dot-separator">•</span>
+        <span class="timestamp">{{ formatDate(reply.PostedDateTime) }}</span>
+      </div>
     </div>
     <div class="message-actions">
       <v-btn
@@ -54,6 +58,8 @@
 </template>
 
 <script setup>
+
+import {formatDate} from "@/utils/common";
 
 defineProps({
   reply: {
@@ -108,5 +114,27 @@ defineEmits(['reply', 'delete']);
 
 .nested-replies {
   margin-left: 20px;
+}
+
+.message-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.author-name {
+  font-weight: 500;
+  color: #003058;
+}
+
+.dot-separator {
+  font-size: 0.7rem;
+  color: #999;
+}
+
+.timestamp {
+  color: #666;
 }
 </style>

@@ -31,7 +31,11 @@
                 <div class="message-content" style="display: flex; flex-direction: column; gap: 4px">
                   <strong class="pb-1">{{ message.TopicName || 'No Topic' }}</strong>
                   <p class="mt-1">{{ message.Body }}</p>
-                  <span class="pt-1">{{ formatDate(message.PostedDateTime) }}</span>
+                  <div class="message-info">
+                    <span class="author-name">{{ message.Author }}</span>
+                    <span class="dot-separator">•</span>
+                    <span class="timestamp">{{ formatDate(message.PostedDateTime) }}</span>
+                  </div>
                 </div>
                 <!-- Message Actions -->
                 <div class="message-actions">
@@ -260,6 +264,7 @@ const parseDiscussions = (response) => {
       TopicName: message.TopicName !== 'null' ? message.TopicName : 'No Topic',
       Body: message.Body,
       AuthorEmail: extractEmail(message.Author),
+      Author: message.Author,
       PostedDateTime: message.PostedDateTime,
       HasChildren: message.HasChildren === 'true',
       TargetItemId: message.TargetItemId,
@@ -319,6 +324,29 @@ const saveMessage = async (body, topicName = null, isReply = false, parentId = n
       : await apiService.createMessage(payload);
 
     if (response.status === 200) {
+      const senderPayload = [{
+        containerVersionId: userStore.containerVersionId,
+        itemId: response.data.CreationResponse.items[0].itemId,
+        operationType: "Update",
+        item: {
+          Properties: {
+            externalUser: userStore.username
+          }
+        },
+        originalItem: {
+          Properties: {
+            externalUser: null
+          }
+        },
+        rulesRunOnClient: ""
+      }];
+
+      try {
+        await apiService.addMessageSender(senderPayload);
+      } catch (err) {
+        consoleError('Error updating message sender:', err);
+      }
+
       successMessage(isReply ? 'Reply sent successfully.' : 'Message sent successfully.');
       await fetchDiscussions();
     } else {
@@ -552,5 +580,27 @@ watch(
 
 .reply-message .message {
   border-bottom: none;
+}
+
+.message-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.author-name {
+  font-weight: 500;
+  color: #003058;
+}
+
+.dot-separator {
+  font-size: 0.7rem;
+  color: #999;
+}
+
+.timestamp {
+  color: #666;
 }
 </style>
