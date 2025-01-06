@@ -588,6 +588,7 @@ watch(
   gap: 8px;
   font-size: 0.85rem;
   color: #666;
+  margin-top: 4px;
 }
 
 .author-name {
