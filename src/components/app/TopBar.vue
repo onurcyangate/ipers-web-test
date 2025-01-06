@@ -40,13 +40,19 @@
 
 <script setup>
 import {useAuthStore} from '@/store/authStore';
-import router from "@/router";
-import {COLORS} from "@/styles/colors";
-import {computed} from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { COLORS } from "@/styles/colors";
+import { computed } from 'vue';
 
+const route = useRoute();
+const router = useRouter();
 
-console.log("router path: ", router.path)
-const isDashboard = computed(() => router.path === '/dashboard');
+const isDashboard = computed(() => {
+  console.log("route path: ", route.matched.some(record => record.name === 'dashboard'));
+  console.log("route path: ", route.matched);
+  return route.matched.some(record => record.name === 'dashboard');
+});
+
 const authStore = useAuthStore();
 
 const logout = () => {
