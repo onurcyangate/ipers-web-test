@@ -1,11 +1,18 @@
 import BaseService from '@/services/base.service'
 
 class ApiService extends BaseService {
-  constructor() {
-    const baseUrl = import.meta.env.VITE_API_BASE_URL;
-    super(baseUrl)
+  static instance = null;
+
+  constructor(baseURL) {
+    super(baseURL)
   }
 
+  static initialize(baseURL) {
+    if (!ApiService.instance) {
+      ApiService.instance = new ApiService(baseURL)
+    }
+    return ApiService.instance
+  }
   /**
    *
    * @param {Object} payload
@@ -112,3 +119,14 @@ class ApiService extends BaseService {
 }
 
 export default new ApiService()
+
+export const getApiService = () => {
+  if (!ApiService.instance) {
+    throw new Error('ApiService must be initialized before use')
+  }
+  return ApiService.instance
+}
+
+export const initializeApiService = (baseURL) => {
+  return ApiService.initialize(baseURL)
+}
