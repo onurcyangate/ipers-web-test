@@ -546,7 +546,6 @@ watch(
 }
 
 .message span {
-  font-size: 0.8em;
   color: gray;
 }
 
