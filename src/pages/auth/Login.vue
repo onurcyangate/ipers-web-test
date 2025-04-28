@@ -21,7 +21,7 @@ const loginAttempt = async () => {
   try {
     loading.value = true;
     // TODO discuss with team
-    const modifiedUsername = formState.username.slice(0, formState.username.indexOf('@'));
+    const modifiedUsername = formState.username;
     const payload = {
       username: modifiedUsername,
       password: formState.password.trim()

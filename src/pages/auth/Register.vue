@@ -88,7 +88,7 @@ const registerAttempt = async () => {
         {name: 'sn', values: [formState.sn.value]},
         {name: "accountDisabled", values: [true]},
       ],
-      name: formState.mail.value.slice(0, formState.mail.value.indexOf('@')),
+      name: formState.mail.value,
     };
     await apiService.register(payload, formState.unique_code.value);
     successMessage('Account has been successfully created. Verify your email to login.')

@@ -41,7 +41,7 @@ onMounted(async () => {
   try {
     const grecaptcha = await loadReCaptcha();
     grecaptcha.render(recaptchaContainer.value, {
-      sitekey: '6LcKnwwqAAAAABbJDBoYou6ehPrDeKlwv1Ia_iFo',
+      sitekey: '6LcNLfEqAAAAADQLEsuoi75FVpUhhrs3i_oHNkVS',
       callback: onVerify,
       'expired-callback': onExpired,
     });
