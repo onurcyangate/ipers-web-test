@@ -41,7 +41,7 @@ class ApiService extends BaseService {
   }
 
   fetchUserCases(params) {
-    return this._axiosInstance.get(`/external-user-case-list?username=${params}&caseId=`)
+    return this._axiosInstance.get(`/external-user-case-list?mail=${params}&caseId=`)
   }
 
   fetchUniversityCases() {
