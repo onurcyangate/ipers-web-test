@@ -393,7 +393,7 @@ const fetchMedicalFiles = async () => {
 
 const downloadFile = async (file) => {
   try {
-    const fileUrl = import.meta.env.VITE_API_BASE_URL + 'iowa/file-download?fileId=' + file.fileId;
+    const fileUrl = import.meta.env.VITE_API_BASE_URL + '/file-download?fileId=' + file.fileId;
     const isPDF = file.mimeType === 'application/pdf' || file.filename.toLowerCase().endsWith('.pdf');
 
     if (isPDF) {
