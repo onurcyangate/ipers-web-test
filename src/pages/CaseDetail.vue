@@ -199,6 +199,8 @@ const medicalFilesLoading = ref(false);
 const pendingFilesFromChild = ref([]);
 const universityDecision = ref(null);
 import {format} from 'date-fns';
+import {useConfigStore} from "@/store/configStore";
+const configStore = useConfigStore();
 
 const caseDetailFields = computed(() => ({
   caseIdStr: 'Case #',
@@ -393,7 +395,7 @@ const fetchMedicalFiles = async () => {
 
 const downloadFile = async (file) => {
   try {
-    const fileUrl = import.meta.env.VITE_API_BASE_URL + '/file-download?fileId=' + file.fileId;
+    const fileUrl = configStore.apiBaseUrl + '/file-download?fileId=' + file.fileId;
     const isPDF = file.mimeType === 'application/pdf' || file.filename.toLowerCase().endsWith('.pdf');
 
     if (isPDF) {
