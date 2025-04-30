@@ -4,6 +4,9 @@
 
 <script setup>
 import { onMounted, ref } from 'vue';
+import { useConfigStore } from "@/store/configStore";
+
+const configStore = useConfigStore()
 
 const emit = defineEmits(['verify', 'expired']);
 const recaptchaContainer = ref(null);
@@ -41,7 +44,7 @@ onMounted(async () => {
   try {
     const grecaptcha = await loadReCaptcha();
     grecaptcha.render(recaptchaContainer.value, {
-      sitekey: '6LcNLfEqAAAAADQLEsuoi75FVpUhhrs3i_oHNkVS',
+      sitekey: configStore.captchaSiteKey,
       callback: onVerify,
       'expired-callback': onExpired,
     });

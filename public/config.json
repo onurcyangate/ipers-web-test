@@ -1,3 +1,4 @@
 {
-  "apiBaseUrl": "https://localhost:8081/iowa"
+  "apiBaseUrl": "https://localhost:8081/iowa",
+  "captchaSiteKey": "6LcNLfEqAAAAADQLEsuoi75FVpUhhrs3i_oHNkVS"
 }
