@@ -303,15 +303,15 @@ const handleFileUpload = async (files) => {
 
       // Log specific errors
       uploadResults
-          .filter(r => !r.success)
-          .forEach(r => consoleError(`Failed to upload ${r.file}: ${r.error}`));
+        .filter(r => !r.success)
+        .forEach(r => consoleError(`Failed to upload ${r.file}: ${r.error}`));
     } else if (failureCount > 0 && successCount === 0) {
       errorMessage('Failed to upload all files.');
 
       // Log specific errors
       uploadResults
-          .filter(r => !r.success)
-          .forEach(r => consoleError(`Failed to upload ${r.file}: ${r.error}`));
+        .filter(r => !r.success)
+        .forEach(r => consoleError(`Failed to upload ${r.file}: ${r.error}`));
     }
 
   } catch (error) {
@@ -462,13 +462,35 @@ const downloadFile = async (file) => {
 };
 
 const deleteFile = async (file) => {
+  console.log('[CaseDetail] Deleting file:', {
+    fileId: file.fileId,
+    fileName: file.name,
+    caseId: caseId.value,
+    timestamp: new Date().toISOString()
+  });
+
   try {
     loading.value = true;
-    await apiService.deleteFile(file.fileId, file.name, caseId.value);
+    const response = await apiService.deleteFile(file.fileId, file.name, caseId.value);
+
+    console.log('[CaseDetail] Delete response:', {
+      status: response.status,
+      data: response.data,
+      fileName: file.name,
+      timestamp: new Date().toISOString()
+    });
+
     refreshPendingFilesTrigger.value = true;
     successMessage('File deleted successfully.');
   } catch (error) {
     consoleError('Error deleting file: ', error);
+    console.error('[CaseDetail] Delete failed:', {
+      fileId: file.fileId,
+      fileName: file.name,
+      error: error.message,
+      response: error.response?.data,
+      status: error.response?.status
+    });
     errorMessage('Failed to delete file');
   } finally {
     loading.value = false;
