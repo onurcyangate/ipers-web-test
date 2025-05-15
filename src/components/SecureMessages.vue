@@ -5,11 +5,11 @@
       <span v-if="messagesLoading" class="loader"></span>
       <v-spacer></v-spacer>
       <v-btn
-        v-if="!messagesLoading"
-        icon
-        variant="text"
-        @click="isExpanded = !isExpanded"
-        :aria-label="isExpanded ? 'Collapse' : 'Expand'"
+          v-if="!messagesLoading"
+          icon
+          variant="text"
+          @click="isExpanded = !isExpanded"
+          :aria-label="isExpanded ? 'Collapse' : 'Expand'"
       >
         <v-icon>{{ isExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
       </v-btn>
@@ -18,11 +18,11 @@
     <v-expand-transition>
       <v-card-text v-if="isExpanded" class="scrollable-messages mx-1" ref="messageContainer"
                    style="border-bottom: 1px solid lightgray;">
-        <v-expansion-panels accordion>
+        <v-expansion-panels accordion :model-value="expandedPanels">
           <v-expansion-panel
-            v-for="(message, index) in topLevelMessages"
-            :key="index"
-            elevation="0"
+              v-for="(message, index) in topLevelMessages"
+              :key="index"
+              elevation="0"
           >
             <!-- Parent Message -->
             <v-expansion-panel-title class="py-2 px-2 pr-2" :hide-actions="!hasReplies(message.Id)"
@@ -32,7 +32,7 @@
                   <strong class="pb-1">{{ message.TopicName || 'No Topic' }}</strong>
                   <p class="mt-1">{{ message.Body }}</p>
                   <div class="message-info">
-                    <span class="author-name">{{ message.Author }}</span>
+                    <span class="author-name">{{ message.Author || 'Case Officer' }}</span>
                     <span class="dot-separator">•</span>
                     <span class="timestamp">{{ formatDate(message.PostedDateTime) }}</span>
                   </div>
@@ -40,21 +40,21 @@
                 <!-- Message Actions -->
                 <div class="message-actions">
                   <v-btn
-                    icon
-                    small
-                    variant="text"
-                    @click.stop="initReply(message)"
-                    style="margin-right: -10px"
+                      icon
+                      small
+                      variant="text"
+                      @click.stop="initReply(message)"
+                      style="margin-right: -10px"
                   >
                     <v-icon>mdi-reply</v-icon>
                   </v-btn>
                   <v-btn
-                    v-if="!hasReplies(message.Id)"
-                    icon
-                    variant="text"
-                    small
-                    color="red"
-                    @click.stop="deleteMessage(message.TargetItemId)"
+                      v-if="!hasReplies(message.Id)"
+                      icon
+                      variant="text"
+                      small
+                      color="red"
+                      @click.stop="deleteMessage(message.TargetItemId)"
                   >
                     <v-icon>mdi-trash-can-outline</v-icon>
                   </v-btn>
@@ -66,20 +66,20 @@
             <v-expansion-panel-text v-if="hasReplies(message.Id)">
               <v-row class="replies">
                 <v-col
-                  cols="12"
-                  v-for="(reply, idx) in getReplies(message.Id)"
-                  :key="idx"
-                  class="reply-message"
-                  :style="{ marginLeft: '10px' }"
+                    cols="12"
+                    v-for="(reply, idx) in getReplies(message.Id)"
+                    :key="idx"
+                    class="reply-message"
+                    :style="{ marginLeft: '10px' }"
                 >
                   <MessageReply
-                    :reply="reply"
-                    :get-replies="getReplies"
-                    :has-replies="hasReplies"
-                    :format-date="formatDate"
-                    :depth="0"
-                    @reply="initReply"
-                    @delete="deleteMessage"
+                      :reply="reply"
+                      :get-replies="getReplies"
+                      :has-replies="hasReplies"
+                      :format-date="formatDate"
+                      :depth="0"
+                      @reply="initReply"
+                      @delete="deleteMessage"
                   />
                 </v-col>
               </v-row>
@@ -107,22 +107,22 @@
 
         <v-col cols="12">
           <v-textarea
-            v-model="newReplyMessage"
-            label="Reply Message"
-            variant="outlined"
-            row-height="15"
-            rows="2"
-            class="mt-1"
-            :style="{ width: '100%' }"
+              v-model="newReplyMessage"
+              label="Reply Message"
+              variant="outlined"
+              row-height="15"
+              rows="2"
+              class="mt-1"
+              :style="{ width: '100%' }"
           ></v-textarea>
         </v-col>
         <v-col cols="12" class="text-right">
           <v-btn
-            :color="COLORS.PRIMARY"
-            @click="sendReply"
-            variant="flat"
-            class="no-uppercase"
-            :disabled="!newReplyMessage"
+              :color="COLORS.PRIMARY"
+              @click="sendReply"
+              variant="flat"
+              class="no-uppercase"
+              :disabled="!newReplyMessage"
           >
             Send Reply
           </v-btn>
@@ -138,10 +138,10 @@
       <v-row class="w-100">
         <v-col v-if="!showNewMessageForm" cols="12" class="text-right">
           <v-btn
-            :color="COLORS.PRIMARY"
-            @click="showNewMessageForm = true"
-            variant="flat"
-            class="no-uppercase"
+              :color="COLORS.PRIMARY"
+              @click="showNewMessageForm = true"
+              variant="flat"
+              class="no-uppercase"
           >
             Create Message
           </v-btn>
@@ -151,38 +151,38 @@
         <template v-if="showNewMessageForm">
           <v-col cols="12">
             <v-text-field
-              v-model="newTopic"
-              label="Subject"
-              variant="outlined"
-              density="compact"
-              class="mt-1"
-              style="width: 100%; margin-bottom: -10px"
+                v-model="newTopic"
+                label="Subject"
+                variant="outlined"
+                density="compact"
+                class="mt-1"
+                style="width: 100%; margin-bottom: -10px"
             ></v-text-field>
           </v-col>
           <v-col cols="12">
             <v-textarea
-              v-model="newMessage"
-              label="Message"
-              variant="outlined"
-              rows="3"
-              style="width: 100%;"
+                v-model="newMessage"
+                label="Message"
+                variant="outlined"
+                rows="3"
+                style="width: 100%;"
             ></v-textarea>
           </v-col>
           <v-col cols="12" class="text-right">
             <v-btn
-              :color="COLORS.PRIMARY"
-              @click="sendMessage"
-              variant="flat"
-              class="no-uppercase"
-              :disabled="!newMessage || !newTopic"
+                :color="COLORS.PRIMARY"
+                @click="sendMessage"
+                variant="flat"
+                class="no-uppercase"
+                :disabled="!newMessage || !newTopic"
             >
               Send
             </v-btn>
             <v-btn
-              class="ml-2 no-uppercase"
-              color="#003058"
-              variant="outlined"
-              @click="cancelNewMessage"
+                class="ml-2 no-uppercase"
+                color="#003058"
+                variant="outlined"
+                @click="cancelNewMessage"
             >
               Cancel
             </v-btn>
@@ -194,14 +194,15 @@
 </template>
 
 <script setup>
-import {ref, computed, watch, onMounted} from 'vue';
-import {COLORS} from '@/styles/colors';
+import { ref, computed, watch, onMounted } from 'vue';
+import { COLORS } from '@/styles/colors';
 import { getApiService } from '@/services/api.service'
+
 const apiService = getApiService()
-import {errorMessage, successMessage} from '@/utils/message';
-import {formatDate} from '../utils/common';
-import {consoleError} from '@/utils/logger';
-import {useAuthStore} from "@/store/authStore";
+import { errorMessage, successMessage } from '@/utils/message';
+import { formatDate } from '../utils/common';
+import { consoleError } from '@/utils/logger';
+import { useAuthStore } from "@/store/authStore";
 import MessageReply from "@/components/MessageReply.vue";
 
 const props = defineProps({
@@ -226,9 +227,14 @@ const newReplyMessage = ref('');
 const userStore = useAuthStore();
 const isExpanded = ref(true);
 const showNewMessageForm = ref(false);
+const expandedPanels = ref([]);
+
+const canFetchMessages = computed(() => {
+  return props.ready && userStore.businessWorkspaceObjectId;
+});
 
 const topLevelMessages = computed(() =>
-  discussionsList.value.filter((d) => !d.ParentId)
+    discussionsList.value.filter((d) => !d.ParentId)
 );
 
 const hasReplies = (id) => {
@@ -269,8 +275,14 @@ const parseDiscussions = (response) => {
       HasChildren: message.HasChildren === 'true',
       TargetItemId: message.TargetItemId,
     }));
+
+    // Auto-expand panels that have replies
+    expandedPanels.value = discussionsList.value
+        .filter(msg => !msg.ParentId && hasReplies(msg.Id))
+        .map((msg, index) => index);
   } else {
     discussionsList.value = [];
+    expandedPanels.value = [];
   }
 };
 
@@ -281,8 +293,8 @@ const extractEmail = (authorField) => {
 const initReply = (message) => {
   replyTo.value = message;
   newReplyTopic.value = message.Discussion?.TopicName
-    ? message.Discussion.TopicName
-    : '';
+      ? message.Discussion.TopicName
+      : '';
   showNewMessageForm.value = true;
 };
 
@@ -308,20 +320,38 @@ const saveMessage = async (body, topicName = null, isReply = false, parentId = n
     item: {
       Discussion: {
         Body: body,
-        ...(topicName ? {TopicName: topicName} : {}),
+        ...(topicName ? { TopicName: topicName } : {}),
       },
-      ...(isReply ? {DisplayOrganization: {ParentId: parentId}} : {}),
+      ...(isReply ? { DisplayOrganization: { ParentId: parentId } } : {}),
     },
     targetEntityId: userStore.targetEntityId,
     targetEntityContainerVersionId: userStore.containerVersionId,
   };
 
+  // Log the request payload
+  console.log('[SecureMessages] Sending message/reply:', {
+    isReply,
+    parentId,
+    payload,
+    timestamp: new Date().toISOString()
+  });
+
   try {
     loading.value = true;
 
     const response = isReply
-      ? await apiService.replyMessage(payload)
-      : await apiService.createMessage(payload);
+        ? await apiService.replyMessage(payload)
+        : await apiService.createMessage(payload);
+
+    // Log the full response
+    console.log('[SecureMessages] Response received:', {
+      isReply,
+      status: response.status,
+      statusText: response.statusText,
+      headers: response.headers,
+      data: response.data,
+      timestamp: new Date().toISOString()
+    });
 
     if (response.status === 200) {
       const senderPayload = [{
@@ -341,22 +371,58 @@ const saveMessage = async (body, topicName = null, isReply = false, parentId = n
         rulesRunOnClient: ""
       }];
 
+      // Log the sender update payload
+      console.log('[SecureMessages] Updating message sender:', {
+        senderPayload,
+        timestamp: new Date().toISOString()
+      });
+
       try {
-        await apiService.addMessageSender(senderPayload);
+        const senderResponse = await apiService.addMessageSender(senderPayload);
+        console.log('[SecureMessages] Sender update response:', {
+          status: senderResponse.status,
+          data: senderResponse.data,
+          timestamp: new Date().toISOString()
+        });
       } catch (err) {
-        consoleError('Error updating message sender:', err);
+        console.error('[SecureMessages] Error updating message sender:', {
+          error: err,
+          message: err.message,
+          response: err.response,
+          timestamp: new Date().toISOString()
+        });
       }
 
       successMessage(isReply ? 'Reply sent successfully.' : 'Message sent successfully.');
+
+      console.log('[SecureMessages] Fetching updated discussions');
       await fetchDiscussions();
     } else {
+      console.error('[SecureMessages] Message send failed - unexpected status:', {
+        status: response.status,
+        data: response.data,
+        timestamp: new Date().toISOString()
+      });
       errorMessage(isReply ? 'Failed to send the reply.' : 'Failed to send the message.');
     }
   } catch (err) {
-    consoleError(err);
+    console.error('[SecureMessages] Exception caught in saveMessage:', {
+      error: err,
+      message: err.message,
+      stack: err.stack,
+      response: err.response?.data,
+      status: err.response?.status,
+      isReply,
+      timestamp: new Date().toISOString()
+    });
+
     errorMessage(isReply ? 'Failed to send reply.' : 'Failed to send message.');
   } finally {
     loading.value = false;
+    console.log('[SecureMessages] Save message completed:', {
+      isReply,
+      timestamp: new Date().toISOString()
+    });
   }
 };
 
@@ -409,7 +475,6 @@ const fetchDiscussions = async () => {
     parseDiscussions(responseBody);
     userStore.setTargetEntityId(responseBody.TargetEntityId);
     userStore.setContainerVersionId(responseBody.ContainerVerisonId);
-    // parseDiscussions(fallbackDiscussions)
   } catch (err) {
     consoleError(err);
     errorMessage('Failed to fetch discussions.');
@@ -418,85 +483,7 @@ const fetchDiscussions = async () => {
   }
 };
 
-const fallbackDiscussions = {
-  "Status": 200,
-  "Message": "Messages listed.",
-  "TargetEntityId": "12A62609423FA1EF920A1EEAC692847A",
-  "ContainerVerisonId": "56c3c2d807c036d884c120bb40ef5c17",
-  "MessageList": [
-    {
-      "Id": "131077",
-      "Author": "cyangateuser1@Appworks.Users,:userIdValue:cyangateuser1@Appworks.Users",
-      "PostedDateTime": "2024-09-19T13:04:19Z",
-      "DiscussionType": 0,
-      "TopicName": "1st",
-      "Body": "1st",
-      "HasChildren": "true",
-      "ParentId": "null"
-    },
-    {
-      "Id": "131078",
-      "Author": "cyangateuser1@Appworks.Users,:userIdValue:cyangateuser1@Appworks.Users",
-      "PostedDateTime": "2024-09-19T13:04:30Z",
-      "DiscussionType": 1,
-      "TopicName": "null",
-      "Body": "1st 1st response",
-      "HasChildren": "true",
-      "ParentId": "131077"
-    },
-    {
-      "Id": "131079",
-      "Author": "cyangateuser1@Appworks.Users,:userIdValue:cyangateuser1@Appworks.Users",
-      "PostedDateTime": "2024-09-19T13:04:47Z",
-      "DiscussionType": 1,
-      "TopicName": "null",
-      "Body": "1st 1st 1st response",
-      "HasChildren": "true",
-      "ParentId": "131078"
-    },
-    {
-      "Id": "131080",
-      "Author": "cyangateuser1@Appworks.Users,:userIdValue:cyangateuser1@Appworks.Users",
-      "PostedDateTime": "2024-09-19T13:05:01Z",
-      "DiscussionType": 1,
-      "TopicName": "null",
-      "Body": "1st 2nd response",
-      "HasChildren": "false",
-      "ParentId": "131077"
-    },
-    {
-      "Id": "147465",
-      "Author": "cyangateuser1@Appworks.Users,:userIdValue:cyangateuser1@Appworks.Users",
-      "PostedDateTime": "2024-09-26T06:42:55Z",
-      "DiscussionType": 1,
-      "TopicName": "null",
-      "Body": "test 4563",
-      "HasChildren": "true",
-      "ParentId": "131079"
-    },
-    {
-      "Id": "147469",
-      "Author": "cyangateuser1@Appworks.Users,:userIdValue:cyangateuser1@Appworks.Users",
-      "PostedDateTime": "2024-09-30T06:29:04Z",
-      "DiscussionType": 1,
-      "TopicName": "null",
-      "Body": "test123",
-      "HasChildren": "true",
-      "ParentId": "147465"
-    },
-    {
-      "Id": "147462",
-      "Author": "cyangateuser1@Appworks.Users,:userIdValue:cyangateuser1@Appworks.Users",
-      "PostedDateTime": "2024-09-30T06:29:04Z",
-      "DiscussionType": 1,
-      "TopicName": "null",
-      "Body": "test123 - re",
-      "HasChildren": "false",
-      "ParentId": "147469"
-    }
-  ]
-};
-
+// Initialize component state
 onMounted(() => {
   discussionsList.value = [];
   replyTo.value = null;
@@ -505,18 +492,16 @@ onMounted(() => {
   newReplyTopic.value = '';
   newReplyMessage.value = '';
   showNewMessageForm.value = false;
-
-  fetchDiscussions();
 });
 
-
 watch(
-  () => props.ready,
-  async (isReady) => {
-    if (isReady) {
-      await fetchDiscussions();
-    }
-  }
+    canFetchMessages,
+    async (canFetch) => {
+      if (canFetch) {
+        await fetchDiscussions();
+      }
+    },
+    { immediate: true }
 );
 </script>
 
