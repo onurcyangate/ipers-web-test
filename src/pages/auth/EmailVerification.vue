@@ -80,7 +80,7 @@ const resendVerificationEmail = async () => {
     await router.replace('/verify-email');
     infoMessage("Account verification email has been sent.")
   } catch (err) {
-    if (err.response.data.status === '409 CONFLICT') {
+    if (err.response?.data.status === '409 CONFLICT') {
       warningMessage('Account already verified.')
       showResendButton.value = false
       isVerified.value = true

@@ -73,7 +73,7 @@ const verifyEmail = async (token) => {
     messageContent.value = 'Your account has been successfully verified. You can now login.'
     isVerified.value = true
   } catch (err) {
-    if (err.response.data.status === '409 CONFLICT') {
+    if (err.response?.data.status === '409 CONFLICT') {
       warningMessage('Account already verified.')
       messageTitle.value = 'Account Already Verified'
       messageContent.value = 'Your account has been verified. You can now login.'
@@ -99,7 +99,7 @@ const resendVerificationEmail = async () => {
     await router.replace('/verify-email');
     infoMessage("Account verification email has been sent.")
   } catch (err) {
-    if (err.response.data.status === '409 CONFLICT') {
+    if (err.response?.data.status === '409 CONFLICT') {
       warningMessage('Account already verified.')
       messageTitle.value = 'Account Already Verified'
       messageContent.value = 'Your account has been verified. You can now login.'
