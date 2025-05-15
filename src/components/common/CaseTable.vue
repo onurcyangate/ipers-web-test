@@ -4,12 +4,12 @@
       <v-row class="d-flex align-center mb-4">
         <v-col cols="3" class="d-flex align-center">
           <v-text-field
-            v-model="search"
-            label="Search"
-            clearable
-            variant="outlined"
-            density="compact"
-            class="pt-3"
+              v-model="search"
+              label="Search"
+              clearable
+              variant="outlined"
+              density="compact"
+              class="pt-3"
           ></v-text-field>
         </v-col>
         <v-spacer></v-spacer>
@@ -18,26 +18,27 @@
         </v-col>
       </v-row>
       <v-data-table
-        :headers="headers"
-        :items="filteredCases"
-        item-value="caseIdStr"
-        :items-per-page="5"
+          :headers="headers"
+          :items="filteredCases"
+          item-value="caseIdStr"
+          :items-per-page="shouldShowPagination ? 10 : -1"
+          :disable-pagination="!shouldShowPagination"
       >
         <template v-slot:item="{ item, index }">
           <tr
-            :style="{ backgroundColor: index % 2 === 0 ? 'white' : '#f3f3f3' }"
-            class="custom-row clickable"
-            @click="rowClicked(item)"
+              :style="{ backgroundColor: index % 2 === 0 ? 'white' : '#f3f3f3' }"
+              class="custom-row clickable"
+              @click="rowClicked(item)"
           >
             <td class="text-left">{{ item.caseIdStr }}</td>
             <td class="text-left">{{ item.memberFirstName }}</td>
             <td class="text-left">{{ item.memberLastName }}</td>
             <td class="text-left">
               <v-chip
-                :color="getStatusColor(item.LlifeCycleStatusDomained)"
-                text-color="white"
-                size="small"
-                class="font-weight-medium"
+                  :color="getStatusColor(item.LlifeCycleStatusDomained)"
+                  text-color="white"
+                  size="small"
+                  class="font-weight-medium"
               >
                 {{ getStatusText(item.LlifeCycleStatusDomained) }}
               </v-chip>
@@ -53,14 +54,23 @@
             Loading...
           </div>
         </template>
+        <template v-slot:bottom v-if="shouldShowPagination">
+          <v-data-table-footer
+              :items-per-page="10"
+              :items-length="filteredCases.length"
+          />
+        </template>
+        <template v-slot:bottom v-else>
+          <!-- Empty slot to override default footer -->
+        </template>
       </v-data-table>
     </v-card>
     <Dialog
-      v-model="isAddCaseModalOpen"
-      heading="Add New Case"
-      label="Case Number"
-      inputType="text"
-      @submit="addNewCase"
+        v-model="isAddCaseModalOpen"
+        heading="Add New Case"
+        label="Case Number"
+        inputType="text"
+        @submit="addNewCase"
     ></Dialog>
   </v-container>
 </template>
@@ -125,11 +135,30 @@ const rowClicked = (item) => {
 };
 
 const filteredCases = computed(() => {
-  return props.cases.filter(
-    (c) =>
-      c?.memberFirstName?.toLowerCase().includes(search.value.toLowerCase()) ||
-      c?.memberLastName?.toLowerCase().includes(search.value.toLowerCase())
-  );
+  if (!search.value) return props.cases;
+
+  const searchLower = search.value.toLowerCase();
+
+  return props.cases.filter((c) => {
+    // Search in Case ID
+    if (c?.caseIdStr?.toLowerCase().includes(searchLower)) return true;
+
+    // Search in Member First Name
+    if (c?.memberFirstName?.toLowerCase().includes(searchLower)) return true;
+
+    // Search in Member Last Name
+    if (c?.memberLastName?.toLowerCase().includes(searchLower)) return true;
+
+    // Search in Status
+    const statusText = getStatusText(c?.LlifeCycleStatusDomained)?.toLowerCase();
+    if (statusText?.includes(searchLower)) return true;
+
+    return false;
+  });
+});
+
+const shouldShowPagination = computed(() => {
+  return filteredCases.value.length > 10;
 });
 </script>
 
