@@ -5,11 +5,11 @@
       <span v-if="messagesLoading" class="loader"></span>
       <v-spacer></v-spacer>
       <v-btn
-          v-if="!messagesLoading"
-          icon
-          variant="text"
-          @click="isExpanded = !isExpanded"
-          :aria-label="isExpanded ? 'Collapse' : 'Expand'"
+        v-if="!messagesLoading"
+        icon
+        variant="text"
+        @click="isExpanded = !isExpanded"
+        :aria-label="isExpanded ? 'Collapse' : 'Expand'"
       >
         <v-icon>{{ isExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
       </v-btn>
@@ -20,9 +20,9 @@
                    style="border-bottom: 1px solid lightgray;">
         <v-expansion-panels accordion :model-value="expandedPanels">
           <v-expansion-panel
-              v-for="(message, index) in topLevelMessages"
-              :key="index"
-              elevation="0"
+            v-for="(message, index) in topLevelMessages"
+            :key="index"
+            elevation="0"
           >
             <!-- Parent Message -->
             <v-expansion-panel-title class="py-2 px-2 pr-2" :hide-actions="!hasReplies(message.Id)"
@@ -32,7 +32,7 @@
                   <strong class="pb-1">{{ message.TopicName || 'No Topic' }}</strong>
                   <p class="mt-1">{{ message.Body }}</p>
                   <div class="message-info">
-                    <span class="author-name">{{ message.Author || 'Case Officer' }}</span>
+                    <span class="author-name">{{ (message.Author && message.Author !== 'null') ? message.Author : 'Case Officer' }}</span>
                     <span class="dot-separator">•</span>
                     <span class="timestamp">{{ formatDate(message.PostedDateTime) }}</span>
                   </div>
@@ -40,21 +40,21 @@
                 <!-- Message Actions -->
                 <div class="message-actions">
                   <v-btn
-                      icon
-                      small
-                      variant="text"
-                      @click.stop="initReply(message)"
-                      style="margin-right: -10px"
+                    icon
+                    small
+                    variant="text"
+                    @click.stop="initReply(message)"
+                    style="margin-right: -10px"
                   >
                     <v-icon>mdi-reply</v-icon>
                   </v-btn>
                   <v-btn
-                      v-if="!hasReplies(message.Id)"
-                      icon
-                      variant="text"
-                      small
-                      color="red"
-                      @click.stop="deleteMessage(message.TargetItemId)"
+                    v-if="!hasReplies(message.Id)"
+                    icon
+                    variant="text"
+                    small
+                    color="red"
+                    @click.stop="deleteMessage(message.TargetItemId)"
                   >
                     <v-icon>mdi-trash-can-outline</v-icon>
                   </v-btn>
@@ -66,20 +66,20 @@
             <v-expansion-panel-text v-if="hasReplies(message.Id)">
               <v-row class="replies">
                 <v-col
-                    cols="12"
-                    v-for="(reply, idx) in getReplies(message.Id)"
-                    :key="idx"
-                    class="reply-message"
-                    :style="{ marginLeft: '10px' }"
+                  cols="12"
+                  v-for="(reply, idx) in getReplies(message.Id)"
+                  :key="idx"
+                  class="reply-message"
+                  :style="{ marginLeft: '10px' }"
                 >
                   <MessageReply
-                      :reply="reply"
-                      :get-replies="getReplies"
-                      :has-replies="hasReplies"
-                      :format-date="formatDate"
-                      :depth="0"
-                      @reply="initReply"
-                      @delete="deleteMessage"
+                    :reply="reply"
+                    :get-replies="getReplies"
+                    :has-replies="hasReplies"
+                    :format-date="formatDate"
+                    :depth="0"
+                    @reply="initReply"
+                    @delete="deleteMessage"
                   />
                 </v-col>
               </v-row>
@@ -107,22 +107,22 @@
 
         <v-col cols="12">
           <v-textarea
-              v-model="newReplyMessage"
-              label="Reply Message"
-              variant="outlined"
-              row-height="15"
-              rows="2"
-              class="mt-1"
-              :style="{ width: '100%' }"
+            v-model="newReplyMessage"
+            label="Reply Message"
+            variant="outlined"
+            row-height="15"
+            rows="2"
+            class="mt-1"
+            :style="{ width: '100%' }"
           ></v-textarea>
         </v-col>
         <v-col cols="12" class="text-right">
           <v-btn
-              :color="COLORS.PRIMARY"
-              @click="sendReply"
-              variant="flat"
-              class="no-uppercase"
-              :disabled="!newReplyMessage"
+            :color="COLORS.PRIMARY"
+            @click="sendReply"
+            variant="flat"
+            class="no-uppercase"
+            :disabled="!newReplyMessage"
           >
             Send Reply
           </v-btn>
@@ -138,10 +138,10 @@
       <v-row class="w-100">
         <v-col v-if="!showNewMessageForm" cols="12" class="text-right">
           <v-btn
-              :color="COLORS.PRIMARY"
-              @click="showNewMessageForm = true"
-              variant="flat"
-              class="no-uppercase"
+            :color="COLORS.PRIMARY"
+            @click="showNewMessageForm = true"
+            variant="flat"
+            class="no-uppercase"
           >
             Create Message
           </v-btn>
@@ -151,38 +151,38 @@
         <template v-if="showNewMessageForm">
           <v-col cols="12">
             <v-text-field
-                v-model="newTopic"
-                label="Subject"
-                variant="outlined"
-                density="compact"
-                class="mt-1"
-                style="width: 100%; margin-bottom: -10px"
+              v-model="newTopic"
+              label="Subject"
+              variant="outlined"
+              density="compact"
+              class="mt-1"
+              style="width: 100%; margin-bottom: -10px"
             ></v-text-field>
           </v-col>
           <v-col cols="12">
             <v-textarea
-                v-model="newMessage"
-                label="Message"
-                variant="outlined"
-                rows="3"
-                style="width: 100%;"
+              v-model="newMessage"
+              label="Message"
+              variant="outlined"
+              rows="3"
+              style="width: 100%;"
             ></v-textarea>
           </v-col>
           <v-col cols="12" class="text-right">
             <v-btn
-                :color="COLORS.PRIMARY"
-                @click="sendMessage"
-                variant="flat"
-                class="no-uppercase"
-                :disabled="!newMessage || !newTopic"
+              :color="COLORS.PRIMARY"
+              @click="sendMessage"
+              variant="flat"
+              class="no-uppercase"
+              :disabled="!newMessage || !newTopic"
             >
               Send
             </v-btn>
             <v-btn
-                class="ml-2 no-uppercase"
-                color="#003058"
-                variant="outlined"
-                @click="cancelNewMessage"
+              class="ml-2 no-uppercase"
+              color="#003058"
+              variant="outlined"
+              @click="cancelNewMessage"
             >
               Cancel
             </v-btn>
@@ -234,7 +234,7 @@ const canFetchMessages = computed(() => {
 });
 
 const topLevelMessages = computed(() =>
-    discussionsList.value.filter((d) => !d.ParentId)
+  discussionsList.value.filter((d) => !d.ParentId)
 );
 
 const hasReplies = (id) => {
@@ -278,8 +278,8 @@ const parseDiscussions = (response) => {
 
     // Auto-expand panels that have replies
     expandedPanels.value = discussionsList.value
-        .filter(msg => !msg.ParentId && hasReplies(msg.Id))
-        .map((msg, index) => index);
+      .filter(msg => !msg.ParentId && hasReplies(msg.Id))
+      .map((msg, index) => index);
   } else {
     discussionsList.value = [];
     expandedPanels.value = [];
@@ -293,8 +293,8 @@ const extractEmail = (authorField) => {
 const initReply = (message) => {
   replyTo.value = message;
   newReplyTopic.value = message.Discussion?.TopicName
-      ? message.Discussion.TopicName
-      : '';
+    ? message.Discussion.TopicName
+    : '';
   showNewMessageForm.value = true;
 };
 
@@ -340,8 +340,8 @@ const saveMessage = async (body, topicName = null, isReply = false, parentId = n
     loading.value = true;
 
     const response = isReply
-        ? await apiService.replyMessage(payload)
-        : await apiService.createMessage(payload);
+      ? await apiService.replyMessage(payload)
+      : await apiService.createMessage(payload);
 
     // Log the full response
     console.log('[SecureMessages] Response received:', {
@@ -353,10 +353,14 @@ const saveMessage = async (body, topicName = null, isReply = false, parentId = n
       timestamp: new Date().toISOString()
     });
 
+    const itemId = isReply
+      ? response.data.ReplyResponse.items[0].itemId
+      : response.data.CreationResponse.items[0].itemId;
+
     if (response.status === 200) {
       const senderPayload = [{
         containerVersionId: userStore.containerVersionId,
-        itemId: response.data.CreationResponse.items[0].itemId,
+        itemId: itemId,
         operationType: "Update",
         item: {
           Properties: {
@@ -495,13 +499,13 @@ onMounted(() => {
 });
 
 watch(
-    canFetchMessages,
-    async (canFetch) => {
-      if (canFetch) {
-        await fetchDiscussions();
-      }
-    },
-    { immediate: true }
+  canFetchMessages,
+  async (canFetch) => {
+    if (canFetch) {
+      await fetchDiscussions();
+    }
+  },
+  { immediate: true }
 );
 </script>
 
