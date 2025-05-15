@@ -252,6 +252,9 @@ const handleFileUpload = async (files) => {
     fileUploadLoading.value = true;
     fileUploadProgress.value = files.map(() => 0);
 
+    let hasErrors = false;
+    const uploadResults = [];
+
     for (const [index, file] of files.entries()) {
       const formData = new FormData();
       formData.append('file', file);
@@ -261,23 +264,59 @@ const handleFileUpload = async (files) => {
 
       try {
         const response = await apiService.uploadFile(caseDetails.value.caseIdStr, formData);
-        if (response.data.status !== '200 OK') {
-          throw new Error(response.data.message || 'Upload failed');
+
+        // Check if the response indicates success
+        if (response.data.status === '200 OK' || response.data.status === 200) {
+          uploadResults.push({ success: true, file: file.name });
+          previouslyUploadedFiles.value.push({name: file.name});
+        } else {
+          hasErrors = true;
+          uploadResults.push({
+            success: false,
+            file: file.name,
+            error: response.data.message || 'Upload failed'
+          });
         }
-        successMessage('Files uploaded successfully.');
-        refreshPendingFilesTrigger.value = true;
-        previouslyUploadedFiles.value.push({name: file.name});
+      } catch (uploadError) {
+        hasErrors = true;
+        uploadResults.push({
+          success: false,
+          file: file.name,
+          error: uploadError.message || 'Network error'
+        });
       } finally {
-        stopFileUploadProgressLoader(index);
         progressController.stop = true;
-        resetFileInputTrigger.value = true;
-        uploadedFiles.value = [];
-        fileUploadProgress.value = [];
+        fileUploadProgress.value[index] = 100;
       }
     }
+
+    // Show appropriate messages based on results
+    const successCount = uploadResults.filter(r => r.success).length;
+    const failureCount = uploadResults.filter(r => !r.success).length;
+
+    if (successCount > 0 && failureCount === 0) {
+      successMessage(`All ${successCount} file(s) uploaded successfully.`);
+      refreshPendingFilesTrigger.value = true;
+    } else if (successCount > 0 && failureCount > 0) {
+      warningMessage(`${successCount} file(s) uploaded successfully, ${failureCount} failed.`);
+      refreshPendingFilesTrigger.value = true;
+
+      // Log specific errors
+      uploadResults
+          .filter(r => !r.success)
+          .forEach(r => consoleError(`Failed to upload ${r.file}: ${r.error}`));
+    } else if (failureCount > 0 && successCount === 0) {
+      errorMessage('Failed to upload all files.');
+
+      // Log specific errors
+      uploadResults
+          .filter(r => !r.success)
+          .forEach(r => consoleError(`Failed to upload ${r.file}: ${r.error}`));
+    }
+
   } catch (error) {
-    consoleError('Error uploading documents: ', error);
-    errorMessage('Failed to upload documents');
+    consoleError('Error in upload process: ', error);
+    errorMessage('Failed to start upload process');
   } finally {
     fileUploadLoading.value = false;
     resetFileInputTrigger.value = true;
