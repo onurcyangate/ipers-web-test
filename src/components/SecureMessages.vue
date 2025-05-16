@@ -32,7 +32,9 @@
                   <strong class="pb-1">{{ message.TopicName || 'No Topic' }}</strong>
                   <p class="mt-1">{{ message.Body }}</p>
                   <div class="message-info">
-                    <span class="author-name">{{ (message.Author && message.Author !== 'null') ? message.Author : 'Case Officer' }}</span>
+                    <span class="author-name">
+                      {{ (message.Author !== 'null' && message.Author) || 'Case Officer' }}
+                    </span>
                     <span class="dot-separator">•</span>
                     <span class="timestamp">{{ formatDate(message.PostedDateTime) }}</span>
                   </div>
