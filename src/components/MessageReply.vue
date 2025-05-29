@@ -3,7 +3,9 @@
     <div class="message-content">
       <p>{{ reply.Body }}</p>
       <div class="message-info">
-        <span class="author-name">{{ reply.Author }}</span>
+        <span class="author-name">
+                      {{ (reply.Author !== 'null' && reply.Author) || 'Case Officer' }}
+                    </span>
         <span class="dot-separator">•</span>
         <span class="timestamp">{{ formatDate(reply.PostedDateTime) }}</span>
       </div>
