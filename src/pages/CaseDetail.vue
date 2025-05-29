@@ -302,7 +302,6 @@ const handleFileUpload = async (files) => {
           timestamp: new Date().toISOString()
         });
 
-        // Check if the response indicates success
         if (response.data.status === '200 OK' || response.data.status === 200) {
           uploadResults.push({ success: true, file: file.name });
           console.log(`[CaseDetail] Successfully uploaded: ${file.name}`);
@@ -391,7 +390,7 @@ const handleDecisionFileUpload = async (args) => {
 
       try {
         const response = await apiService.uploadDecisionFile(caseDetails.value.caseIdStr, formData);
-        if (response.data.status !== '200 OK') {
+        if (response.data.status === '200 OK' || response.data.status === 200) {
           throw new Error(response.data.message || 'Upload failed');
         }
         successMessage('Files uploaded successfully.');
