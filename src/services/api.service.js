@@ -89,7 +89,7 @@ class ApiService extends BaseService {
   }
 
   uploadDecisionFile(caseId, payload) {
-    return this._axiosInstance.post(`/university-decision-file-move?caseId=${caseId}`, payload)
+    return this._axiosInstance.post(`/university-decision-file-upload?caseId=${caseId}`, payload)
   }
 
   listTempFiles(caseId) {
