@@ -4,41 +4,66 @@
       <v-row class="d-flex align-center mb-4">
         <v-col cols="3" class="d-flex align-center">
           <v-text-field
-              v-model="search"
-              label="Search"
-              clearable
-              variant="outlined"
-              density="compact"
-              class="pt-3"
+            v-model="search"
+            label="Search"
+            clearable
+            variant="outlined"
+            density="compact"
+            class="pt-3"
           ></v-text-field>
         </v-col>
         <v-spacer></v-spacer>
         <v-col v-if="isUniversityUser === false" cols="3" class="d-flex align-center justify-end">
-          <v-btn @click="isAddCaseModalOpen = true" class="ml-2" :color="COLORS.PRIMARY">Add New Case</v-btn>
+          <v-btn
+            @click="isAddCaseModalOpen = true"
+            class="ml-2"
+            :color="COLORS.PRIMARY"
+            :loading="addingCase"
+            :disabled="addingCase"
+          >
+            Add New Case
+          </v-btn>
         </v-col>
       </v-row>
+
+      <!-- Skeleton Loader -->
+      <div v-if="loading">
+        <v-skeleton-loader
+          type="table-thead"
+          class="mb-2"
+        ></v-skeleton-loader>
+        <v-skeleton-loader
+          v-for="n in 5"
+          :key="n"
+          type="table-tbody"
+          class="mb-1"
+        ></v-skeleton-loader>
+      </div>
+
+      <!-- Data Table -->
       <v-data-table
-          :headers="headers"
-          :items="filteredCases"
-          item-value="caseIdStr"
-          :items-per-page="shouldShowPagination ? 10 : -1"
-          :disable-pagination="!shouldShowPagination"
+        v-else
+        :headers="headers"
+        :items="filteredCases"
+        item-value="caseIdStr"
+        :items-per-page="shouldShowPagination ? 10 : -1"
+        :disable-pagination="!shouldShowPagination"
       >
         <template v-slot:item="{ item, index }">
           <tr
-              :style="{ backgroundColor: index % 2 === 0 ? 'white' : '#f3f3f3' }"
-              class="custom-row clickable"
-              @click="rowClicked(item)"
+            :style="{ backgroundColor: index % 2 === 0 ? 'white' : '#f3f3f3' }"
+            class="custom-row clickable"
+            @click="rowClicked(item)"
           >
             <td class="text-left">{{ item.caseIdStr }}</td>
             <td class="text-left">{{ item.memberFirstName }}</td>
             <td class="text-left">{{ item.memberLastName }}</td>
             <td class="text-left">
               <v-chip
-                  :color="getStatusColor(item.LlifeCycleStatusDomained)"
-                  text-color="white"
-                  size="small"
-                  class="font-weight-medium"
+                :color="getStatusColor(item.LlifeCycleStatusDomained)"
+                text-color="white"
+                size="small"
+                class="font-weight-medium"
               >
                 {{ getStatusText(item.LlifeCycleStatusDomained) }}
               </v-chip>
@@ -46,18 +71,15 @@
           </tr>
         </template>
         <template v-slot:no-data>
-          <div v-if="!loading">
+          <div class="text-center py-8">
             <div v-if="cases.length === 0">You do not have any case to work on.</div>
             <div v-else>No case available for this search</div>
-          </div>
-          <div v-else>
-            Loading...
           </div>
         </template>
         <template v-slot:bottom v-if="shouldShowPagination">
           <v-data-table-footer
-              :items-per-page="10"
-              :items-length="filteredCases.length"
+            :items-per-page="10"
+            :items-length="filteredCases.length"
           />
         </template>
         <template v-slot:bottom v-else>
@@ -66,11 +88,11 @@
       </v-data-table>
     </v-card>
     <Dialog
-        v-model="isAddCaseModalOpen"
-        heading="Add New Case"
-        label="Case Number"
-        inputType="text"
-        @submit="addNewCase"
+      v-model="isAddCaseModalOpen"
+      heading="Add New Case"
+      label="Case Number"
+      inputType="text"
+      @submit="addNewCase"
     ></Dialog>
   </v-container>
 </template>
@@ -83,7 +105,7 @@ import {COLORS} from "@/styles/colors";
 import { getApiService } from '@/services/api.service'
 const apiService = getApiService()
 import {consoleError} from "@/utils/logger";
-import {errorMessage} from "@/utils/message";
+import {errorMessage, successMessage} from "@/utils/message";
 import {useAuthStore} from "@/store/authStore";
 
 const authStore = useAuthStore();
@@ -101,6 +123,7 @@ const props = defineProps({
 const isUniversityUser = computed(() => authStore.isUniversityUser());
 const search = ref('');
 const isAddCaseModalOpen = ref(false);
+const addingCase = ref(false);
 const router = useRouter();
 const emit = defineEmits(['cases-updated']);
 
@@ -121,12 +144,16 @@ const getStatusText = (status) => {
 
 const addNewCase = async (caseNumber) => {
   try {
+    addingCase.value = true;
     await apiService.addCase(caseNumber, authStore.username);
+    successMessage('Case added successfully.');
+    isAddCaseModalOpen.value = false;
     emit('cases-updated');
   } catch (err) {
     consoleError(err);
     errorMessage('Failed to add case.');
-    return [];
+  } finally {
+    addingCase.value = false;
   }
 };
 
@@ -174,5 +201,10 @@ const shouldShowPagination = computed(() => {
 
 .text-left {
   text-align: left;
+}
+
+/* Custom skeleton loader styles */
+.v-skeleton-loader {
+  background: transparent !important;
 }
 </style>
