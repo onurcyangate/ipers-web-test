@@ -13,7 +13,7 @@
             variant="outlined"
             @change="handleFileChange"
             style="max-height: 100px"
-            :disabled="uploading"
+            :disabled="uploading || props.loading"
             accept=".doc,.docx,.pdf"
             persistent-hint="Maximum file size limit is 10MB."
           />
@@ -23,10 +23,10 @@
           <strong>Pending Documents:</strong>
           <v-card-text class="pl-0 pt-1" style="margin-left: -20px; overflow-y: auto; max-height: 150px">
             <span v-if="pendingFilesLoading" class="loader"></span>
-            <div v-if="pendingFiles.length > 0">
+            <div v-else-if="pendingFiles.length > 0">
               <v-list-item
                 v-for="(file, index) in pendingFiles"
-                :key="index"
+                :key="`${file.fileId}-${index}`"
                 class="py-1 file-list-item"
                 density="compact"
               >
@@ -39,6 +39,7 @@
                     color="red"
                     class="mt-1 flex-shrink-0"
                     style="margin-right: 8px;"
+                    :disabled="pendingFilesLoading"
                   >
                     <v-icon size="small">mdi-close</v-icon>
                   </v-btn>
@@ -54,7 +55,7 @@
       </v-row>
 
       <v-row v-if="fileUploadProgress.length > 0">
-        <v-col cols="12" v-for="(file, index) in localUploadedFiles" :key="index">
+        <v-col cols="12" v-for="(file, index) in localUploadedFiles" :key="`progress-${index}`">
           <div>{{ file.name }}</div>
           <v-progress-linear
             :model-value="fileUploadProgress[index]"
@@ -68,8 +69,14 @@
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn :color="COLORS.PRIMARY" variant="flat" class="no-uppercase" @click="submitDocuments"
-             :loading="props.loading" :disabled="pendingFiles.length === 0">
+      <v-btn
+        :color="COLORS.PRIMARY"
+        variant="flat"
+        class="no-uppercase"
+        @click="submitDocuments"
+        :loading="props.loading"
+        :disabled="pendingFiles.length === 0 || pendingFilesLoading"
+      >
         Submit All Documents
       </v-btn>
     </v-card-actions>
@@ -77,7 +84,7 @@
 </template>
 
 <script setup>
-import {ref, watch} from 'vue';
+import {ref, watch, nextTick} from 'vue';
 import {COLORS} from '@/styles/colors';
 import { getApiService } from '@/services/api.service'
 const apiService = getApiService()
@@ -130,56 +137,117 @@ const emit = defineEmits([
 ]);
 
 const handleFileChange = async () => {
+  console.log('[FileUpload] File change detected:', {
+    fileCount: localUploadedFiles.value.length,
+    files: localUploadedFiles.value.map(f => ({ name: f.name, size: f.size })),
+    timestamp: new Date().toISOString()
+  });
+
   if (localUploadedFiles.value.length > 0) {
-    uploading.value = true;
-    await emit('update:uploadedFiles', localUploadedFiles.value);
-    uploading.value = false;
-    fetchPendingFiles();
+    try {
+      uploading.value = true;
+
+      // Emit files for upload
+      await emit('update:uploadedFiles', localUploadedFiles.value);
+
+      // Wait a bit for the upload to complete before refreshing
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Refresh pending files
+      await fetchPendingFiles();
+
+    } catch (error) {
+      consoleError('[FileUpload] Error in handleFileChange:', error);
+      errorMessage('Error processing file upload');
+    } finally {
+      uploading.value = false;
+    }
   }
 };
 
 const fetchPendingFiles = async () => {
+  if (!props.caseId) {
+    console.warn('[FileUpload] No caseId provided for fetchPendingFiles');
+    return;
+  }
+
+  console.log('[FileUpload] Fetching pending files for case:', props.caseId);
+
   try {
     pendingFilesLoading.value = true;
     const response = await apiService.listTempFiles(props.caseId);
-    pendingFiles.value = response.data.fileList.map(file => ({
+
+    console.log('[FileUpload] Pending files response:', {
+      status: response.status,
+      dataLength: response.data?.fileList?.length || 0,
+      files: response.data?.fileList?.map(f => ({ name: f.fileName, id: f.fileId })) || []
+    });
+
+    const newFiles = response.data?.fileList?.map(file => ({
       name: file.fileName,
       fileId: file.fileId,
-    }));
+    })) || [];
+
+    pendingFiles.value = newFiles;
     emit('updatePendingFiles', pendingFiles.value);
-    props.refreshPendingFilesTrigger = false;
-    props.resetTrigger = false;
-    resetFileInput();
+
+    console.log('[FileUpload] Updated pending files:', pendingFiles.value.length);
+
   } catch (error) {
-    consoleError('Error fetching pending files:', error);
+    consoleError('[FileUpload] Error fetching pending files:', error);
+    console.error('[FileUpload] Fetch error details:', {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status,
+      caseId: props.caseId
+    });
     errorMessage('Failed to fetch pending files.');
   } finally {
     pendingFilesLoading.value = false;
   }
 };
 
-const removePreviouslyUploadedFile = (index) => {
+const removePreviouslyUploadedFile = async (index) => {
   const fileToRemove = pendingFiles.value[index];
+  console.log('[FileUpload] Removing file:', {
+    index,
+    fileId: fileToRemove.fileId,
+    fileName: fileToRemove.name
+  });
+
   emit('deleteFile', fileToRemove);
+
+  // Wait a bit then refresh the list
+  setTimeout(async () => {
+    await fetchPendingFiles();
+  }, 500);
 };
 
 const submitDocuments = () => {
+  console.log('[FileUpload] Submitting documents:', {
+    pendingFilesCount: pendingFiles.value.length,
+    localFilesCount: localUploadedFiles.value.length
+  });
+
   emit('submitDocuments', {
     files: localUploadedFiles.value,
     uploadForDecision: uploadForDecision.value,
   });
-  props.refreshPendingFilesTrigger = false;
-  props.resetTrigger = false;
+
+  // Reset after submission
   resetFileInput();
 };
 
 const resetFileInput = () => {
+  console.log('[FileUpload] Resetting file input');
   localUploadedFiles.value = [];
 };
 
+// Watch for reset trigger
 watch(
   () => props.resetTrigger,
   (newVal) => {
+    console.log('[FileUpload] Reset trigger changed:', newVal);
     if (newVal) {
       resetFileInput();
       emit('update:resetTrigger', false);
@@ -187,26 +255,41 @@ watch(
   }
 );
 
+// Watch for refresh pending files trigger
 watch(
   () => props.refreshPendingFilesTrigger,
   async (newVal) => {
-    // TODO, can set this to true always?
+    console.log('[FileUpload] Refresh pending files trigger changed:', newVal);
     if (newVal) {
+      await nextTick(); // Wait for DOM updates
       await fetchPendingFiles();
-      emit('update:refreshPendingFilesTrigger', false)
+      emit('update:refreshPendingFilesTrigger', false);
     }
   }
 );
 
+// Watch for ready state
 watch(
   () => props.ready,
   async (isReady) => {
-    if (isReady) {
+    console.log('[FileUpload] Ready state changed:', isReady);
+    if (isReady && props.caseId) {
+      await nextTick(); // Wait for DOM updates
       await fetchPendingFiles();
     }
   }
 );
 
+// Watch for caseId changes
+watch(
+  () => props.caseId,
+  async (newCaseId) => {
+    console.log('[FileUpload] CaseId changed:', newCaseId);
+    if (newCaseId && props.ready) {
+      await fetchPendingFiles();
+    }
+  }
+);
 </script>
 
 <style scoped>

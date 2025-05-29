@@ -269,6 +269,13 @@ const updateRefreshPendingFilesTrigger = (newVal) => {
 };
 
 const handleFileUpload = async (files) => {
+  console.log('[CaseDetail] Starting file upload:', {
+    fileCount: files.length,
+    files: files.map(f => ({ name: f.name, size: f.size })),
+    caseId: caseDetails.value.caseIdStr,
+    timestamp: new Date().toISOString()
+  });
+
   try {
     fileUploadLoading.value = true;
     fileUploadProgress.value = files.map(() => 0);
@@ -277,6 +284,8 @@ const handleFileUpload = async (files) => {
     const uploadResults = [];
 
     for (const [index, file] of files.entries()) {
+      console.log(`[CaseDetail] Uploading file ${index + 1}/${files.length}: ${file.name}`);
+
       const formData = new FormData();
       formData.append('file', file);
 
@@ -286,10 +295,17 @@ const handleFileUpload = async (files) => {
       try {
         const response = await apiService.uploadFile(caseDetails.value.caseIdStr, formData);
 
+        console.log(`[CaseDetail] Upload response for ${file.name}:`, {
+          status: response.status,
+          dataStatus: response.data?.status,
+          message: response.data?.message,
+          timestamp: new Date().toISOString()
+        });
+
         // Check if the response indicates success
         if (response.data.status === '200 OK' || response.data.status === 200) {
           uploadResults.push({ success: true, file: file.name });
-          previouslyUploadedFiles.value.push({name: file.name});
+          console.log(`[CaseDetail] Successfully uploaded: ${file.name}`);
         } else {
           hasErrors = true;
           uploadResults.push({
@@ -297,6 +313,7 @@ const handleFileUpload = async (files) => {
             file: file.name,
             error: response.data.message || 'Upload failed'
           });
+          console.error(`[CaseDetail] Upload failed for ${file.name}:`, response.data.message);
         }
       } catch (uploadError) {
         hasErrors = true;
@@ -304,6 +321,11 @@ const handleFileUpload = async (files) => {
           success: false,
           file: file.name,
           error: uploadError.message || 'Network error'
+        });
+        console.error(`[CaseDetail] Upload error for ${file.name}:`, {
+          message: uploadError.message,
+          response: uploadError.response?.data,
+          status: uploadError.response?.status
         });
       } finally {
         progressController.stop = true;
@@ -315,12 +337,23 @@ const handleFileUpload = async (files) => {
     const successCount = uploadResults.filter(r => r.success).length;
     const failureCount = uploadResults.filter(r => !r.success).length;
 
+    console.log('[CaseDetail] Upload results:', {
+      successCount,
+      failureCount,
+      totalFiles: files.length
+    });
+
     if (successCount > 0 && failureCount === 0) {
       successMessage(`All ${successCount} file(s) uploaded successfully.`);
-      refreshPendingFilesTrigger.value = true;
+      // Wait a moment before triggering refresh to ensure backend processing is complete
+      setTimeout(() => {
+        refreshPendingFilesTrigger.value = true;
+      }, 1000);
     } else if (successCount > 0 && failureCount > 0) {
       warningMessage(`${successCount} file(s) uploaded successfully, ${failureCount} failed.`);
-      refreshPendingFilesTrigger.value = true;
+      setTimeout(() => {
+        refreshPendingFilesTrigger.value = true;
+      }, 1000);
 
       // Log specific errors
       uploadResults
@@ -336,13 +369,15 @@ const handleFileUpload = async (files) => {
     }
 
   } catch (error) {
-    consoleError('Error in upload process: ', error);
+    consoleError('[CaseDetail] Error in upload process: ', error);
     errorMessage('Failed to start upload process');
   } finally {
     fileUploadLoading.value = false;
     resetFileInputTrigger.value = true;
     uploadedFiles.value = [];
     fileUploadProgress.value = [];
+
+    console.log('[CaseDetail] Upload process completed');
   }
 };
 
