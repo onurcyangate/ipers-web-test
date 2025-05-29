@@ -125,21 +125,42 @@
             <!-- Downloads Section -->
             <v-col v-if="downloads.length" cols="12" md="4">
               <v-card class="light-border elevation-10 pa-2" style="max-height: 250px">
-                <v-card-title class="blue-header-1">DOWNLOADS</v-card-title>
+                <v-card-title class="blue-header-1 d-flex align-center">
+                  DOWNLOADS
+                </v-card-title>
+
                 <span v-if="downloadableFilesLoading" class="loader"></span>
-                <v-card-text style="overflow-y: auto">
-                  <div v-for="(file, index) in downloads" :key="index">
-                    <v-list-item @click="downloadFile(file)">
-                      <v-row align="center" no-gutters>
-                        <v-col cols="auto mr-2">
-                          <v-icon size="large">mdi-download</v-icon>
-                        </v-col>
-                        <v-col>
-                          <span class="text-wrap" style="font-size: 1rem">{{ file.filename }}</span>
-                        </v-col>
-                      </v-row>
+
+                <v-card-text v-else style="overflow-y: auto; padding: 8px 16px;">
+                  <v-list dense class="pa-0">
+                    <v-list-item
+                      v-for="(file, index) in downloads"
+                      :key="index"
+                      @click="downloadFile(file)"
+                      class="download-item px-3 py-3 rounded mb-1"
+                      style="cursor: pointer; min-height: 60px;"
+                    >
+                      <v-list-item-content class="pa-0">
+                        <div
+                          class="filename-title"
+                          :style="`font-size: 0.875rem; color: ${COLORS.PRIMARY}; font-weight: 500; text-decoration: underline; text-decoration-color: rgba(25, 118, 210, 0.3);`"
+                          :title="file.filename"
+                        >
+                          {{ file.filename }}
+                        </div>
+                      </v-list-item-content>
+
+                      <template v-slot:append>
+                        <v-icon
+                          size="18"
+                          :color="COLORS.PRIMARY"
+                          style="opacity: 0.6;"
+                        >
+                          mdi-download-outline
+                        </v-icon>
+                      </template>
                     </v-list-item>
-                  </div>
+                  </v-list>
                 </v-card-text>
               </v-card>
             </v-col>
@@ -565,4 +586,44 @@ const goBackToDashboard = () => {
 </script>
 
 <style scoped>
+.filename-title {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4;
+  height: 2.8em; /* Fixed height for exactly 2 lines */
+  word-break: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.v-list-item-content {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.download-item {
+  transition: all 0.2s ease-in-out;
+}
+
+.download-item:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.download-item:hover .filename-title {
+  text-decoration-color: rgba(25, 118, 210, 0.8) !important;
+}
+
+.v-list {
+  background: transparent !important;
+}
+
+.v-list-item {
+  border-radius: 8px !important;
+}
+
+.v-avatar {
+  flex-shrink: 0;
+}
 </style>
