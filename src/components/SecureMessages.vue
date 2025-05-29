@@ -197,7 +197,6 @@
       v-model="confirmMessageDeleteDialog"
       heading="Delete Message"
       message="Are you sure you want to delete this message?"
-      sub-message="This action cannot be undone."
       confirm-text="Delete"
       cancel-text="Cancel"
       confirm-color="error"
