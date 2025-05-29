@@ -51,7 +51,7 @@
                     <v-icon>mdi-reply</v-icon>
                   </v-btn>
                   <v-btn
-                    v-if="!hasReplies(message.Id)"
+                    v-if="!hasReplies(message.Id) && canDeleteMessage(message)"
                     icon
                     variant="text"
                     small
@@ -330,6 +330,13 @@ const cancelNewMessage = () => {
 const showDeleteConfirm = (targetItemId) => {
   messageToDelete.value = targetItemId;
   confirmMessageDeleteDialog.value = true;
+};
+
+const canDeleteMessage = (message) => {
+  if (!message.Author || message.Author === 'null' || message.Author.trim() === '') {
+    return false;
+  }
+  return true;
 };
 
 const handleDeleteConfirm = async () => {

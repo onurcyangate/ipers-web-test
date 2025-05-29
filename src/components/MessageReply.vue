@@ -4,8 +4,8 @@
       <p>{{ reply.Body }}</p>
       <div class="message-info">
         <span class="author-name">
-                      {{ (reply.Author !== 'null' && reply.Author) || 'Case Officer' }}
-                    </span>
+          {{ (reply.Author !== 'null' && reply.Author) || 'Case Officer' }}
+        </span>
         <span class="dot-separator">•</span>
         <span class="timestamp">{{ formatDate(reply.PostedDateTime) }}</span>
       </div>
@@ -21,7 +21,7 @@
         <v-icon>mdi-reply</v-icon>
       </v-btn>
       <v-btn
-        v-if="!hasReplies(reply.Id)"
+        v-if="!hasReplies(reply.Id) && canDeleteReply(reply)"
         icon
         variant="text"
         small
@@ -60,7 +60,6 @@
 </template>
 
 <script setup>
-
 import {formatDate} from "@/utils/common";
 
 defineProps({
@@ -91,6 +90,13 @@ defineProps({
 });
 
 defineEmits(['reply', 'delete']);
+
+const canDeleteReply = (reply) => {
+  if (!reply.Author || reply.Author === 'null' || reply.Author.trim() === '') {
+    return false;
+  }
+  return true;
+};
 </script>
 
 <style scoped>
