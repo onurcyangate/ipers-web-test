@@ -17,7 +17,7 @@
 
     <v-expand-transition>
       <v-card-text v-if="isExpanded" class="scrollable-messages mx-1" ref="messageContainer"
-                   style="border-bottom: 1px solid lightgray;">
+                   style="border-bottom: 1px solid lightgray; overflow-x: hidden;">
         <v-expansion-panels accordion :model-value="expandedPanels">
           <v-expansion-panel
             v-for="(message, index) in topLevelMessages"
@@ -28,9 +28,9 @@
             <v-expansion-panel-title class="py-2 px-2 pr-2" :hide-actions="!hasReplies(message.Id)"
                                      :readonly="!hasReplies(message.Id)">
               <div class="message">
-                <div class="message-content" style="display: flex; flex-direction: column; gap: 4px">
-                  <strong class="pb-1">{{ message.TopicName || 'No Topic' }}</strong>
-                  <p class="mt-1">{{ message.Body }}</p>
+                <div class="message-content" style="display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1;">
+                  <strong class="pb-1" style="word-wrap: break-word; overflow-wrap: break-word;">{{ message.TopicName || 'No Topic' }}</strong>
+                  <p class="mt-1" style="word-wrap: break-word; overflow-wrap: break-word; white-space: pre-wrap;">{{ message.Body }}</p>
                   <div class="message-info">
                     <span class="author-name">
                       {{ (message.Author !== 'null' && message.Author) || 'Case Officer' }}
@@ -40,7 +40,7 @@
                   </div>
                 </div>
                 <!-- Message Actions -->
-                <div class="message-actions">
+                <div class="message-actions" style="flex-shrink: 0;">
                   <v-btn
                     icon
                     small
@@ -56,7 +56,7 @@
                     variant="text"
                     small
                     color="red"
-                    @click.stop="deleteMessage(message.TargetItemId)"
+                    @click.stop="showDeleteConfirm(message.TargetItemId)"
                   >
                     <v-icon>mdi-trash-can-outline</v-icon>
                   </v-btn>
@@ -81,7 +81,7 @@
                     :format-date="formatDate"
                     :depth="0"
                     @reply="initReply"
-                    @delete="deleteMessage"
+                    @delete="showDeleteConfirm"
                   />
                 </v-col>
               </v-row>
@@ -192,6 +192,17 @@
         </template>
       </v-row>
     </v-card-actions>
+
+    <ConfirmDialog
+      v-model="confirmMessageDeleteDialog"
+      heading="Delete Message"
+      message="Are you sure you want to delete this message?"
+      sub-message="This action cannot be undone."
+      confirm-text="Delete"
+      cancel-text="Cancel"
+      confirm-color="error"
+      @confirm="handleDeleteConfirm"
+    />
   </v-card>
 </template>
 
@@ -199,6 +210,7 @@
 import { ref, computed, watch, onMounted } from 'vue';
 import { COLORS } from '@/styles/colors';
 import { getApiService } from '@/services/api.service'
+import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 
 const apiService = getApiService()
 import { errorMessage, successMessage } from '@/utils/message';
@@ -230,6 +242,8 @@ const userStore = useAuthStore();
 const isExpanded = ref(true);
 const showNewMessageForm = ref(false);
 const expandedPanels = ref([]);
+const confirmMessageDeleteDialog = ref(false);
+const messageToDelete = ref(null);
 
 const canFetchMessages = computed(() => {
   return props.ready && userStore.businessWorkspaceObjectId;
@@ -311,6 +325,40 @@ const cancelNewMessage = () => {
   showNewMessageForm.value = false;
   newMessage.value = '';
   newTopic.value = '';
+};
+
+const showDeleteConfirm = (targetItemId) => {
+  messageToDelete.value = targetItemId;
+  confirmMessageDeleteDialog.value = true;
+};
+
+const handleDeleteConfirm = async () => {
+  if (messageToDelete.value) {
+    await performMessageDelete(messageToDelete.value);
+    messageToDelete.value = null;
+  }
+};
+
+const performMessageDelete = async (targetItemId) => {
+  const payload = [{
+    deleteTarget: true,
+    itemId: userStore.businessWorkspaceObjectId,
+    operationType: 'delete',
+    relationName: 'Discussions',
+    targetItemId: targetItemId,
+  }];
+
+  try {
+    loading.value = true;
+    await apiService.deleteMessage(payload);
+    successMessage('Message deleted successfully.');
+    await fetchDiscussions();
+  } catch (err) {
+    consoleError('Error deleting message: ', err);
+    errorMessage('Failed to delete message.');
+  } finally {
+    loading.value = false;
+  }
 };
 
 const saveMessage = async (body, topicName = null, isReply = false, parentId = null) => {
@@ -451,28 +499,6 @@ const sendReply = async () => {
   }
 };
 
-const deleteMessage = async (targetItemId) => {
-  const payload = [{
-    deleteTarget: true,
-    itemId: userStore.businessWorkspaceObjectId,
-    operationType: 'delete',
-    relationName: 'Discussions',
-    targetItemId: targetItemId,
-  }];
-
-  try {
-    loading.value = true;
-    await apiService.deleteMessage(payload);
-    successMessage('Message deleted successfully.');
-    await fetchDiscussions();
-  } catch (err) {
-    consoleError('Error deleting message: ', err);
-    errorMessage('Failed to delete message.');
-  } finally {
-    loading.value = false;
-  }
-};
-
 const fetchDiscussions = async () => {
   try {
     messagesLoading.value = true;
@@ -543,6 +569,7 @@ watch(
 .scrollable-messages {
   max-height: 300px;
   overflow-y: auto;
+  overflow-x: hidden; /* Prevent horizontal scroll */
 }
 
 .reply-preview {
