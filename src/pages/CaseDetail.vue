@@ -355,7 +355,7 @@ const handleDecisionFileUpload = async (args) => {
       formData.append('file', file);
 
       try {
-        const response = await apiService.uploadFile(caseDetails.value.caseIdStr, formData);
+        const response = await apiService.uploadDecisionFile(caseDetails.value.caseIdStr, formData);
         if (response.data.status !== '200 OK') {
           throw new Error(response.data.message || 'Upload failed');
         }
