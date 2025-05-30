@@ -18,37 +18,48 @@
     <v-expand-transition>
       <v-card-text v-if="isExpanded" class="scrollable-messages mx-1" ref="messageContainer"
                    style="border-bottom: 1px solid lightgray; overflow-x: hidden;">
-        <v-expansion-panels accordion :model-value="expandedPanels">
+        <v-expansion-panels accordion :model-value="expandedPanels" variant="accordion">
           <v-expansion-panel
             v-for="(message, index) in topLevelMessages"
-            :key="index"
+            :key="message.Id"
             elevation="0"
+            class="message-thread"
+            :class="{ 'thread-separator': index > 0 }"
           >
             <!-- Parent Message -->
-            <v-expansion-panel-title class="py-2 px-2 pr-2" :hide-actions="!hasReplies(message.Id)"
-                                     :readonly="!hasReplies(message.Id)">
+            <v-expansion-panel-title
+              class="py-3 px-3 main-message-header"
+              :hide-actions="!hasReplies(message.Id)"
+              :readonly="!hasReplies(message.Id)"
+            >
               <div class="message">
-                <div class="message-content" style="display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1;">
-                  <strong class="pb-1" style="word-wrap: break-word; overflow-wrap: break-word;">{{ message.TopicName || 'No Topic' }}</strong>
-                  <p class="mt-1" style="word-wrap: break-word; overflow-wrap: break-word; white-space: pre-wrap;">{{ message.Body }}</p>
+                <div class="message-content">
+                  <div class="thread-indicator">
+                    <v-icon size="small" color="primary" class="mr-2">mdi-message-text</v-icon>
+                    <strong class="topic-title">{{ message.TopicName || 'No Topic' }}</strong>
+                  </div>
+                  <p class="message-body">{{ message.Body }}</p>
                   <div class="message-info">
                     <span class="author-name">
                       {{ (message.Author !== 'null' && message.Author) || 'Case Officer' }}
                     </span>
                     <span class="dot-separator">•</span>
                     <span class="timestamp">{{ formatDate(message.PostedDateTime) }}</span>
+                    <span v-if="hasReplies(message.Id)" class="reply-count">
+                      • {{ getReplies(message.Id).length }} {{ getReplies(message.Id).length === 1 ? 'reply' : 'replies' }}
+                    </span>
                   </div>
                 </div>
                 <!-- Message Actions -->
-                <div class="message-actions" style="flex-shrink: 0;">
+                <div class="message-actions">
                   <v-btn
                     icon
                     small
                     variant="text"
                     @click.stop="initReply(message)"
-                    style="margin-right: -10px"
+                    class="action-btn"
                   >
-                    <v-icon>mdi-reply</v-icon>
+                    <v-icon size="small">mdi-reply</v-icon>
                   </v-btn>
                   <v-btn
                     v-if="!hasReplies(message.Id) && canDeleteMessage(message)"
@@ -57,34 +68,40 @@
                     small
                     color="red"
                     @click.stop="showDeleteConfirm(message.TargetItemId)"
+                    class="action-btn"
                   >
-                    <v-icon>mdi-trash-can-outline</v-icon>
+                    <v-icon size="small">mdi-trash-can-outline</v-icon>
                   </v-btn>
                 </div>
               </div>
             </v-expansion-panel-title>
 
-            <!-- Replies -->
-            <v-expansion-panel-text v-if="hasReplies(message.Id)">
-              <v-row class="replies">
-                <v-col
-                  cols="12"
-                  v-for="(reply, idx) in getReplies(message.Id)"
-                  :key="idx"
-                  class="reply-message"
-                  :style="{ marginLeft: '10px' }"
-                >
-                  <MessageReply
-                    :reply="reply"
-                    :get-replies="getReplies"
-                    :has-replies="hasReplies"
-                    :format-date="formatDate"
-                    :depth="0"
-                    @reply="initReply"
-                    @delete="showDeleteConfirm"
-                  />
-                </v-col>
-              </v-row>
+            <!-- Replies Section -->
+            <v-expansion-panel-text v-if="hasReplies(message.Id)" class="replies-container">
+              <div class="replies-wrapper">
+                <div class="replies-header">
+                  <v-icon size="small" color="grey" class="mr-1">mdi-reply-all</v-icon>
+                  <span class="replies-label">Replies</span>
+                </div>
+                <div class="replies-list">
+                  <div
+                    v-for="(reply, idx) in getReplies(message.Id)"
+                    :key="reply.Id"
+                    class="reply-item"
+                    :class="{ 'reply-separator': idx > 0 }"
+                  >
+                    <MessageReply
+                      :reply="reply"
+                      :get-replies="getReplies"
+                      :has-replies="hasReplies"
+                      :format-date="formatDate"
+                      :depth="0"
+                      @reply="initReply"
+                      @delete="showDeleteConfirm"
+                    />
+                  </div>
+                </div>
+              </div>
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -206,16 +223,16 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue';
-import { COLORS } from '@/styles/colors';
-import { getApiService } from '@/services/api.service'
+import {ref, computed, watch, onMounted} from 'vue';
+import {COLORS} from '@/styles/colors';
+import {getApiService} from '@/services/api.service'
 import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 
 const apiService = getApiService()
-import { errorMessage, successMessage } from '@/utils/message';
-import { formatDate } from '../utils/common';
-import { consoleError } from '@/utils/logger';
-import { useAuthStore } from "@/store/authStore";
+import {errorMessage, successMessage} from '@/utils/message';
+import {formatDate} from '../utils/common';
+import {consoleError} from '@/utils/logger';
+import {useAuthStore} from "@/store/authStore";
 import MessageReply from "@/components/MessageReply.vue";
 
 const props = defineProps({
@@ -259,7 +276,6 @@ const hasReplies = (id) => {
 
 const getReplies = (parentId) => {
   if (!parentId) return [];
-  // Add a check to prevent replies appearing in their own thread
   return discussionsList.value.filter((d) => {
     if (d.ParentId !== parentId) return false;
 
@@ -291,7 +307,6 @@ const parseDiscussions = (response) => {
       TargetItemId: message.TargetItemId,
     }));
 
-    // Auto-expand panels that have replies
     expandedPanels.value = discussionsList.value
       .filter(msg => !msg.ParentId && hasReplies(msg.Id))
       .map((msg, index) => index);
@@ -376,21 +391,13 @@ const saveMessage = async (body, topicName = null, isReply = false, parentId = n
     item: {
       Discussion: {
         Body: body,
-        ...(topicName ? { TopicName: topicName } : {}),
+        ...(topicName ? {TopicName: topicName} : {}),
       },
-      ...(isReply ? { DisplayOrganization: { ParentId: parentId } } : {}),
+      ...(isReply ? {DisplayOrganization: {ParentId: parentId}} : {}),
     },
     targetEntityId: userStore.targetEntityId,
     targetEntityContainerVersionId: userStore.containerVersionId,
   };
-
-  // Log the request payload
-  console.log('[SecureMessages] Sending message/reply:', {
-    isReply,
-    parentId,
-    payload,
-    timestamp: new Date().toISOString()
-  });
 
   try {
     loading.value = true;
@@ -398,16 +405,6 @@ const saveMessage = async (body, topicName = null, isReply = false, parentId = n
     const response = isReply
       ? await apiService.replyMessage(payload)
       : await apiService.createMessage(payload);
-
-    // Log the full response
-    console.log('[SecureMessages] Response received:', {
-      isReply,
-      status: response.status,
-      statusText: response.statusText,
-      headers: response.headers,
-      data: response.data,
-      timestamp: new Date().toISOString()
-    });
 
     const itemId = isReply
       ? response.data.ReplyResponse.items[0].itemId
@@ -431,58 +428,22 @@ const saveMessage = async (body, topicName = null, isReply = false, parentId = n
         rulesRunOnClient: ""
       }];
 
-      // Log the sender update payload
-      console.log('[SecureMessages] Updating message sender:', {
-        senderPayload,
-        timestamp: new Date().toISOString()
-      });
-
       try {
-        const senderResponse = await apiService.addMessageSender(senderPayload);
-        console.log('[SecureMessages] Sender update response:', {
-          status: senderResponse.status,
-          data: senderResponse.data,
-          timestamp: new Date().toISOString()
-        });
+        await apiService.addMessageSender(senderPayload);
       } catch (err) {
-        console.error('[SecureMessages] Error updating message sender:', {
-          error: err,
-          message: err.message,
-          response: err.response,
-          timestamp: new Date().toISOString()
-        });
+        console.error('Error updating message sender:', err);
       }
 
       successMessage(isReply ? 'Reply sent successfully.' : 'Message sent successfully.');
-
-      console.log('[SecureMessages] Fetching updated discussions');
       await fetchDiscussions();
     } else {
-      console.error('[SecureMessages] Message send failed - unexpected status:', {
-        status: response.status,
-        data: response.data,
-        timestamp: new Date().toISOString()
-      });
       errorMessage(isReply ? 'Failed to send the reply.' : 'Failed to send the message.');
     }
   } catch (err) {
-    console.error('[SecureMessages] Exception caught in saveMessage:', {
-      error: err,
-      message: err.message,
-      stack: err.stack,
-      response: err.response?.data,
-      status: err.response?.status,
-      isReply,
-      timestamp: new Date().toISOString()
-    });
-
+    console.error('Exception in saveMessage:', err);
     errorMessage(isReply ? 'Failed to send reply.' : 'Failed to send message.');
   } finally {
     loading.value = false;
-    console.log('[SecureMessages] Save message completed:', {
-      isReply,
-      timestamp: new Date().toISOString()
-    });
   }
 };
 
@@ -521,7 +482,6 @@ const fetchDiscussions = async () => {
   }
 };
 
-// Initialize component state
 onMounted(() => {
   discussionsList.value = [];
   replyTo.value = null;
@@ -539,79 +499,130 @@ watch(
       await fetchDiscussions();
     }
   },
-  { immediate: true }
+  {immediate: true}
 );
 </script>
 
 <style scoped>
+/* Message Thread Separation */
+.message-thread {
+  border-radius: 8px !important;
+  overflow: hidden;
+}
+
+.thread-separator {
+  margin-top: 16px !important;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  padding-top: 8px !important;
+}
+
+.main-message-header {
+  background-color: rgba(0, 48, 88, 0.02) !important;
+  border-left: 3px solid #003058;
+}
+
+/* Thread Indicator */
+.thread-indicator {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.topic-title {
+  color: #003058;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
 .message {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  padding: 10px 0;
+  padding: 8px 0;
   flex-grow: 1;
 }
 
 .message-content {
   flex-grow: 1;
+  min-width: 0;
+}
+
+.message-body {
+  margin: 8px 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+  color: #333;
 }
 
 .message-actions {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
   padding-top: 5px;
-  padding-right: 5px;
+  flex-shrink: 0;
 }
 
-.message strong {
-  display: block;
+.action-btn {
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
 }
 
-.message span {
-  color: gray;
+.action-btn:hover {
+  opacity: 1;
 }
 
-.scrollable-messages {
-  max-height: 300px;
-  overflow-y: auto;
-  overflow-x: hidden; /* Prevent horizontal scroll */
+/* Replies Section */
+.replies-container {
+  background-color: rgba(0, 0, 0, 0.01);
+  padding: 0 !important;
 }
 
-.reply-preview {
-  background-color: #f0f0f0;
-  padding: 3px 10px 10px;
-  border-left: 3px solid #ccc;
-  position: relative;
+.replies-wrapper {
+  padding: 12px 16px;
+  border-left: 2px solid rgba(0, 48, 88, 0.1);
+  margin-left: 8px;
 }
 
-.reply-preview-message {
-  margin-left: 10px;
+.replies-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
-.replies {
-  padding-left: 20px;
+.replies-label {
+  font-size: 0.85rem;
+  color: #666;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.v-expansion-panel-title {
-  padding: 0;
+.replies-list {
+  display: flex;
+  flex-direction: column;
 }
 
-.v-expansion-panel-text {
-  padding: 0 0 0 16px;
+.reply-item {
+  padding: 8px 0;
 }
 
-.reply-message .message {
-  border-bottom: none;
+.reply-separator {
+  border-top: 1px solid rgba(0, 0, 0, 0.04);
+  margin-top: 8px;
+  padding-top: 16px !important;
 }
 
+/* Message Info */
 .message-info {
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 0.85rem;
   color: #666;
-  margin-top: 4px;
+  margin-top: 8px;
 }
 
 .author-name {
@@ -626,5 +637,59 @@ watch(
 
 .timestamp {
   color: #666;
+}
+
+.reply-count {
+  color: #003058;
+  font-weight: 500;
+}
+
+/* Scrollable Messages */
+.scrollable-messages {
+  max-height: 400px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 4px;
+}
+
+/* Reply Preview */
+.reply-preview {
+  background-color: #f0f0f0;
+  padding: 3px 10px 10px;
+  border-left: 3px solid #ccc;
+  position: relative;
+  border-radius: 4px;
+}
+
+.reply-preview-message {
+  margin-left: 10px;
+}
+
+/* Expansion Panel Overrides */
+.v-expansion-panel-title {
+  padding: 0 !important;
+}
+
+.v-expansion-panel-text {
+  padding: 0 !important;
+}
+
+/* Custom scrollbar */
+.scrollable-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollable-messages::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 3px;
+}
+
+.scrollable-messages::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.scrollable-messages::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
 }
 </style>
