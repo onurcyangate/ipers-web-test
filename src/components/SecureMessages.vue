@@ -35,7 +35,6 @@
               <div class="message">
                 <div class="message-content">
                   <div class="thread-indicator">
-                    <v-icon size="small" color="primary" class="mr-2">mdi-message-text</v-icon>
                     <strong class="topic-title">{{ message.TopicName || 'No Topic' }}</strong>
                   </div>
                   <p class="message-body">{{ message.Body }}</p>
@@ -223,16 +222,16 @@
 </template>
 
 <script setup>
-import {ref, computed, watch, onMounted} from 'vue';
-import {COLORS} from '@/styles/colors';
-import {getApiService} from '@/services/api.service'
+import { ref, computed, watch, onMounted } from 'vue';
+import { COLORS } from '@/styles/colors';
+import { getApiService } from '@/services/api.service'
 import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 
 const apiService = getApiService()
-import {errorMessage, successMessage} from '@/utils/message';
-import {formatDate} from '../utils/common';
-import {consoleError} from '@/utils/logger';
-import {useAuthStore} from "@/store/authStore";
+import { errorMessage, successMessage } from '@/utils/message';
+import { formatDate } from '../utils/common';
+import { consoleError } from '@/utils/logger';
+import { useAuthStore } from "@/store/authStore";
 import MessageReply from "@/components/MessageReply.vue";
 
 const props = defineProps({
@@ -391,9 +390,9 @@ const saveMessage = async (body, topicName = null, isReply = false, parentId = n
     item: {
       Discussion: {
         Body: body,
-        ...(topicName ? {TopicName: topicName} : {}),
+        ...(topicName ? { TopicName: topicName } : {}),
       },
-      ...(isReply ? {DisplayOrganization: {ParentId: parentId}} : {}),
+      ...(isReply ? { DisplayOrganization: { ParentId: parentId } } : {}),
     },
     targetEntityId: userStore.targetEntityId,
     targetEntityContainerVersionId: userStore.containerVersionId,
@@ -499,7 +498,7 @@ watch(
       await fetchDiscussions();
     }
   },
-  {immediate: true}
+  { immediate: true }
 );
 </script>
 
@@ -518,7 +517,7 @@ watch(
 
 .main-message-header {
   background-color: rgba(0, 48, 88, 0.02) !important;
-  border-left: 3px solid #003058;
+  padding-left: 12px !important;
 }
 
 /* Thread Indicator */

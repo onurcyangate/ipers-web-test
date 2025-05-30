@@ -1,68 +1,63 @@
 <template>
   <div class="reply-container">
     <div class="reply-message">
-      <div class="reply-indicator">
-        <v-icon size="x-small" color="grey" class="mr-1">mdi-reply</v-icon>
-      </div>
-      <div class="message">
-        <div class="message-content">
-          <p class="reply-body">{{ reply.Body }}</p>
-          <div class="message-info">
+      <div class="message-content">
+        <p class="reply-body">{{ reply.Body }}</p>
+        <div class="message-info">
             <span class="author-name">
               {{ (reply.Author !== 'null' && reply.Author) || 'Case Officer' }}
             </span>
-            <span class="dot-separator">•</span>
-            <span class="timestamp">{{ formatDate(reply.PostedDateTime) }}</span>
-          </div>
+          <span class="dot-separator">•</span>
+          <span class="timestamp">{{ formatDate(reply.PostedDateTime) }}</span>
         </div>
-        <div class="message-actions">
-          <v-btn
-            icon
-            small
-            variant="text"
-            @click.stop="$emit('reply', reply)"
-            class="action-btn"
-          >
-            <v-icon size="small">mdi-reply</v-icon>
-          </v-btn>
-          <v-btn
-            v-if="!hasReplies(reply.Id) && canDeleteReply(reply)"
-            icon
-            variant="text"
-            small
-            color="red"
-            @click.stop="$emit('delete', reply.TargetItemId)"
-            class="action-btn"
-          >
-            <v-icon size="small">mdi-trash-can-outline</v-icon>
-          </v-btn>
-        </div>
+      </div>
+      <div class="message-actions">
+        <v-btn
+          icon
+          small
+          variant="text"
+          @click.stop="$emit('reply', reply)"
+          class="action-btn"
+        >
+          <v-icon size="small">mdi-reply</v-icon>
+        </v-btn>
+        <v-btn
+          v-if="!hasReplies(reply.Id) && canDeleteReply(reply)"
+          icon
+          variant="text"
+          small
+          color="red"
+          @click.stop="$emit('delete', reply.TargetItemId)"
+          class="action-btn"
+        >
+          <v-icon size="small">mdi-trash-can-outline</v-icon>
+        </v-btn>
       </div>
     </div>
+  </div>
 
-    <!-- Recursive nested replies with depth check -->
+  <!-- Recursive nested replies with depth check -->
+  <div
+    v-if="hasReplies(reply.Id) && depth < maxDepth"
+    class="nested-replies"
+    :style="{ marginLeft: `${Math.min(depth + 1, 4) * 12}px` }"
+  >
     <div
-      v-if="hasReplies(reply.Id) && depth < maxDepth"
-      class="nested-replies"
-      :style="{ marginLeft: `${Math.min(depth + 1, 4) * 12}px` }"
+      v-for="(nestedReply, index) in getReplies(reply.Id)"
+      :key="nestedReply.Id"
+      class="nested-reply-item"
+      :class="{ 'nested-separator': index > 0 }"
     >
-      <div
-        v-for="(nestedReply, index) in getReplies(reply.Id)"
-        :key="nestedReply.Id"
-        class="nested-reply-item"
-        :class="{ 'nested-separator': index > 0 }"
-      >
-        <message-reply
-          :reply="nestedReply"
-          :get-replies="getReplies"
-          :has-replies="hasReplies"
-          :format-date="formatDate"
-          :depth="depth + 1"
-          :max-depth="maxDepth"
-          @reply="$emit('reply', $event)"
-          @delete="$emit('delete', $event)"
-        />
-      </div>
+      <message-reply
+        :reply="nestedReply"
+        :get-replies="getReplies"
+        :has-replies="hasReplies"
+        :format-date="formatDate"
+        :depth="depth + 1"
+        :max-depth="maxDepth"
+        @reply="$emit('reply', $event)"
+        @delete="$emit('delete', $event)"
+      />
     </div>
   </div>
 </template>
@@ -117,7 +112,7 @@ const canDeleteReply = (reply) => {
   align-items: flex-start;
   background-color: rgba(0, 0, 0, 0.01);
   border-radius: 6px;
-  padding: 8px;
+  padding: 8px 8px 8px 16px;
   margin: 4px 0;
   border-left: 2px solid rgba(0, 48, 88, 0.15);
 }
