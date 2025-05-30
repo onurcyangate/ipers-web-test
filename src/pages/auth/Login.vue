@@ -12,10 +12,19 @@ const isFormValid = ref(null);
 const authStore = useAuthStore();
 const loading = ref(false);
 const showPassword = ref(false);
+const captchaVerified = ref(false);
 const formState = reactive({
   username: '',
   password: ''
 });
+
+const handleVerify = () => {
+  captchaVerified.value = true;
+};
+
+const handleExpired = () => {
+  captchaVerified.value = false;
+};
 
 const loginAttempt = async () => {
   try {
@@ -92,9 +101,10 @@ const togglePasswordVisibility = () => {
             Forgot Password
           </v-btn>
         </div>
+        <Recaptcha @verify="handleVerify" @expired="handleExpired"></Recaptcha>
         <v-btn type="submit" color="primary" block class="mt-2 no-uppercase" :loading="loading"
                style="margin-bottom:15px"
-               :disabled="!isFormValid">
+               :disabled="!isFormValid || !captchaVerified">
           Sign In
         </v-btn>
         <v-btn @click="() => router.push('/register')" variant="text" block color="grey" class="mt-2 no-uppercase"
