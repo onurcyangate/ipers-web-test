@@ -537,8 +537,9 @@ watch(
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  padding: 8px 0;
+  padding: 10px 20p;
   flex-grow: 1;
+  padding-left:10px;
 }
 
 .message-content {
