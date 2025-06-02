@@ -8,7 +8,6 @@
         variant="text"
         @click="isExpanded = !isExpanded"
         :aria-label="isExpanded ? 'Collapse' : 'Expand'"
-        :disabled="!medicalFileExists"
       >
         <v-icon>{{ isExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
       </v-btn>
@@ -43,6 +42,7 @@
                   style="max-height: 100px"
                   accept=".doc,.docx,.pdf"
                   :rules="[fileSizeRule]"
+                  :disabled="!medicalFileExists"
                 />
               </v-col>
             </v-row>
