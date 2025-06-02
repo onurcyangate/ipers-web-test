@@ -537,7 +537,7 @@ watch(
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  padding: 10px 20p;
+  padding: 10px 20px;
   flex-grow: 1;
   padding-left:10px;
 }
