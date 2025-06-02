@@ -8,6 +8,7 @@
         variant="text"
         @click="isExpanded = !isExpanded"
         :aria-label="isExpanded ? 'Collapse' : 'Expand'"
+        :disabled="!medicalFileExists"
       >
         <v-icon>{{ isExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
       </v-btn>
@@ -27,6 +28,7 @@
                   variant="outlined"
                   density="compact"
                   class="mt-2"
+                  :disabled="!medicalFileExists"
                 />
               </v-col>
               <v-col cols="12" md="7" lg="8">
@@ -99,6 +101,10 @@ const props = defineProps({
     default: false,
   },
   refreshPendingFilesTrigger: {
+    type: Boolean,
+    default: false,
+  },
+  medicalFileExists: {
     type: Boolean,
     default: false,
   },

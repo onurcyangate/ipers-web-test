@@ -113,6 +113,7 @@
                 :resetTrigger="resetDecisionFileInputTrigger"
                 :refreshPendingFilesTrigger="refreshPendingDecisionFilesTrigger"
                 :existingDecision="universityDecision"
+                :medical-file-exists="medicalFiles.length > 0"
               />
             </v-col>
           </v-row>
