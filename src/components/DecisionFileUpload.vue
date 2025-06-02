@@ -1,5 +1,5 @@
 <template>
-  <v-card class="light-border elevation-10 pa-2 mt-4">
+  <v-card class="light-border elevation-10 pa-2 ">
     <v-card-title class="blue-header-1 d-flex justify-space-between">
       <span>UNIVERSITY DECISION</span>
       <v-spacer></v-spacer>

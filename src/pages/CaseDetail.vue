@@ -85,15 +85,6 @@
               </div>
             </v-card-text>
           </v-card>
-
-          <DecisionFileUpload
-            v-if="isUniversityUser === true"
-            @setDecisionWithFile="handleDecisionFileUpload"
-            :loading="decisionFileUploadLoading"
-            :resetTrigger="resetDecisionFileInputTrigger"
-            :refreshPendingFilesTrigger="refreshPendingDecisionFilesTrigger"
-            :existingDecision="universityDecision"
-          />
         </v-col>
         <v-col cols="12" md="7">
           <v-row>
@@ -113,6 +104,15 @@
                 @update:refreshPendingFilesTrigger="updateRefreshPendingFilesTrigger"
                 :ready="isReady"
                 :caseId="caseId"
+                v-if="!isUniversityUser"
+              />
+              <DecisionFileUpload
+                v-if="isUniversityUser === true"
+                @setDecisionWithFile="handleDecisionFileUpload"
+                :loading="decisionFileUploadLoading"
+                :resetTrigger="resetDecisionFileInputTrigger"
+                :refreshPendingFilesTrigger="refreshPendingDecisionFilesTrigger"
+                :existingDecision="universityDecision"
               />
             </v-col>
           </v-row>
