@@ -495,7 +495,7 @@ const fetchMedicalFiles = async () => {
 
 const downloadFile = async (file) => {
   try {
-    const fileUrl = configStore.apiBaseUrl + '/file-download?fileId=' + file.fileId;
+    const fileUrl = configStore.pdfPreviewBaseUrl + '/file-download?fileId=' + file.fileId;
     const isPDF = file.mimeType === 'application/pdf' || file.filename.toLowerCase().endsWith('.pdf');
 
     if (isPDF) {

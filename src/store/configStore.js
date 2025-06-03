@@ -3,13 +3,13 @@ import { defineStore } from 'pinia'
 export const useConfigStore = defineStore('config', {
   state: () => ({
     apiBaseUrl: '',
-    proxyTarget: '',
+    pdfPreviewBaseUrl: '',
     captchaSiteKey: '',
   }),
   actions: {
     setConfig(config) {
       this.apiBaseUrl = config.apiBaseUrl || ''
-      this.proxyTarget = config.proxyTarget || ''
+      this.pdfPreviewBaseUrl = config.pdfPreviewBaseUrl || ''
       this.captchaSiteKey = config.captchaSiteKey || ''
     },
   },

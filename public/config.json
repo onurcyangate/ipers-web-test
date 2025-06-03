@@ -1,5 +1,5 @@
 {
   "apiBaseUrl": "/api",
-  "proxyTarget": "https://localhost:8092",
+  "pdfPreviewBaseUrl": "https://localhost:8092/iowa",
   "captchaSiteKey": "6LcNLfEqAAAAADQLEsuoi75FVpUhhrs3i_oHNkVS"
 }
