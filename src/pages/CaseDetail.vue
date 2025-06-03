@@ -119,7 +119,7 @@
           </v-row>
 
           <v-row>
-            <v-col :cols="12" :md="downloads.length ? 8 : 12" v-if="caseDetails.caseIdStr">
+            <v-col :cols="12" :md="(downloads.length && !isUniversityUser) ? 8 : 12" v-if="caseDetails.caseIdStr">
               <SecureMessages :ready="isReady"/>
             </v-col>
 
