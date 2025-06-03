@@ -34,7 +34,7 @@
                   <strong style="color: #003058">{{ label }} : </strong>
                   <span v-if="key === 'appointmentDate'">
             {{ caseDetails.formattedUniversityAppointmentDate || '' }}
-          </span>s
+          </span>
                   <span v-else>
             {{ caseDetails[key] }}
           </span>
