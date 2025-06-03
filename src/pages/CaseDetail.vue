@@ -123,7 +123,7 @@
               <SecureMessages :ready="isReady"/>
             </v-col>
 
-            <v-col v-if="downloads.length" cols="12" md="4">
+            <v-col v-if="downloads.length && !isUniversityUser" cols="12" md="4">
               <v-card class="light-border elevation-10 pa-2 d-flex flex-column" style="max-height: 350px;">
                 <v-card-title class="blue-header-1 d-flex align-center flex-shrink-0 pb-2">
                   DOWNLOADS
