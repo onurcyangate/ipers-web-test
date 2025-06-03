@@ -495,7 +495,7 @@ const fetchMedicalFiles = async () => {
 
 const downloadFile = async (file) => {
   try {
-    const fileUrl = configStore.pdfPreviewBaseUrl + '/file-download?fileId=' + file.fileId;
+    const fileUrl = configStore.apiBaseUrl + '/file-download?fileId=' + file.fileId;
 
     const link = document.createElement('a');
     link.href = fileUrl;
