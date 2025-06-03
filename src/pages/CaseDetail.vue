@@ -231,8 +231,8 @@ const caseDetailFields = computed(() => ({
   caseIdStr: 'Case #',
   memberFirstName: 'Member Name',
   memberLastName: 'Member Last Name',
-  memberPhone: 'Member Phone Number',
-  memberEmail: 'Member E-mail',
+  MemberPhone: 'Member Phone Number',
+  MemberEmail: 'Member E-mail',
   ...(isUniversityUser.value && {appointmentDate: 'Appointment Date'}),
 }));
 
