@@ -496,24 +496,13 @@ const fetchMedicalFiles = async () => {
 const downloadFile = async (file) => {
   try {
     const fileUrl = configStore.pdfPreviewBaseUrl + '/file-download?fileId=' + file.fileId;
-    const isPDF = file.mimeType === 'application/pdf' || file.filename.toLowerCase().endsWith('.pdf');
 
-    if (isPDF) {
-      const newWindow = window.open();
-      if (newWindow) {
-        newWindow.location.href = fileUrl;
-      } else {
-        window.location.href = fileUrl;
-        warningMessage('Please allow popups to open PDF in new tab');
-      }
-    } else {
-      const link = document.createElement('a');
-      link.href = fileUrl;
-      link.setAttribute('download', file.filename);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
+    const link = document.createElement('a');
+    link.href = fileUrl;
+    link.setAttribute('download', file.filename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 
     infoMessage('File downloaded successfully.');
   } catch (error) {
