@@ -40,7 +40,7 @@ const loginAttempt = async () => {
     userStore.login(response.data.user)
     if (responseMessage === 'Account is disabled') {
       warningMessage('Your account is disabled. Please verify your account.');
-      await apiService.resendVerificationEmail();
+      await apiService.resendVerificationEmail({email: formState.username});
       await router.replace('/verify-email');
       return;
     }

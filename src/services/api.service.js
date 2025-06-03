@@ -36,8 +36,8 @@ class ApiService extends BaseService {
     return this._axiosInstance.get(`/check-unique-caseid?caseID=${params}`)
   }
 
-  resendVerificationEmail() {
-    return this._axiosInstance.post('/resend-email')
+  resendVerificationEmail(payload) {
+    return this._axiosInstance.post('/resend-email', payload)
   }
 
   fetchUserCases(params) {
