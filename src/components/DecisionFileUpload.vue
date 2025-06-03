@@ -46,6 +46,21 @@
                 />
               </v-col>
             </v-row>
+
+            <v-row>
+              <v-col cols="12">
+                <v-alert
+                  type="info"
+                  variant="outlined"
+                  density="compact"
+                  class="text-caption"
+                  style="background-color: rgba(33, 150, 243, 0.05); border: 1px solid rgba(33, 150, 243, 0.1); width: fit-content; display: inline-flex;"
+                  color="info"
+                >
+                  This case will not be visible after setting a decision.
+                </v-alert>
+              </v-col>
+            </v-row>
           </v-col>
 
           <v-col v-if="false" cols="6">
