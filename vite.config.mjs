@@ -13,22 +13,6 @@ import { fileURLToPath, URL } from 'node:url'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 
-// Read config.json directly
-let config = {}
-try {
-  const configPath = resolve(process.cwd(), 'config.json')
-  const configData = readFileSync(configPath, 'utf-8')
-  config = JSON.parse(configData)
-  console.log("config: ", JSON.stringify(config))
-} catch (error) {
-  console.warn('Could not read config.json, using default values:', error.message)
-  config = {
-    apiBaseUrl: '/api',
-    proxyTarget: 'http://localhost:8092',
-    captchaSiteKey: ''
-  }
-}
-
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
