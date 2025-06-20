@@ -265,7 +265,12 @@ const canFetchMessages = computed(() => {
 });
 
 const topLevelMessages = computed(() =>
-  discussionsList.value.filter((d) => !d.ParentId)
+  discussionsList.value.filter((d) => {
+    if (d.ParentId) return false;
+
+    const messageAuthorEmail = d.AuthorEmail || extractEmail(d.Author || '');
+    return messageAuthorEmail === userStore.username;
+  })
 );
 
 const hasReplies = (id) => {
